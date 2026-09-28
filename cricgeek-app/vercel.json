@@ -9,14 +9,7 @@
     "insights": {
       "root": "insights_service",
       "entrypoint": "main.py",
-      "framework": "fastapi",
-      "maxDuration": 120,
-      "includeFiles": [
-        "t20_insights.py",
-        "cricket_metrics.py",
-        "evaluator.py",
-        "outputs/**"
-      ]
+      "framework": "fastapi"
     }
   },
   "rewrites": [
