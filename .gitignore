@@ -1,0 +1,27 @@
+# Nested Next.js project generated output and dependencies
+/cricgeek-app/node_modules/
+/cricgeek-app/.next/
+/cricgeek-app/out/
+/cricgeek-app/build/
+/cricgeek-app/.vercel/
+/cricgeek-app/coverage/
+
+# Local environment files and secrets
+/cricgeek-app/.env
+/cricgeek-app/.env.*
+!/cricgeek-app/ollama-proxy/.env.example
+
+# Logs, caches, and runtime artifacts
+/cricgeek-app/data/logs/
+/cricgeek-app/reports/
+/cricgeek-app/ops-backups/
+/cricgeek-app/**/__pycache__/
+/cricgeek-app/**/*.py[cod]
+/cricgeek-app/*.tsbuildinfo
+/cricgeek-app/next-env.d.ts
+/cricgeek-app/public/uploads/
+/cricgeek-app/public/test-upload.png
+
+# Browser screenshots and unrelated workspace logs
+/cricgeek-app/about_*.png
+/startup_log.txt
