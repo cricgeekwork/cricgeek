@@ -20,13 +20,19 @@
       }
     },
     {
-      "source": "/_insights/:path*",
+      "source": "/_insights/(.*)",
       "destination": {
         "service": "insights"
       }
     },
     {
-      "source": "/:path*",
+      "source": "/",
+      "destination": {
+        "service": "web"
+      }
+    },
+    {
+      "source": "/(.*)",
       "destination": {
         "service": "web"
       }
