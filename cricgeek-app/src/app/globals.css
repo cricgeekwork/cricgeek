@@ -66,14 +66,14 @@ body {
 }
 
 /* Smooth page transitions */
-main {
-  animation: fadeIn 0.3s ease-in;
+.cg-page-transition {
+  animation: fadeIn 0.3s ease-out;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -413,3 +413,214 @@ main {
   opacity: 0;
   animation: rowReveal 0.35s ease forwards;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   CricGeek Animation System
+   Cricket-broadcast-style entrance, hover, and transition effects.
+   All animations use transform/opacity only (GPU-composited).
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Intro Overlay ─────────────────────────────────────────── */
+
+@keyframes cgIntroLogoIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.cg-intro-logo-in {
+  animation: cgIntroLogoIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.cg-intro-glow {
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.35),
+              0 0 60px rgba(34, 197, 94, 0.15);
+}
+
+@keyframes cgIntroSweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100vw);
+  }
+}
+
+.cg-intro-sweep {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #22C55E 40%, #22C55E 60%, transparent);
+  transform: translateX(-100%);
+  animation: cgIntroSweep 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* ── 2. Card entrance animation ───────────────────────────────── */
+
+@keyframes cgCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cg-card-enter {
+  animation: cgCardEnter 0.35s ease-out both;
+  animation-delay: var(--cg-stagger, 0ms);
+}
+
+/* ── 3. Hover lift for cards & buttons ────────────────────────── */
+
+.cg-hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cg-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
+              0 0 0 1px rgba(34, 197, 94, 0.1);
+}
+
+.cg-hover-lift:active {
+  transform: translateY(0);
+}
+
+/* Green border glow on hover for cards */
+.cg-hover-glow {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cg-hover-glow:hover {
+  border-color: rgba(34, 197, 94, 0.35);
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.06);
+}
+
+/* ── 4. LIVE indicator pulse (replaces default animate-pulse) ── */
+
+@keyframes cgLivePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.15);
+  }
+}
+
+.cg-live-pulse {
+  animation: cgLivePulse 2s ease-in-out infinite;
+}
+
+/* ── 5. Button hover accent ───────────────────────────────────── */
+
+.cg-btn-hover {
+  transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cg-btn-hover:hover {
+  transform: translateY(-1px);
+}
+
+.cg-btn-hover:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ── 6. Section reveal (for hero, features, etc.) ─────────────── */
+
+@keyframes cgSectionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cg-section-reveal {
+  animation: cgSectionReveal 0.4s ease-out both;
+  animation-delay: var(--cg-section-delay, 0ms);
+}
+
+/* ── 7. Navbar & layout entrance (for first load) ─────────────── */
+
+@keyframes cgNavEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cg-nav-enter {
+  animation: cgNavEnter 0.35s ease-out both;
+}
+
+/* ── 8. prefers-reduced-motion: disable ALL custom animations ── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .cg-intro-logo-in,
+  .cg-intro-sweep,
+  .cg-card-enter,
+  .cg-section-reveal,
+  .cg-nav-enter,
+  .cg-live-pulse {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .cg-hover-lift:hover,
+  .cg-hover-glow:hover {
+    transform: none !important;
+  }
+
+  .cg-page-transition {
+    animation: none !important;
+  }
+}
+
+/* ── 9. Mobile: lighter animations ─────────────────────────────── */
+
+@media (max-width: 768px) {
+  .cg-card-enter {
+    animation-duration: 0.25s;
+  }
+
+  .cg-section-reveal {
+    animation-duration: 0.3s;
+  }
+
+  .cg-hover-lift:hover {
+    transform: translateY(-1px);
+  }
+
+  .cg-page-transition {
+    animation-duration: 0.25s;
+  }
+}
+

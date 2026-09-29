@@ -11,7 +11,7 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
 
   return (
     <Link href={`/matches/${match.id}`}>
-      <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-4 hover:border-cg-green/50 transition-all hover:shadow-lg hover:shadow-green-500/5 group">
+      <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-4 hover:border-cg-green/50 transition-all hover:shadow-lg hover:shadow-green-500/5 group cg-hover-lift cg-hover-glow">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <span
@@ -24,7 +24,7 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
           </span>
           {isLive && (
             <span className="flex items-center gap-1 text-xs font-medium text-red-400">
-              <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+              <span className="w-2 h-2 bg-red-500 rounded-full cg-live-pulse" />
               LIVE
             </span>
           )}

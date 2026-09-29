@@ -22,7 +22,7 @@ export default async function HomePage() {
           <div className="min-w-0 lg:flex-1">
 
             {/* Hero */}
-            <section className="relative bg-gradient-to-b from-cg-dark via-green-950/30 to-cg-dark overflow-hidden">
+            <section className="relative bg-gradient-to-b from-cg-dark via-green-950/30 to-cg-dark overflow-hidden cg-section-reveal" style={{"--cg-section-delay": "100ms"} as React.CSSProperties}>
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(34,197,94,0.08),transparent_50%)]" />
               <div className="relative py-16 sm:py-24">
                 <div className="max-w-3xl">
@@ -87,7 +87,7 @@ export default async function HomePage() {
             </div>
 
             {/* Live Matches */}
-            <section className="py-8">
+            <section className="py-8 cg-section-reveal" style={{"--cg-section-delay": "200ms"} as React.CSSProperties}>
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <Zap size={20} className="text-cg-green" />
@@ -157,7 +157,7 @@ export default async function HomePage() {
             </div>
 
             {/* Features */}
-            <section className="py-12">
+            <section className="py-12 cg-section-reveal" style={{"--cg-section-delay": "300ms"} as React.CSSProperties}>
               <h2 className="text-2xl font-bold text-white text-center mb-8">
                 Everything Cricket. One Platform.
               </h2>
@@ -168,8 +168,8 @@ export default async function HomePage() {
                   { icon: PenSquare, title: "Community Expressions", desc: "Share your cricket views and engage with fellow fans" },
                   { icon: Calendar, title: "Match Calendar", desc: "Never miss a match with our complete cricket calendar" },
                   { icon: BrainCircuit, title: "AI Insights", desc: "Integrated T20 decision support, evaluation, and player explorer tools" },
-                ].map((feature) => (
-                  <div key={feature.title} className="bg-cg-dark-2 border border-gray-800 rounded-xl p-5 hover:border-cg-green/30 transition-all">
+                ].map((feature, i) => (
+                  <div key={feature.title} className="bg-cg-dark-2 border border-gray-800 rounded-xl p-5 hover:border-cg-green/30 transition-all cg-card-enter cg-hover-lift cg-hover-glow" style={{"--cg-stagger": `${i * 60}ms`} as React.CSSProperties}>
                     <feature.icon size={24} className="text-cg-green mb-3" />
                     <h3 className="text-white font-semibold mb-1">{feature.title}</h3>
                     <p className="text-gray-400 text-sm">{feature.desc}</p>
