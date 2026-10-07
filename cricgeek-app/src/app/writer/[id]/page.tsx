@@ -9,6 +9,7 @@ import ScoreRing from "@/components/writer/ScoreRing";
 import AdSlot from "@/components/ads/AdSlot";
 import { ARCHETYPE_CONFIG, getScoreColor } from "@/components/writer/WriterProfileCard";
 import { getUserWriterProfile } from "@/lib/communities/local-community-service";
+import { useCricGeekSession } from "@/hooks/useCricGeekSession";
 import { use } from "react";
 
 interface WriterData {
@@ -42,8 +43,28 @@ const TIER_COLORS: Record<string, string> = {
   platinum: "from-indigo-300 to-purple-400 border-indigo-400/50",
 };
 
+function getOwnerEarnings(writer: Pick<WriterData, "recentBlogs" | "profile">): WriterData["earnings"] {
+  const rate = 80;
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  const thisMonthBlogs = writer.recentBlogs.filter((blog) => {
+    const createdAt = new Date(blog.createdAt);
+    return createdAt.getMonth() === currentMonth && createdAt.getFullYear() === currentYear;
+  });
+  const thisMonthViews = thisMonthBlogs.reduce((total, blog) => total + blog.views, 0);
+
+  return {
+    rate,
+    total: Math.round(((writer.profile.totalViews ?? 0) / 1000) * rate),
+    month: Math.round((thisMonthViews / 1000) * rate),
+    monthExpressionCount: thisMonthBlogs.length,
+    monthViews: thisMonthViews,
+  };
+}
+
 export default function WriterProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
+  const { user: currentUser } = useCricGeekSession();
   const [writer, setWriter] = useState<WriterData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -116,7 +137,8 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
 
   const config = ARCHETYPE_CONFIG[writer.profile.archetype] || ARCHETYPE_CONFIG.rookie;
   const xpProgress = writer.profile.xp % 100;
-  const earnings = writer.earnings ?? null;
+  const isOwner = Boolean(currentUser?.id && currentUser.id === writer.id);
+  const earnings = isOwner ? (writer.earnings ?? getOwnerEarnings(writer)) : null;
   const popularBlogs = [...writer.recentBlogs].sort((a, b) => b.views - a.views).slice(0, 3);
 
   return (
