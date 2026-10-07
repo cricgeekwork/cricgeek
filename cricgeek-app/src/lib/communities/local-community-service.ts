@@ -28,12 +28,25 @@ export type CommunityNotification = {
   createdAt: string;
 };
 
+type LocalExpressionInteraction = {
+  userId: string;
+  slug: string;
+};
+
+type LocalExpressionView = LocalExpressionInteraction & {
+  count: number;
+};
+
 export type LocalCommunityState = {
   follows: Array<{ communityId: string; userId: string }>;
   memberships: Array<{ communityId: string; userId: string }>;
   joinRequests: JoinRequest[];
   notifications: CommunityNotification[];
   extraPosts: Post[];
+  savedExpressions: LocalExpressionInteraction[];
+  reactedExpressions: LocalExpressionInteraction[];
+  followedWriters: Array<{ followerId: string; writerId: string }>;
+  seenExpressions: LocalExpressionView[];
 };
 
 const USER_KEY = "cricgeek.local.currentUserId";
@@ -46,6 +59,10 @@ const emptyState = (): LocalCommunityState => ({
   joinRequests: [],
   notifications: [],
   extraPosts: [],
+  savedExpressions: [],
+  reactedExpressions: [],
+  followedWriters: [],
+  seenExpressions: [],
 });
 
 function canUseStorage() {
@@ -69,6 +86,10 @@ function readState(): LocalCommunityState {
       joinRequests: parsed.joinRequests ?? [],
       notifications: parsed.notifications ?? [],
       extraPosts: parsed.extraPosts ?? [],
+      savedExpressions: parsed.savedExpressions ?? [],
+      reactedExpressions: parsed.reactedExpressions ?? [],
+      followedWriters: parsed.followedWriters ?? [],
+      seenExpressions: parsed.seenExpressions ?? [],
     };
   } catch {
     return emptyState();
@@ -102,7 +123,47 @@ export function getLocalCommunitySnapshot() {
 
 export function getUserWriterProfile(userId: string) {
   const profile = getLocalWriterProfile(userId);
-  if (!profile) return null;
+  if (!profile) {
+    const communityMatches = SAMPLE_COMMUNITIES.flatMap((community) =>
+      community.topWriters
+        .filter((writer) => writer.id === userId)
+        .map((writer) => ({ writer, community: community.name }))
+    );
+    const writer = communityMatches[0]?.writer;
+    if (!writer) return null;
+
+    return {
+      id: writer.id,
+      name: writer.name,
+      avatar: writer.avatarUrl ?? null,
+      bio: null,
+      role: "user",
+      createdAt: "",
+      stats: { followerCount: 0, blogCount: 0 },
+      viewerState: { followsWriter: false },
+      profile: {
+        averageBQS: 0,
+        totalBlogs: 0,
+        totalViews: 0,
+        totalRuns: 0,
+        archetype: "fan",
+        writerTitle: "",
+        level: 1,
+        xp: 0,
+        bestBQS: 0,
+        featuredCount: 0,
+        streak: 0,
+        bcs: 0,
+        statAccuracy: 0,
+      },
+      dna: { analyst: 25, fan: 25, storyteller: 25, debater: 25 },
+      badges: [],
+      achievements: [],
+      recentBlogs: [],
+      communities: Array.from(new Set(communityMatches.map((match) => match.community))),
+    };
+  }
+
   const joinedNames = SAMPLE_COMMUNITIES
     .filter((community) => isCommunityMember(community.id, userId))
     .map((community) => community.name);
@@ -129,6 +190,100 @@ export function signOutLocalUser() {
   if (!canUseStorage()) return;
   window.localStorage.removeItem(USER_KEY);
   emitChange();
+}
+
+function toggleExpressionInteraction(
+  interactions: LocalExpressionInteraction[],
+  userId: string,
+  slug: string
+) {
+  const exists = interactions.some((item) => item.userId === userId && item.slug === slug);
+  return {
+    exists,
+    interactions: exists
+      ? interactions.filter((item) => item.userId !== userId || item.slug !== slug)
+      : [...interactions, { userId, slug }],
+  };
+}
+
+export function isLocalExpressionSaved(userId: string, slug: string) {
+  return readState().savedExpressions.some((item) => item.userId === userId && item.slug === slug);
+}
+
+export function toggleLocalExpressionSaved(userId: string, slug: string) {
+  const state = readState();
+  const result = toggleExpressionInteraction(state.savedExpressions, userId, slug);
+  state.savedExpressions = result.interactions;
+  writeState(state);
+  return !result.exists;
+}
+
+export function isLocalExpressionReacted(userId: string, slug: string) {
+  return readState().reactedExpressions.some((item) => item.userId === userId && item.slug === slug);
+}
+
+export function toggleLocalExpressionReaction(userId: string, slug: string) {
+  const state = readState();
+  const result = toggleExpressionInteraction(state.reactedExpressions, userId, slug);
+  state.reactedExpressions = result.interactions;
+  writeState(state);
+  return !result.exists;
+}
+
+export function isFollowingWriterLocally(userId: string, writerId: string) {
+  return readState().followedWriters.some((item) => item.followerId === userId && item.writerId === writerId);
+}
+
+export function toggleLocalWriterFollow(userId: string, writerId: string) {
+  const state = readState();
+  const exists = isFollowingWriterLocally(userId, writerId);
+  state.followedWriters = exists
+    ? state.followedWriters.filter((item) => item.followerId !== userId || item.writerId !== writerId)
+    : [...state.followedWriters, { followerId: userId, writerId }];
+  writeState(state);
+  return !exists;
+}
+
+export function getLocalExpressionSignals(userId: string) {
+  const state = readState();
+  const followedCommunityIds = state.follows
+    .filter((item) => item.userId === userId)
+    .map((item) => item.communityId);
+  const joinedCommunityIds = SAMPLE_COMMUNITIES
+    .filter((community) =>
+      community.headId === userId ||
+      state.memberships.some((item) => item.userId === userId && item.communityId === community.id)
+    )
+    .map((community) => community.id);
+  const localUser = getLocalDemoUser(userId);
+
+  return {
+    savedSlugs: state.savedExpressions.filter((item) => item.userId === userId).map((item) => item.slug),
+    reactedSlugs: state.reactedExpressions.filter((item) => item.userId === userId).map((item) => item.slug),
+    followedWriterIds: state.followedWriters
+      .filter((item) => item.followerId === userId)
+      .map((item) => item.writerId),
+    followedCommunityIds,
+    joinedCommunityIds,
+    communityTopics: SAMPLE_COMMUNITIES
+      .filter((community) => followedCommunityIds.includes(community.id) || joinedCommunityIds.includes(community.id))
+      .flatMap((community) => [community.name, community.topic]),
+    ownExpressionTopics: localUser?.recentBlogs.map((blog) => blog.title) ?? [],
+    seenSlugs: state.seenExpressions
+      .filter((item) => item.userId === userId && item.count > 1)
+      .map((item) => item.slug),
+  };
+}
+
+export function recordLocalExpressionsSeen(userId: string, slugs: string[]) {
+  if (slugs.length === 0) return;
+  const state = readState();
+  for (const slug of new Set(slugs)) {
+    const existing = state.seenExpressions.find((item) => item.userId === userId && item.slug === slug);
+    if (existing) existing.count += 1;
+    else state.seenExpressions.push({ userId, slug, count: 1 });
+  }
+  writeState(state);
 }
 
 export function getUser(userId: string) {

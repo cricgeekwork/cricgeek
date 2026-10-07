@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { parseBlogTags } from "@/lib/blog-tags";
 
 const KNOWN_PLAYERS = [
   "Virat Kohli",
@@ -65,12 +66,26 @@ function unique(values: string[]): string[] {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
 
-function mergePreferenceValues(current: unknown, incoming: string[], limit = 24): string[] {
-  const existing = Array.isArray(current)
-    ? current.filter((value): value is string => typeof value === "string")
-    : [];
+export function getPreferenceValues(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((entry): entry is string => typeof entry === "string");
+  }
+  if (typeof value !== "string" || !value.trim()) return [];
 
-  return unique([...incoming, ...existing]).slice(0, limit);
+  try {
+    const parsed: unknown = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((entry): entry is string => typeof entry === "string");
+    }
+  } catch {
+    // Older preference values may be stored as comma-separated text.
+  }
+
+  return value.split(",").map((entry) => entry.trim()).filter(Boolean);
+}
+
+function mergePreferenceValues(current: unknown, incoming: string[], limit = 24): string[] {
+  return unique([...incoming, ...getPreferenceValues(current)]).slice(0, limit);
 }
 
 function collectEntities(source: string, candidates: string[]): string[] {
@@ -90,12 +105,7 @@ export function extractMentionSignals(input: {
   const content = input.content ?? "";
   const tags = input.tags ?? "";
   const matchName = input.matchName ?? "";
-  const normalizedTags = unique(
-    tags
-      .split(",")
-      .map((tag) => tag.trim().toLowerCase())
-      .filter(Boolean)
-  );
+  const normalizedTags = unique(parseBlogTags(tags).map((tag) => tag.toLowerCase()));
 
   const combinedText = [title, content, tags, matchName, ...(input.matchTeams ?? [])].join(" ");
   const mentionedPlayers = unique(collectEntities(combinedText, KNOWN_PLAYERS));
@@ -128,26 +138,20 @@ export async function updateUserFeedPreferences(userId: string, signal: Preferen
     where: { userId },
     create: {
       userId,
-      favoriteTags,
-      favoriteTeams,
-      favoritePlayers,
-      favoriteWriters,
-      favoriteMatchTypes,
+      favoriteTags: JSON.stringify(favoriteTags),
+      favoriteTeams: JSON.stringify(favoriteTeams),
+      favoritePlayers: JSON.stringify(favoritePlayers),
+      favoriteWriters: JSON.stringify(favoriteWriters),
+      favoriteMatchTypes: JSON.stringify(favoriteMatchTypes),
     },
     update: {
-      favoriteTags,
-      favoriteTeams,
-      favoritePlayers,
-      favoriteWriters,
-      favoriteMatchTypes,
+      favoriteTags: JSON.stringify(favoriteTags),
+      favoriteTeams: JSON.stringify(favoriteTeams),
+      favoritePlayers: JSON.stringify(favoritePlayers),
+      favoriteWriters: JSON.stringify(favoriteWriters),
+      favoriteMatchTypes: JSON.stringify(favoriteMatchTypes),
     },
   });
-}
-
-function getStringArray(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((entry): entry is string => typeof entry === "string")
-    : [];
 }
 
 export function getPersonalizationScore(input: {
@@ -165,15 +169,12 @@ export function getPersonalizationScore(input: {
     favoritePlayers?: unknown;
   } | null;
 }) {
-  const favoriteTags = new Set(getStringArray(input.preferences?.favoriteTags).map((value) => value.toLowerCase()));
-  const favoriteTeams = new Set(getStringArray(input.preferences?.favoriteTeams).map((value) => value.toLowerCase()));
-  const favoritePlayers = new Set(getStringArray(input.preferences?.favoritePlayers).map((value) => value.toLowerCase()));
-  const blogTags = (input.blog.tags ?? "")
-    .split(",")
-    .map((tag) => tag.trim().toLowerCase())
-    .filter(Boolean);
-  const blogTeams = getStringArray(input.blog.mentionedTeams).map((value) => value.toLowerCase());
-  const blogPlayers = getStringArray(input.blog.mentionedPlayers).map((value) => value.toLowerCase());
+  const favoriteTags = new Set(getPreferenceValues(input.preferences?.favoriteTags).map((value) => value.toLowerCase()));
+  const favoriteTeams = new Set(getPreferenceValues(input.preferences?.favoriteTeams).map((value) => value.toLowerCase()));
+  const favoritePlayers = new Set(getPreferenceValues(input.preferences?.favoritePlayers).map((value) => value.toLowerCase()));
+  const blogTags = parseBlogTags(input.blog.tags).map((tag) => tag.toLowerCase());
+  const blogTeams = getPreferenceValues(input.blog.mentionedTeams).map((value) => value.toLowerCase());
+  const blogPlayers = getPreferenceValues(input.blog.mentionedPlayers).map((value) => value.toLowerCase());
 
   let score = 0;
 

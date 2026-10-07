@@ -77,14 +77,42 @@ function LoginContent() {
     }
   };
 
-  const handleDemoSignIn = (userId: string) => {
-    const user = signInLocalUser(userId);
+  const handleDemoSignIn = async (userId: string) => {
+    const user = listLocalUsers().find((candidate) => candidate.id === userId);
     if (!user) {
       setError("Could not sign in with that demo account.");
       return;
     }
-    router.replace(next || redirect || "/communities");
-    router.refresh();
+
+    setError("");
+    setLoading(true);
+    const callbackUrl = next || redirect || "/communities";
+    try {
+      const result = await signIn("credentials", {
+        localDemoUserId: user.id,
+        redirect: false,
+        callbackUrl,
+      });
+      if (!result || result.error) {
+        setError("Could not sign in with that demo account.");
+        return;
+      }
+
+      const session = await getSession();
+      const sessionUserId = (session?.user as { id?: string } | undefined)?.id;
+      if (sessionUserId !== user.id) {
+        setError("Could not confirm the demo account session.");
+        return;
+      }
+
+      signInLocalUser(userId);
+      router.replace(result.url || callbackUrl);
+      router.refresh();
+    } catch {
+      setError("Could not sign in with that demo account.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -230,7 +258,8 @@ function LoginContent() {
                   key={demoUser.id}
                   type="button"
                   onClick={() => handleDemoSignIn(demoUser.id)}
-                  className="text-left bg-cg-dark-3 border border-gray-700 rounded-xl px-3 py-2.5 hover:border-gray-500 hover:bg-gray-800 transition-all"
+                  disabled={loading}
+                  className="text-left bg-cg-dark-3 border border-gray-700 rounded-xl px-3 py-2.5 hover:border-gray-500 hover:bg-gray-800 transition-all disabled:opacity-50"
                 >
                   <span className="block text-sm font-semibold text-white">{demoUser.name}</span>
                   <span className="block text-[11px] text-gray-500">@{demoUser.username}</span>

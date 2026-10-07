@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import NotificationBell from "@/components/layout/NotificationBell";
-import { useLocalCommunitySession } from "@/hooks/useLocalCommunitySession";
+import { useCricGeekSession } from "@/hooks/useCricGeekSession";
 import { signOutLocalUser } from "@/lib/communities/local-community-service";
 import {
   Menu,
@@ -32,31 +31,16 @@ const navLinks = [
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
 ];
 
-interface UserSession {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
-
 export default function Navbar() {
-  const router = useRouter();
-  const { data: session, status } = useSession();
-  const { user: localUser } = useLocalCommunitySession();
+  const { user, status, isLocalUser } = useCricGeekSession();
   const [isOpen, setIsOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const sessionUser = (session?.user as UserSession | undefined) ?? null;
-  const user = localUser
-    ? { id: localUser.id, name: localUser.name, email: localUser.email, role: "user" }
-    : sessionUser;
-  const authLoading = status === "loading" && !localUser;
+  const authLoading = status === "loading";
 
   const handleSignOut = () => {
     setShowDropdown(false);
-    if (localUser) {
+    if (isLocalUser) {
       signOutLocalUser();
-      router.replace("/");
-      return;
     }
     void signOut({ redirectTo: "/" });
   };

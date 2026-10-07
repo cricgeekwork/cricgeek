@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCricGeekSession } from "@/hooks/useCricGeekSession";
+import { isLocalExpressionSaved, toggleLocalExpressionSaved } from "@/lib/communities/local-community-service";
 
 interface SaveBlogButtonProps {
   slug: string;
@@ -21,12 +23,25 @@ export default function SaveBlogButton({
   loginHref = "/auth/login",
   onUpdate,
 }: SaveBlogButtonProps) {
+  const { user, isLocalUser, localSnapshot } = useCricGeekSession();
   const [saved, setSaved] = useState(initialSaved);
   const [count, setCount] = useState(initialCount);
   const [submitting, setSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (isLocalUser && user) {
+      setSaved(isLocalExpressionSaved(user.id, slug));
+    }
+  }, [isLocalUser, localSnapshot, slug, user]);
+
   const handleToggle = async () => {
     if (submitting) return;
+    if (isLocalUser && user) {
+      setSubmitting(true);
+      setSaved(toggleLocalExpressionSaved(user.id, slug));
+      setSubmitting(false);
+      return;
+    }
     setSubmitting(true);
 
     const nextSaved = !saved;

@@ -20,6 +20,7 @@ import ScoreRing from "@/components/writer/ScoreRing";
 import WriterProfileCard from "@/components/writer/WriterProfileCard";
 import BlogDiscussion from "@/components/blog/BlogDiscussion";
 import { ARCHETYPE_META } from "@/lib/scoring";
+import { parseBlogTags } from "@/lib/blog-tags";
 import { use } from "react";
 
 interface BlogData {
@@ -936,9 +937,9 @@ export default function BlogSlugPage({
               <div className="mt-8 border-t border-gray-800 pt-6">
                 {blog.tags && (
                   <div className="flex flex-wrap gap-1.5">
-                    {blog.tags.split(",").map((tag) => (
+                    {parseBlogTags(blog.tags).map((tag) => (
                       <span
-                        key={tag}
+                        key={`${blog.id}-${tag}`}
                         className="bg-gray-800 text-gray-400 text-[11px] px-3 py-1 rounded-full hover:bg-cg-green/20 hover:text-cg-green transition-all cursor-pointer"
                       >
                         #{tag.trim()}

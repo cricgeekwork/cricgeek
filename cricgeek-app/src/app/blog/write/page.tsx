@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { wordCount } from "@/lib/utils";
+import { parseBlogTags, serializeBlogTags } from "@/lib/blog-tags";
+import { useCricGeekSession } from "@/hooks/useCricGeekSession";
 
 const PLACEHOLDERS = [
   "Start your innings here...",
@@ -58,6 +60,7 @@ const EQS_TOOLTIP = "EQS tracks clarity, originality, and tone of your cricket e
 
 function WriteBlogPageContent() {
   const searchParams = useSearchParams();
+  const { user: currentUser, status: authStatus } = useCricGeekSession();
   const linkedMatchId = searchParams.get("matchId");
   const linkedMatchName = searchParams.get("matchName");
   const [activeContests, setActiveContests] = useState<Array<{
@@ -68,8 +71,7 @@ function WriteBlogPageContent() {
     endDate: string;
   }>>([]);
   const [contestId, setContestId] = useState("");
-  const [sessionUserId, setSessionUserId] = useState<string | null>(null);
-  const [sessionUserRole, setSessionUserRole] = useState<string | null>(null);
+  const sessionUserId = currentUser?.id ?? null;
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState("");
@@ -85,7 +87,6 @@ function WriteBlogPageContent() {
   const [polishing, setPolishing] = useState(false);
   const [polishResult, setPolishResult] = useState("");
   const [imageUploading, setImageUploading] = useState(false);
-  const [upgradingWriter, setUpgradingWriter] = useState(false);
   const [publishPhase, setPublishPhase] = useState<"idle" | "scoring" | "publishing" | "published">("idle");
   const [publishReviewCollapsed, setPublishReviewCollapsed] = useState(false);
   const [publishEqsReady, setPublishEqsReady] = useState(false);
@@ -115,8 +116,8 @@ function WriteBlogPageContent() {
         setTagError(data.error || "Tag generation failed");
         return;
       }
-      const existing = tags.split(",").map((t) => t.trim()).filter(Boolean);
-      const merged = [...new Set([...existing, ...data.tags])];
+      const generatedTags = Array.isArray(data.tags) ? data.tags.filter((tag: unknown): tag is string => typeof tag === "string") : [];
+      const merged = parseBlogTags([...parseBlogTags(tags), ...generatedTags].join(", "));
       setTags(merged.join(", "));
     } catch {
       setTagError("Could not reach the AI service.");
@@ -126,11 +127,11 @@ function WriteBlogPageContent() {
   };
 
   const removeTag = (tagToRemove: string) => {
-    const updated = tags.split(",").map((t) => t.trim()).filter((t) => t !== tagToRemove);
+    const updated = parseBlogTags(tags).filter((tag) => tag.toLowerCase() !== tagToRemove.toLowerCase());
     setTags(updated.join(", "));
   };
 
-  const tagList = tags.split(",").map((t) => t.trim()).filter(Boolean);
+  const tagList = parseBlogTags(tags);
 
   const currentWordCount = wordCount(content);
   const overs = (currentWordCount / 50).toFixed(1);
@@ -219,22 +220,6 @@ function WriteBlogPageContent() {
     }
 
     void loadContests();
-  }, []);
-
-  useEffect(() => {
-    async function loadSession() {
-      try {
-        const res = await fetch("/api/auth/session");
-        const data = await res.json();
-        setSessionUserId(data?.user?.id || null);
-        setSessionUserRole(data?.user?.role || null);
-      } catch {
-        setSessionUserId(null);
-        setSessionUserRole(null);
-      }
-    }
-
-    void loadSession();
   }, []);
 
   useEffect(() => {
@@ -406,26 +391,6 @@ function WriteBlogPageContent() {
     }
   };
 
-  const activateWriterProfile = async () => {
-    setUpgradingWriter(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/writer/profile", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Could not activate your writer profile.");
-        return;
-      }
-
-      setSessionUserRole(data.user?.role || "writer");
-      window.dispatchEvent(new Event("auth-change"));
-    } catch {
-      setError("Could not activate your writer profile.");
-    } finally {
-      setUpgradingWriter(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -437,7 +402,7 @@ function WriteBlogPageContent() {
     }
 
     if (!sessionUserId) {
-      setError("__auth__"); // Special signal to show sign-in banner
+      setError(authStatus === "loading" ? "Checking your sign-in. Please try again shortly." : "__auth__");
       return;
     }
 
@@ -486,8 +451,7 @@ function WriteBlogPageContent() {
         body: JSON.stringify({
           title,
           content,
-          tags,
-          authorId: sessionUserId,
+          tags: serializeBlogTags(tags),
           matchId: linkedMatchId || null,
           contestId: contestId || null,
         }),
@@ -835,24 +799,6 @@ function WriteBlogPageContent() {
               </Link>
             </div>
           )}
-          {sessionUserId && sessionUserRole === "user" && (
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 text-sm flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="font-semibold text-blue-200">Writer access is required to publish.</p>
-                <p className="text-blue-100/80">
-                  Normal users can react, save, and follow writers. Activate your writer profile to start publishing expressions.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={activateWriterProfile}
-                disabled={upgradingWriter}
-                className="rounded-lg bg-cg-green px-4 py-2 text-xs font-bold text-black hover:bg-cg-green-dark disabled:opacity-60"
-              >
-                {upgradingWriter ? "Activating..." : "Become a Writer"}
-              </button>
-            </div>
-          )}
           {error && error !== "__auth__" && (
             <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-400 text-sm">
               {error}
@@ -1050,7 +996,7 @@ function WriteBlogPageContent() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading || (sessionUserId !== null && sessionUserRole === "user")}
+            disabled={loading}
             className="w-full bg-cg-green text-black py-3 rounded-xl font-bold text-sm hover:bg-cg-green-dark transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <Send size={16} />
@@ -1060,9 +1006,7 @@ function WriteBlogPageContent() {
                 : publishPhase === "publishing"
                   ? "Publishing..."
                   : "Working..."
-              : sessionUserRole === "user"
-                ? "Activate Writer Profile to Publish"
-                : "Deliver the Ball"}
+              : "Deliver the Ball"}
           </button>
           {!isValidLength && currentWordCount > 0 && (
             <p className={`text-center text-xs ${currentWordCount < 50 ? "text-amber-400" : "text-red-400"}`}>

@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCricGeekSession } from "@/hooks/useCricGeekSession";
+import { isFollowingWriterLocally, toggleLocalWriterFollow } from "@/lib/communities/local-community-service";
 
 interface FollowWriterButtonProps {
   writerId: string;
@@ -23,12 +25,25 @@ export default function FollowWriterButton({
   loginHref = "/auth/login",
   onUpdate,
 }: FollowWriterButtonProps) {
+  const { user, isLocalUser, localSnapshot } = useCricGeekSession();
   const [following, setFollowing] = useState(initialFollowing);
   const [followerCount, setFollowerCount] = useState(initialFollowerCount);
   const [submitting, setSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (isLocalUser && user) {
+      setFollowing(isFollowingWriterLocally(user.id, writerId));
+    }
+  }, [isLocalUser, localSnapshot, user, writerId]);
+
   const handleToggle = async () => {
     if (disabled || submitting) return;
+    if (isLocalUser && user) {
+      setSubmitting(true);
+      setFollowing(toggleLocalWriterFollow(user.id, writerId));
+      setSubmitting(false);
+      return;
+    }
     setSubmitting(true);
 
     const nextFollowing = !following;

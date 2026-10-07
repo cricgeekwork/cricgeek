@@ -70,6 +70,27 @@ export async function GET(
       return NextResponse.json({ error: "Writer not found" }, { status: 404 });
     }
 
+    const earnings = viewerId === user.id
+      ? (() => {
+          const rate = 80;
+          const currentMonth = new Date().getMonth();
+          const currentYear = new Date().getFullYear();
+          const thisMonthBlogs = user.blogs.filter((blog) => {
+            const createdAt = new Date(blog.createdAt);
+            return createdAt.getMonth() === currentMonth && createdAt.getFullYear() === currentYear;
+          });
+          const thisMonthViews = thisMonthBlogs.reduce((total, blog) => total + blog.views, 0);
+
+          return {
+            rate,
+            total: Math.round(((user.writerProfile?.totalViews ?? 0) / 1000) * rate),
+            month: Math.round((thisMonthViews / 1000) * rate),
+            monthExpressionCount: thisMonthBlogs.length,
+            monthViews: thisMonthViews,
+          };
+        })()
+      : undefined;
+
     return NextResponse.json({
       id: user.id,
       name: user.name,
@@ -84,6 +105,7 @@ export async function GET(
       viewerState: {
         followsWriter: Array.isArray(user.followers) ? user.followers.length > 0 : false,
       },
+      ...(earnings ? { earnings } : {}),
       profile: user.writerProfile ?? {
         averageBQS: 0,
         totalBlogs: 0,

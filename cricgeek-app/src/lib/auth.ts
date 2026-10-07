@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "./db";
 import { verifyDemoCredentials } from "@/lib/demo-data";
+import { getLocalDemoUser } from "@/lib/communities/local-users";
 
 const authUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL;
 const authSecret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
@@ -205,8 +206,45 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        localDemoUserId: { label: "Local demo user", type: "text" },
       },
       async authorize(credentials) {
+        const localDemoUserId = credentials?.localDemoUserId;
+        if (typeof localDemoUserId === "string" && localDemoUserId) {
+          const localDemoUser = getLocalDemoUser(localDemoUserId);
+          if (!localDemoUser) return null;
+
+          try {
+            const existingById = await prisma.user.findUnique({
+              where: { id: localDemoUser.id },
+              select: { id: true, name: true, email: true, role: true },
+            });
+            if (existingById) return existingById;
+
+            const existingByEmail = await prisma.user.findUnique({
+              where: { email: localDemoUser.email },
+              select: { id: true },
+            });
+            if (existingByEmail) return null;
+
+            const ensuredUser = await ensureCredentialsUser({
+              id: localDemoUser.id,
+              name: localDemoUser.name,
+              email: localDemoUser.email,
+              role: "user",
+            });
+            return ensuredUser.id === localDemoUser.id ? ensuredUser : null;
+          } catch (error) {
+            console.error("Failed to initialize local demo user session:", error);
+            return {
+              id: localDemoUser.id,
+              name: localDemoUser.name,
+              email: localDemoUser.email,
+              role: "user",
+            };
+          }
+        }
+
         if (!credentials?.email || !credentials?.password) {
           return null;
         }

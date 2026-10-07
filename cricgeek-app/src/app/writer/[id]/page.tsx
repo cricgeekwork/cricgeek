@@ -20,6 +20,13 @@ interface WriterData {
   createdAt: string;
   stats?: { followerCount: number; blogCount: number };
   viewerState?: { followsWriter: boolean };
+  earnings?: {
+    rate: number;
+    total: number;
+    month: number;
+    monthExpressionCount: number;
+    monthViews: number;
+  };
   profile: { averageBQS: number; totalBlogs: number; totalViews: number; totalRuns: number; archetype: string; writerTitle: string; level: number; xp: number; bestBQS: number; featuredCount: number; streak: number; bcs: number; statAccuracy: number };
   dna: { analyst: number; fan: number; storyteller: number; debater: number };
   badges: { badge: string; title: string; description: string; tier: string; earnedAt: string }[];
@@ -109,16 +116,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
 
   const config = ARCHETYPE_CONFIG[writer.profile.archetype] || ARCHETYPE_CONFIG.rookie;
   const xpProgress = writer.profile.xp % 100;
-  const earningsPerThousandViews = 80;
-  const totalEarnings = Math.round((writer.profile.totalViews / 1000) * earningsPerThousandViews);
-  const currentMonth = new Date().getMonth();
-  const currentYear = new Date().getFullYear();
-  const thisMonthBlogs = writer.recentBlogs.filter((blog) => {
-    const createdAt = new Date(blog.createdAt);
-    return createdAt.getMonth() === currentMonth && createdAt.getFullYear() === currentYear;
-  });
-  const thisMonthViews = thisMonthBlogs.reduce((total, blog) => total + blog.views, 0);
-  const thisMonthEarnings = Math.round((thisMonthViews / 1000) * earningsPerThousandViews);
+  const earnings = writer.earnings ?? null;
   const popularBlogs = [...writer.recentBlogs].sort((a, b) => b.views - a.views).slice(0, 3);
 
   return (
@@ -364,7 +362,11 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cg-dark-3 text-[10px] font-bold text-white">{index + 1}</span>
                 <span className="min-w-0 flex-1 truncate text-[11px] text-gray-200">{blog.title}</span>
                 <span className="flex shrink-0 items-center gap-1 text-[10px] text-gray-400"><Eye size={11} /> {blog.views.toLocaleString()}</span>
-                <span className="w-16 shrink-0 text-right text-[10px] font-bold text-cg-green">₹{Math.round((blog.views / 1000) * earningsPerThousandViews).toLocaleString()}</span>
+                {earnings && (
+                  <span className="w-16 shrink-0 text-right text-[10px] font-bold text-cg-green">
+                    ₹{Math.round((blog.views / 1000) * earnings.rate).toLocaleString()}
+                  </span>
+                )}
               </Link>
             ))}
           </div>
@@ -372,12 +374,13 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
       </section>
 
       {/* My Earnings is intentionally the final profile section. */}
+      {earnings && (
       <section className="order-1 mb-6 border-t border-gray-800 pt-5">
         <div className="mb-3 flex items-start gap-3">
           <Wallet size={24} className="mt-0.5 text-cg-green" />
           <div>
             <h2 className="text-lg font-bold text-white">My Earnings</h2>
-            <p className="text-[10px] text-gray-500">Track your earnings from your expressions. You earn ₹{earningsPerThousandViews} for every 1,000 views.</p>
+            <p className="text-[10px] text-gray-500">Track your earnings from your expressions. You earn ₹{earnings.rate} for every 1,000 views.</p>
           </div>
         </div>
 
@@ -386,7 +389,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
             {
               title: "Total Earnings",
               subtitle: "All time earnings from your expressions",
-              amount: totalEarnings,
+              amount: earnings.total,
               expressionsLabel: "Total Expressions",
               expressions: writer.profile.totalBlogs,
               viewsLabel: "Total Views",
@@ -396,11 +399,11 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
             {
               title: "This Month",
               subtitle: "Earnings from your expressions this month",
-              amount: thisMonthEarnings,
               expressionsLabel: "Expressions",
-              expressions: thisMonthBlogs.length,
+              expressions: earnings.monthExpressionCount,
               viewsLabel: "Views",
-              views: thisMonthViews,
+              views: earnings.monthViews,
+              amount: earnings.month,
               icon: Calendar,
             },
           ].map((card) => (
@@ -429,6 +432,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
           ))}
         </div>
       </section>
+      )}
 
       </div>
         </main>

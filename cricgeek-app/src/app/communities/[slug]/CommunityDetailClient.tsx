@@ -117,12 +117,12 @@ export default function CommunityDetailClient({ community }: { community: Commun
                <h2 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Popular Writers</h2>
                <div className="flex flex-wrap gap-4">
                  {community.topWriters.map((writer) => (
-                    <div key={writer.id} className="flex items-center gap-3 bg-black/40 border border-gray-800 px-4 py-2 rounded-full">
+                    <Link key={writer.id} href={`/writer/${writer.id}`} className="flex items-center gap-3 bg-black/40 border border-gray-800 px-4 py-2 rounded-full hover:border-cg-green/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cg-green">
                       <div className="w-8 h-8 rounded-full bg-cg-dark-2 border border-gray-700 flex items-center justify-center text-xs font-bold text-cg-green">
                         {writer.name.charAt(0).toUpperCase()}
                       </div>
                       <span className="text-sm font-medium text-white">{writer.name}</span>
-                    </div>
+                    </Link>
                   ))}
                </div>
             </section>

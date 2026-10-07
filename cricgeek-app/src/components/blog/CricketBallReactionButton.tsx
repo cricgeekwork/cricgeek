@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useCricGeekSession } from "@/hooks/useCricGeekSession";
+import { isLocalExpressionReacted, toggleLocalExpressionReaction } from "@/lib/communities/local-community-service";
 
 interface CricketBallReactionButtonProps {
   slug: string;
@@ -20,12 +22,25 @@ export default function CricketBallReactionButton({
   loginHref = "/auth/login",
   onUpdate,
 }: CricketBallReactionButtonProps) {
+  const { user, isLocalUser, localSnapshot } = useCricGeekSession();
   const [count, setCount] = useState(initialCount);
   const [reacted, setReacted] = useState(initialReacted);
   const [submitting, setSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (isLocalUser && user) {
+      setReacted(isLocalExpressionReacted(user.id, slug));
+    }
+  }, [isLocalUser, localSnapshot, slug, user]);
+
   const handleToggle = async () => {
     if (submitting) return;
+    if (isLocalUser && user) {
+      setSubmitting(true);
+      setReacted(toggleLocalExpressionReaction(user.id, slug));
+      setSubmitting(false);
+      return;
+    }
     setSubmitting(true);
 
     const nextReacted = !reacted;

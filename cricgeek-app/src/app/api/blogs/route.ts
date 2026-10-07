@@ -4,6 +4,9 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { getDemoBlogs } from "@/lib/demo-data";
 import { upsertExpressionEmbedding } from "@/lib/internal-originality";
+import { getPreferenceValues } from "@/lib/personalization";
+import { parseBlogTags, serializeBlogTags } from "@/lib/blog-tags";
+import { rankExpressionCandidates } from "@/lib/expression-recommendations";
 
 // GET all approved blogs
 export async function GET(req: NextRequest) {
@@ -13,43 +16,125 @@ export async function GET(req: NextRequest) {
   const page = Number.isFinite(pageValue) && pageValue > 0 ? pageValue : 1;
   const limit = Number.isFinite(limitValue) && limitValue > 0 ? limitValue : 10;
   const tag = searchParams.get("tag");
+  const feed = searchParams.get("feed") || "latest";
+  const seenSlugs = (searchParams.get("seen") || "").split(",").filter(Boolean).slice(0, 100);
+  const session = await auth();
+  const userId = (session?.user as { id?: string } | undefined)?.id;
+
+  if ((feed === "saved" || feed === "for-you") && !userId) {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
 
   try {
-    const where: Record<string, unknown> = { status: "approved" };
-    if (tag) {
-      where.tags = { contains: tag };
-    }
+    const where: Prisma.BlogWhereInput = {
+      status: "approved",
+      score: { is: { processingStatus: "completed" } },
+      ...(tag ? { tags: { contains: tag } } : {}),
+      ...(feed === "saved" && userId ? { saves: { some: { userId } } } : {}),
+    };
+    const include: Prisma.BlogInclude = {
+      author: { select: { id: true, name: true, avatar: true } },
+      _count: { select: { comments: true, reactions: true, saves: true } },
+      score: {
+        select: {
+          bqs: true,
+          archetypeLabel: true,
+          processingStatus: true,
+        },
+      },
+      reactions: userId
+        ? { where: { userId }, select: { id: true }, take: 1 }
+        : false,
+      saves: userId
+        ? { where: { userId }, select: { id: true }, take: 1 }
+        : false,
+    };
 
-    const [blogs, total] = await Promise.all([
-      prisma.blog.findMany({
-        where: {
-          ...where,
-          score: {
-            is: {
-              processingStatus: "completed",
-            },
-          },
-        },
-        include: {
-          author: { select: { id: true, name: true, avatar: true } },
-          _count: { select: { comments: true } },
-          score: {
-            select: {
-              bqs: true,
-              archetypeLabel: true,
-              processingStatus: true,
-            },
-          },
-        },
-        orderBy: { createdAt: "desc" },
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
+    let [blogs, total] = await Promise.all([
+      feed === "for-you"
+        ? prisma.blog.findMany({
+            where,
+            include,
+            orderBy: { createdAt: "desc" },
+            take: 250,
+          })
+        : prisma.blog.findMany({
+            where,
+            include,
+            orderBy: { createdAt: "desc" },
+            skip: (page - 1) * limit,
+            take: limit,
+          }),
       prisma.blog.count({ where }),
     ]);
 
+    if (feed === "for-you" && userId) {
+      const [preferences, follows, saved, reacted, ownBlogs] = await Promise.all([
+        prisma.userFeedPreference.findUnique({ where: { userId } }),
+        prisma.writerFollow.findMany({
+          where: { followerId: userId },
+          select: { writerId: true },
+        }),
+        prisma.savedBlog.findMany({
+          where: { userId },
+          take: 100,
+          select: {
+            blog: {
+              select: { authorId: true, tags: true, mentionedPlayers: true, mentionedTeams: true },
+            },
+          },
+        }),
+        prisma.blogReaction.findMany({
+          where: { userId },
+          take: 100,
+          select: {
+            blog: {
+              select: { authorId: true, tags: true, mentionedPlayers: true, mentionedTeams: true },
+            },
+          },
+        }),
+        prisma.blog.findMany({
+          where: { authorId: userId, status: "approved" },
+          orderBy: { createdAt: "desc" },
+          take: 25,
+          select: { title: true, tags: true },
+        }),
+      ]);
+      const preferredWriters = getPreferenceValues(preferences?.favoriteWriters);
+      const followedWriterIds = [
+        ...follows.map((follow) => follow.writerId),
+        ...preferredWriters,
+      ];
+      const interactedBlogs = [...saved, ...reacted].map((item) => item.blog);
+      const rankedBlogs = rankExpressionCandidates(blogs, {
+        followedWriterIds,
+        interactedAuthorIds: interactedBlogs.map((blog) => blog.authorId),
+        interactedTags: interactedBlogs.flatMap((blog) => parseBlogTags(blog.tags)),
+        favoriteTags: getPreferenceValues(preferences?.favoriteTags),
+        favoriteTeams: getPreferenceValues(preferences?.favoriteTeams),
+        favoritePlayers: getPreferenceValues(preferences?.favoritePlayers),
+        ownExpressionTopics: ownBlogs.flatMap((blog) => [blog.title, ...parseBlogTags(blog.tags)]),
+        seenSlugs,
+      });
+      total = rankedBlogs.length;
+      blogs = rankedBlogs.slice((page - 1) * limit, page * limit);
+    }
+
+    const responseBlogs = blogs.map((blog) => {
+      const { reactions, saves, ...publicBlog } = blog;
+      return {
+        ...publicBlog,
+        reactionCount: blog._count.reactions,
+        saveCount: blog._count.saves,
+        viewerState: {
+          reacted: Array.isArray(reactions) && reactions.length > 0,
+          saved: Array.isArray(saves) && saves.length > 0,
+        },
+      };
+    });
+
     return NextResponse.json({
-      blogs,
+      blogs: responseBlogs,
       pagination: {
         page,
         limit,
@@ -58,6 +143,30 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch {
+    if (feed === "for-you") {
+      const demoBlogs = rankExpressionCandidates(getDemoBlogs(), { seenSlugs });
+      const start = (page - 1) * limit;
+      const pageBlogs = demoBlogs.slice(start, start + limit);
+      return NextResponse.json({
+        blogs: pageBlogs.map((blog) => ({
+          ...blog,
+          reactionCount: blog.runs,
+          saveCount: 0,
+          viewerState: { reacted: false, saved: false },
+        })),
+        pagination: {
+          page,
+          limit,
+          total: demoBlogs.length,
+          totalPages: Math.ceil(demoBlogs.length / limit),
+        },
+      });
+    }
+
+    if (feed !== "latest") {
+      return NextResponse.json({ error: "Unable to load this expressions feed" }, { status: 500 });
+    }
+
     const demoBlogs = getDemoBlogs();
     const start = (page - 1) * limit;
     const pageBlogs = demoBlogs.slice(start, start + limit);
@@ -84,6 +193,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { title, content, tags } = await req.json();
+    const normalizedTags = serializeBlogTags(typeof tags === "string" ? tags : "");
     const authorId = sessionUser.id;
 
     if (!title || !content || !authorId) {
@@ -116,7 +226,7 @@ export async function POST(req: NextRequest) {
         content,
         excerpt: content.slice(0, 150) + "...",
         slug,
-        tags: tags || "",
+        tags: normalizedTags,
         authorId,
         status: "approved", // Auto-approve for now; enable moderation later
       },

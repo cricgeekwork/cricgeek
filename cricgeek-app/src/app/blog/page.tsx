@@ -9,6 +9,10 @@ import CricketBallReactionButton from "@/components/blog/CricketBallReactionButt
 import SaveBlogButton from "@/components/blog/SaveBlogButton";
 import WriterProfileCard from "@/components/writer/WriterProfileCard";
 import { ARCHETYPE_META } from "@/lib/scoring";
+import { parseBlogTags } from "@/lib/blog-tags";
+import { useCricGeekSession } from "@/hooks/useCricGeekSession";
+import { rankExpressionCandidates } from "@/lib/expression-recommendations";
+import { getLocalExpressionSignals, recordLocalExpressionsSeen } from "@/lib/communities/local-community-service";
 
 interface Blog {
   id: string;
@@ -42,43 +46,120 @@ function getScoreBg(bqs: number): string {
   return "bg-red-400/10";
 }
 
+function getSeenExpressionSlugs(userId: string) {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(`cricgeek.seenExpressions.${userId}`) || "[]");
+    return Array.isArray(saved) ? saved.filter((slug): slug is string => typeof slug === "string").slice(-100) : [];
+  } catch {
+    return [];
+  }
+}
+
+function rememberSeenExpressionSlugs(userId: string, slugs: string[]) {
+  try {
+    const seen = new Set([...getSeenExpressionSlugs(userId), ...slugs]);
+    sessionStorage.setItem(`cricgeek.seenExpressions.${userId}`, JSON.stringify([...seen].slice(-100)));
+  } catch {
+    // Session storage is optional; ranking still works without the repeat-view signal.
+  }
+}
+
 function BlogPageContent() {
   const searchParams = useSearchParams();
+  const { user, status, isLocalUser } = useCricGeekSession();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [feed, setFeed] = useState<"latest" | "for-you" | "saved">("latest");
+  const initialFeed = searchParams.get("feed");
+  const [feed, setFeed] = useState<"latest" | "for-you" | "saved">(
+    initialFeed === "saved" || initialFeed === "for-you" ? initialFeed : "latest"
+  );
   const matchId = searchParams.get("matchId") || "";
+  const currentUserId = user?.id ?? "";
 
   useEffect(() => {
+    let active = true;
     const fetchBlogs = async () => {
+      if (feed !== "latest" && status === "loading") return;
+      if (feed !== "latest" && status === "unauthenticated") {
+        setBlogs([]);
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       try {
         const params = new URLSearchParams();
         if (matchId) params.set("matchId", matchId);
-        params.set("feed", feed);
+        const localDemoFeed = Boolean(isLocalUser && currentUserId && feed !== "latest");
+        params.set("feed", localDemoFeed ? "latest" : feed);
+        if (localDemoFeed) params.set("limit", "250");
+        if (feed === "for-you" && currentUserId && !isLocalUser) {
+          const seenSlugs = getSeenExpressionSlugs(currentUserId);
+          if (seenSlugs.length > 0) params.set("seen", seenSlugs.join(","));
+        }
         const res = await fetch(`/api/blogs${params.toString() ? `?${params.toString()}` : ""}`);
         const data = await res.json().catch(() => ({}));
+        if (!active) return;
         if (!res.ok) {
           setBlogs([]);
           return;
         }
-        setBlogs(data.blogs || []);
+        let nextBlogs: Blog[] = data.blogs || [];
+
+        if (localDemoFeed && currentUserId) {
+          const localSignals = getLocalExpressionSignals(currentUserId);
+          const savedSlugs = new Set(localSignals.savedSlugs);
+          const reactedSlugs = new Set(localSignals.reactedSlugs);
+
+          if (feed === "saved") {
+            nextBlogs = nextBlogs.filter((blog) => savedSlugs.has(blog.slug));
+          } else {
+            const interactedBlogs = nextBlogs.filter(
+              (blog) => savedSlugs.has(blog.slug) || reactedSlugs.has(blog.slug)
+            );
+            nextBlogs = rankExpressionCandidates(nextBlogs, {
+              followedWriterIds: localSignals.followedWriterIds,
+              interactedAuthorIds: interactedBlogs.map((blog) => blog.author.id),
+              interactedTags: interactedBlogs.flatMap((blog) => parseBlogTags(blog.tags)),
+              communityTopics: localSignals.communityTopics,
+              ownExpressionTopics: localSignals.ownExpressionTopics,
+              seenSlugs: localSignals.seenSlugs,
+            }).slice(0, 10);
+          }
+
+          nextBlogs = nextBlogs.map((blog) => ({
+            ...blog,
+            viewerState: {
+              reacted: reactedSlugs.has(blog.slug),
+              saved: savedSlugs.has(blog.slug),
+            },
+          }));
+          recordLocalExpressionsSeen(currentUserId, nextBlogs.map((blog) => blog.slug));
+        } else if (feed === "for-you" && currentUserId) {
+          rememberSeenExpressionSlugs(currentUserId, nextBlogs.map((blog) => blog.slug));
+        }
+
+        setBlogs(nextBlogs);
       } catch {
-        setBlogs([]);
+        if (active) setBlogs([]);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
 
     void fetchBlogs();
-  }, [matchId, feed]);
+    return () => {
+      active = false;
+    };
+  }, [matchId, feed, status, currentUserId, isLocalUser]);
 
   const filteredBlogs = blogs.filter(
     (blog) =>
       blog.title.toLowerCase().includes(search.toLowerCase()) ||
       blog.tags.toLowerCase().includes(search.toLowerCase())
   );
+  const signInHref = `/auth/login?redirect=${encodeURIComponent(`/blog?feed=${feed}`)}`;
 
   return (
     <div>
@@ -157,7 +238,24 @@ function BlogPageContent() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Blog List */}
           <div className="lg:col-span-2 space-y-4">
-            {loading ? (
+            {feed !== "latest" && status === "unauthenticated" ? (
+              <div className="rounded-xl border border-gray-800 bg-cg-dark-2 px-6 py-10 text-center">
+                <h2 className="text-lg font-bold text-white">
+                  {feed === "saved" ? "Sign in to view saved expressions" : "Sign in for your For You feed"}
+                </h2>
+                <p className="mt-2 text-sm text-gray-400">
+                  {feed === "saved"
+                    ? "Saved expressions are private to your account."
+                    : "Sign in to see expressions selected from your activity and preferences."}
+                </p>
+                <Link
+                  href={signInHref}
+                  className="mt-5 inline-flex items-center rounded-lg bg-cg-green px-4 py-2 text-sm font-bold text-black hover:bg-cg-green-dark"
+                >
+                  Sign In
+                </Link>
+              </div>
+            ) : loading || (feed !== "latest" && status === "loading") ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="bg-cg-dark-2 border border-gray-800 rounded-xl p-5 animate-pulse">
@@ -170,7 +268,13 @@ function BlogPageContent() {
             ) : filteredBlogs.length === 0 ? (
               <div className="text-center py-12">
                 <PenSquare size={48} className="text-gray-700 mx-auto mb-4" />
-                <p className="text-gray-400">No expressions found. Be the first to share one.</p>
+                <p className="text-gray-400">
+                  {feed === "saved"
+                    ? "You have not saved any expressions yet."
+                    : feed === "for-you"
+                      ? "Save or react to expressions and follow writers to personalize this feed."
+                      : "No expressions found. Be the first to share one."}
+                </p>
               </div>
             ) : (
               filteredBlogs.map((blog) => (
@@ -235,9 +339,9 @@ function BlogPageContent() {
                       </div>
                       {blog.tags && (
                         <div className="flex flex-wrap gap-1 mt-3">
-                          {blog.tags.split(",").map((tag) => (
+                          {parseBlogTags(blog.tags).map((tag) => (
                             <span
-                              key={tag}
+                              key={`${blog.id}-${tag}`}
                               className="bg-gray-800 text-gray-400 text-[10px] px-2 py-0.5 rounded-full"
                             >
                               #{tag.trim()}

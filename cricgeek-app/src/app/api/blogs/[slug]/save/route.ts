@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { updateUserFeedPreferences } from "@/lib/personalization";
+import { parseBlogTags } from "@/lib/blog-tags";
 
 export async function POST(
   _req: NextRequest,
@@ -46,10 +47,7 @@ export async function POST(
     });
 
     void updateUserFeedPreferences(userId, {
-      tags: (blog.tags ?? "")
-        .split(",")
-        .map((tag) => tag.trim().toLowerCase())
-        .filter(Boolean),
+      tags: parseBlogTags(blog.tags).map((tag) => tag.toLowerCase()),
       teams: Array.isArray(blog.mentionedTeams)
         ? blog.mentionedTeams.filter((entry): entry is string => typeof entry === "string")
         : [],

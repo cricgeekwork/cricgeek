@@ -1,6 +1,7 @@
 "use client";
 
 import { useDeferredValue, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search as SearchIcon, Users } from "lucide-react";
 import AdSlot from "@/components/ads/AdSlot";
@@ -30,6 +31,7 @@ function CommunityCard({ community }: { community: Community }) {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.target !== e.currentTarget) return;
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       handleCardClick();
@@ -70,12 +72,12 @@ function CommunityCard({ community }: { community: Community }) {
               <span className="text-xs text-gray-500 uppercase tracking-widest font-semibold mr-1">Popular Writers:</span>
               <div className="flex flex-col sm:flex-row flex-wrap gap-3 mt-1">
                 {community.topWriters.map((writer) => (
-                  <div key={writer.id} className="flex items-center gap-2">
+                  <Link key={writer.id} href={`/writer/${writer.id}`} onClick={(event) => event.stopPropagation()} className="flex items-center gap-2 rounded-sm outline-none hover:text-cg-green focus-visible:ring-2 focus-visible:ring-cg-green">
                     <div className="w-6 h-6 rounded-full bg-cg-dark-2 border border-gray-700 flex items-center justify-center text-[9px] font-bold text-cg-green">
                       {writer.name.charAt(0).toUpperCase()}
                     </div>
                     <span className="text-sm font-medium text-gray-300">{writer.name}</span>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

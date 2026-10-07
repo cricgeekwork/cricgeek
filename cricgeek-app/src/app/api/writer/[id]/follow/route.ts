@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { updateUserFeedPreferences } from "@/lib/personalization";
-import { isWriterRole } from "@/lib/roles";
 
 export async function POST(
   _req: NextRequest,
@@ -23,12 +22,13 @@ export async function POST(
 
     const writer = await prisma.user.findUnique({
       where: { id },
-      select: { id: true, role: true },
+      select: { id: true },
     });
 
-    if (!writer || !isWriterRole(writer.role)) {
-      return NextResponse.json({ error: "Writer not found" }, { status: 404 });
+    if (!writer) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
 
     await prisma.writerFollow.upsert({
       where: {
