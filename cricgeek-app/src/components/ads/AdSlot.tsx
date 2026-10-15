@@ -38,12 +38,13 @@ function Placeholder({
   const label = width ? `ad  ${width} x ${height}` : `ad  ${height}px`;
   return (
     <div
-      className={`box-border bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center text-gray-500 text-base font-medium w-full max-w-full overflow-hidden ${className}`}
+      className={`box-border bg-[var(--bg-card)] border border-[var(--border-color)] rounded-lg flex items-center justify-center text-[var(--text-muted)] text-base font-medium w-full max-w-full overflow-hidden ${className}`}
       style={{
         width: width ? "100%" : undefined,
         maxWidth: width,
-        height,
-        minHeight: height,
+        height: width ? "auto" : height,
+        minHeight: width ? undefined : height,
+        aspectRatio: width ? `${width} / ${height}` : undefined,
       }}
       aria-label="Advertisement"
     >

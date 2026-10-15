@@ -49,7 +49,8 @@ export default function WriterDNAChart({
               key={ring}
               points={ringPolygon}
               fill="none"
-              stroke={ring === 100 ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.06)"}
+              stroke="var(--border-muted)"
+              strokeOpacity={ring === 100 ? "0.6" : "0.3"}
               strokeWidth="1"
             />
           );
@@ -65,7 +66,8 @@ export default function WriterDNAChart({
               y1={center}
               x2={end.x}
               y2={end.y}
-              stroke="rgba(255,255,255,0.08)"
+              stroke="var(--border-muted)"
+              strokeOpacity="0.4"
               strokeWidth="1"
             />
           );
@@ -75,7 +77,7 @@ export default function WriterDNAChart({
         <polygon
           points={dataPolygon}
           fill="rgba(34,197,94,0.12)"
-          stroke="#22C55E"
+          stroke="var(--accent)"
           strokeWidth="2"
           className="radar-pulse"
         />
@@ -88,7 +90,7 @@ export default function WriterDNAChart({
             cy={p.y}
             r="4"
             fill={dimensions[i].color}
-            stroke="#0A0A0A"
+            stroke="var(--bg-card)"
             strokeWidth="2"
           />
         ))}

@@ -112,10 +112,10 @@ function LoginContent() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-0 bg-cg-dark-2 rounded-2xl border border-gray-800 overflow-hidden">
+    <div className="min-h-[85vh] flex items-center justify-center px-3 sm:px-4 py-6 sm:py-8">
+      <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-0 bg-[var(--bg-surface)] rounded-xl sm:rounded-2xl border border-[var(--border-color)] overflow-hidden">
         {/* Left — Branding Panel */}
-        <div className="hidden lg:flex flex-col justify-between p-8 bg-gradient-to-br from-cg-green/10 via-cg-dark-2 to-cg-dark-3 border-r border-gray-800">
+        <div className="hidden lg:flex flex-col justify-between p-8 bg-[var(--bg-surface-2)] border-r border-[var(--border-color)]">
           <div>
             <div className="flex items-center gap-2 mb-10">
               <div className="w-10 h-10 bg-cg-green rounded-lg flex items-center justify-center">
@@ -149,14 +149,14 @@ function LoginContent() {
           </div>
 
           {/* Cricket fact */}
-          <div className="mt-8 bg-cg-dark-3/50 rounded-lg p-4 border border-gray-800">
+          <div className="mt-8 bg-[var(--bg-surface)] rounded-lg p-4 border border-[var(--border-color)]">
             <p className="text-[10px] text-cg-green font-bold uppercase mb-1.5">🏏 Did you know?</p>
             <p className="text-gray-400 text-xs leading-relaxed">{CRICKET_FACTS[factIdx]}</p>
           </div>
         </div>
 
         {/* Right — Login Form */}
-        <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
+        <div className="p-4 sm:p-8 lg:p-10 flex flex-col justify-center">
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-6">
             <div className="w-14 h-14 bg-cg-green rounded-xl flex items-center justify-center mx-auto mb-3">
@@ -188,7 +188,7 @@ function LoginContent() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-cg-dark-3 border border-gray-700 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-cg-green focus:outline-none focus:ring-1 focus:ring-cg-green/30 transition-all"
+                  className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-cg-green focus:outline-none focus:ring-1 focus:ring-cg-green/30 transition-all"
                   placeholder="you@example.com"
                   required
                   autoComplete="email"
@@ -210,7 +210,7 @@ function LoginContent() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-cg-dark-3 border border-gray-700 rounded-xl pl-10 pr-10 py-3 text-white text-sm focus:border-cg-green focus:outline-none focus:ring-1 focus:ring-cg-green/30 transition-all"
+                  className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-xl pl-10 pr-10 py-3 text-white text-sm focus:border-cg-green focus:outline-none focus:ring-1 focus:ring-cg-green/30 transition-all"
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
@@ -255,7 +255,7 @@ function LoginContent() {
                   type="button"
                   onClick={() => handleDemoSignIn(demoUser.id)}
                   disabled={loading}
-                  className="text-left bg-cg-dark-3 border border-gray-700 rounded-xl px-3 py-2.5 hover:border-gray-500 hover:bg-gray-800 transition-all disabled:opacity-50"
+                  className="text-left bg-[var(--bg-surface-2)] border border-[var(--border-color)] rounded-xl px-3 py-2.5 hover:border-gray-500 hover:bg-gray-800 transition-all disabled:opacity-50"
                 >
                   <span className="block text-sm font-semibold text-white">{demoUser.name}</span>
                   <span className="block text-[11px] text-gray-500">@{demoUser.username}</span>
@@ -277,7 +277,7 @@ function LoginContent() {
               type="button"
               onClick={handleGoogleSignIn}
               disabled={googleLoading}
-              className="flex items-center justify-center gap-2 bg-cg-dark-3 border border-gray-700 rounded-xl py-2.5 text-sm text-gray-300 hover:border-gray-500 hover:bg-gray-800 transition-all disabled:opacity-50"
+              className="flex items-center justify-center gap-2 bg-[var(--bg-surface-2)] border border-[var(--border-color)] rounded-xl py-2.5 text-sm text-gray-300 hover:border-gray-500 hover:bg-gray-800 transition-all disabled:opacity-50"
             >
               <Chrome size={16} />
               {googleLoading ? "Redirecting to Google..." : "Continue with Google"}

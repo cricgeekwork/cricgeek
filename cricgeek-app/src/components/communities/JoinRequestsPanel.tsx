@@ -20,7 +20,7 @@ export default function JoinRequestsPanel({ community }: { community: Community 
     <section
       id="join-requests"
       data-state={snapshot}
-      className="bg-white/[0.02] border border-gray-800 rounded-3xl p-6"
+      className="cg-panel rounded-3xl p-6"
     >
       <h2 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">
         Pending Join Requests
@@ -33,7 +33,7 @@ export default function JoinRequestsPanel({ community }: { community: Community 
             const requester = getUser(request.requesterId);
             if (!requester) return null;
             return (
-              <div key={request.id} className="rounded-2xl border border-gray-800 bg-black/30 p-4">
+              <div key={request.id} className="rounded-2xl border border-gray-800 cg-community-card p-4">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                   <div>
                     <p className="text-white font-bold">{requester.name}</p>
@@ -48,21 +48,21 @@ export default function JoinRequestsPanel({ community }: { community: Community 
                   <div className="flex flex-wrap gap-2">
                     <Link
                       href={`/writer/${requester.id}`}
-                      className="py-2 px-4 rounded-xl text-sm font-bold border border-gray-600 text-gray-200 hover:border-gray-400 hover:bg-gray-800/60 transition-all"
+                      className="py-2 px-4 rounded-xl text-sm font-bold border border-[var(--border-muted)] text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-hover-2)] transition-all"
                     >
                       View Profile
                     </Link>
                     <button
                       type="button"
                       onClick={() => acceptJoinRequest(request.id)}
-                      className="py-2 px-4 rounded-xl text-sm font-bold bg-cg-green text-black hover:bg-cg-green-dark transition-all"
+                      className="py-2 px-4 rounded-xl text-sm font-bold cg-btn-primary transition-all"
                     >
                       Accept
                     </button>
                     <button
                       type="button"
                       onClick={() => rejectJoinRequest(request.id)}
-                      className="py-2 px-4 rounded-xl text-sm font-bold bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 transition-all"
+                      className="py-2 px-4 rounded-xl text-sm font-bold bg-[var(--tag-bg)] text-[var(--text-secondary)] border border-[var(--border-color)] hover:bg-[var(--border-color)] transition-all"
                     >
                       Reject
                     </button>

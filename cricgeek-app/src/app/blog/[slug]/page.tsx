@@ -460,10 +460,7 @@ export default function BlogSlugPage({
 
       {/* ── Section 1: Stadium Header ─────────────────────────────── */}
       <div
-        className="relative rounded-2xl overflow-hidden mb-6"
-        style={{
-          background: "linear-gradient(135deg, #052e16 0%, #0f172a 50%, #1e1b4b 100%)",
-        }}
+        className="relative rounded-2xl overflow-hidden mb-6 cg-stadium-header border border-[var(--border-color)]"
       >
         {/* Green pitch overlay */}
         <div className="absolute inset-0 opacity-5"

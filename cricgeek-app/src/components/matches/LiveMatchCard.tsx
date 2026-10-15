@@ -11,7 +11,7 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
 
   return (
     <Link href={`/matches/${match.id}`}>
-      <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-4 hover:border-cg-green/50 transition-all hover:shadow-lg hover:shadow-green-500/5 group cg-hover-lift cg-hover-glow">
+      <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-3 sm:p-4 hover:border-cg-green/50 transition-all hover:shadow-lg hover:shadow-green-500/5 group cg-hover-lift cg-hover-glow">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <span
@@ -44,7 +44,7 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
             return (
               <div key={team} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-gray-700 rounded-full flex items-center justify-center text-[10px] font-bold text-white">
+                  <div className="w-6 h-6 bg-[var(--tag-bg)] text-[var(--text-primary)] rounded-full flex items-center justify-center text-[10px] font-bold">
                     {teamInfo?.shortname?.slice(0, 2) || team.slice(0, 2)}
                   </div>
                   <span className="text-white text-sm font-medium group-hover:text-cg-green transition-colors">

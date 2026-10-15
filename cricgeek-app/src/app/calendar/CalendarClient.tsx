@@ -109,14 +109,14 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
     .slice(0, 10);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
       <h1 className="text-3xl font-black text-white mb-2">Cricket Calendar</h1>
       <p className="text-gray-400 text-sm mb-8">
         Upcoming fixtures, live games, and recent results in one timeline.
       </p>
 
       {/* Month Navigation */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
         <button
           onClick={prevMonth}
           className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white transition-all"
@@ -152,7 +152,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
           {days.map((day) => (
             <div
               key={day}
-              className="px-2 py-3 text-center text-xs font-semibold text-gray-400 uppercase"
+              className="px-0 py-2 sm:px-2 sm:py-3 text-center text-[9px] sm:text-xs font-semibold text-gray-400 uppercase"
             >
               {day}
             </div>
@@ -165,7 +165,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
           {Array.from({ length: firstDayOfWeek }).map((_, i) => (
             <div
               key={`empty-${i}`}
-              className="min-h-[100px] sm:min-h-[120px] border-b border-r border-gray-800/50 bg-gray-900/30"
+              className="min-h-12 sm:min-h-[120px] border-b border-r border-gray-800/50 bg-gray-900/30"
             />
           ))}
 
@@ -181,7 +181,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                 key={day}
                 onClick={() => dayMatches.length > 0 && setSelectedDate(dateStr)}
                 className={cn(
-                  "min-h-[100px] cursor-default sm:min-h-[120px] border-b border-r border-gray-800/50 p-1.5 transition-all",
+                  "min-h-12 cursor-default sm:min-h-[120px] border-b border-r border-gray-800/50 p-0.5 sm:p-1.5 transition-all",
                   dayMatches.length > 0 && "cursor-pointer hover:bg-white/5",
                   isToday && "bg-cg-green/5",
                   selectedDate === dateStr && "ring-1 ring-inset ring-cg-green/40"
@@ -189,15 +189,15 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
               >
                 <span
                   className={cn(
-                    "text-xs font-medium inline-block w-6 h-6 rounded-full text-center leading-6",
+                    "text-[10px] sm:text-xs font-medium inline-block w-5 h-5 sm:w-6 sm:h-6 rounded-full text-center leading-5 sm:leading-6",
                     isToday
-                      ? "bg-cg-green text-black font-bold"
+                      ? "bg-[var(--accent)] text-[var(--text-on-accent)] font-bold"
                       : "text-gray-400"
                   )}
                 >
                   {day}
                 </span>
-                <div className="space-y-1 mt-1">
+                <div className="hidden sm:block space-y-1 mt-1">
                   {dayMatches.slice(0, 2).map((match) => (
                     <div key={match.id} className="space-y-1">
                       <Link href={`/matches/${match.id}`} className="block">
@@ -234,13 +234,16 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                     </span>
                   )}
                 </div>
+                {dayMatches.length > 0 && (
+                  <span className="mx-auto mt-1 block h-1.5 w-1.5 rounded-full bg-cg-green sm:hidden" aria-hidden="true" />
+                )}
               </div>
             );
           })}
         </div>
       </div>
 
-      <div className="mt-8 rounded-2xl border border-gray-800 bg-cg-dark-2 p-5">
+      <div className="mt-6 sm:mt-8 rounded-xl sm:rounded-2xl border border-gray-800 bg-cg-dark-2 p-3 sm:p-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h3 className="text-lg font-bold text-white">Match Board</h3>
@@ -264,7 +267,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
         ) : (
           <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
             {selectedMatches.map((match) => (
-              <div key={match.id} className="rounded-xl border border-gray-800 bg-cg-dark p-4">
+              <div key={match.id} className="rounded-lg sm:rounded-xl border border-gray-800 bg-cg-dark p-3 sm:p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <span
@@ -409,12 +412,12 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
         )}
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <div>
+      <div className="mt-8 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2">
+        <div className="min-w-0">
           <h3 className="text-lg font-bold text-white mb-4">Upcoming Matches</h3>
-          <div className="space-y-2">
+          <div className="min-w-0 space-y-2">
             {upcomingMatches.map((match) => (
-              <div key={match.id} className="bg-cg-dark-2 border border-gray-800 rounded-lg p-3 hover:border-cg-green/50 transition-all flex items-center gap-3">
+              <div key={match.id} className="min-w-0 bg-cg-dark-2 border border-gray-800 rounded-lg p-3 hover:border-cg-green/50 transition-all flex items-center gap-3">
                   <span
                     className={cn(
                       "text-[10px] font-bold px-2 py-0.5 rounded text-white shrink-0",

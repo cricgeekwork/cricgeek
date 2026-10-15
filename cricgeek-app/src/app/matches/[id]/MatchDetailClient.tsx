@@ -541,10 +541,10 @@ export default function MatchDetailClient({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Match Header */}
-      <div className="mb-6 overflow-hidden rounded-[28px] border border-white/10 bg-[#171a1b] shadow-[0_24px_80px_rgba(0,0,0,0.28)]">
-        <div className="border-b border-white/8 px-6 py-4">
-          <div className="flex flex-wrap items-center gap-3 text-xs text-[#a7a39a]">
-            <span className="rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 font-semibold uppercase tracking-[0.18em] text-white/75">
+      <div className="mb-6 overflow-hidden rounded-[28px] border border-[var(--border-color)] bg-[var(--bg-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)]">
+        <div className="border-b border-[var(--border-color)] px-6 py-4">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--text-secondary)]">
+            <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-2.5 py-1 font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
               {liveMatch.matchType}
             </span>
             {isLive && (
@@ -554,14 +554,14 @@ export default function MatchDetailClient({
               </span>
             )}
             <span>{liveMatch.date}</span>
-            <span className="text-white/45">•</span>
+            <span className="text-[var(--text-muted)]">•</span>
             <span>{liveMatch.venue}</span>
           </div>
         </div>
 
         <div className="grid gap-6 px-6 py-6 lg:grid-cols-[1.35fr,0.65fr]">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8e887d]">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[var(--text-muted)]">
               {liveMatch.name}
             </p>
             <div className="mt-4 space-y-4">
@@ -575,10 +575,10 @@ export default function MatchDetailClient({
                         width={40}
                         height={40}
                         unoptimized
-                        className="h-10 w-10 rounded-full object-cover ring-1 ring-white/10"
+                        className="h-10 w-10 rounded-full object-cover ring-1 ring-[var(--border-color)]"
                       />
                     ) : (
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-sm font-bold text-white/80 ring-1 ring-white/10">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--tag-bg)] text-sm font-bold text-[var(--text-primary)] ring-1 ring-[var(--border-color)]">
                         {team.shortname}
                       </div>
                     )}
@@ -631,7 +631,7 @@ export default function MatchDetailClient({
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-white/8 bg-[#111415] p-5">
+          <div className="rounded-[24px] border border-[var(--border-color)] bg-[var(--bg-card)] p-5">
             <div className="flex items-center justify-between gap-3">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8e887d]">
                 Match Centre
@@ -669,7 +669,7 @@ export default function MatchDetailClient({
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 overflow-x-auto border-b border-white/8">
+      <div className="mb-6 overflow-x-auto border-b border-[var(--border-color)]">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -677,8 +677,8 @@ export default function MatchDetailClient({
             className={cn(
               "relative mr-8 whitespace-nowrap border-b-2 px-1 pb-4 pt-1 text-[17px] font-semibold tracking-tight transition-colors",
               activeTab === tab.id
-                ? "border-[#38a3ff] text-[#66b9ff]"
-                : "border-transparent text-[#b1ab9f] hover:text-white"
+                ? "border-cg-green text-cg-green"
+                : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
             )}
           >
             {tab.label}
@@ -689,9 +689,9 @@ export default function MatchDetailClient({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.85fr)_minmax(320px,1fr)]">
         <div className="min-w-0">
           {activeTab === "live" && primaryScore && (
-            <div className="mb-6 overflow-hidden rounded-[24px] border border-white/8 bg-[#171a1b]">
-              <div className="grid gap-px bg-white/8 lg:grid-cols-[1.3fr,0.9fr]">
-                <div className="bg-[#171a1b] px-6 py-5">
+            <div className="mb-6 overflow-hidden rounded-[24px] border border-[var(--border-color)] bg-[var(--bg-card)]">
+              <div className="grid gap-px bg-[var(--border-color)] lg:grid-cols-[1.3fr,0.9fr]">
+                <div className="bg-[var(--bg-card)] px-6 py-5">
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8e887d]">
                     Top batters
                   </p>
@@ -710,7 +710,7 @@ export default function MatchDetailClient({
                       </thead>
                       <tbody>
                         {primaryScore.featuredBatters.map((entry) => (
-                          <tr key={entry.batsman.id} className="border-t border-white/6 text-white">
+                          <tr key={entry.batsman.id} className="border-t border-[var(--border-color)] text-white">
                             <td className="py-3 pr-4 font-semibold">
                               {entry.batsman.name}
                               {entry.dismissal === "batting" && <span className="ml-1 text-[#31d260]">*</span>}
@@ -727,7 +727,7 @@ export default function MatchDetailClient({
                   </div>
                 </div>
 
-                <div className="bg-[#171a1b] px-6 py-5">
+                <div className="bg-[var(--bg-card)] px-6 py-5">
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8e887d]">
                     Top bowlers
                   </p>

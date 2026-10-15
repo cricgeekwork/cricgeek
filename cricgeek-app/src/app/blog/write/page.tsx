@@ -11,6 +11,7 @@ import Link from "next/link";
 import { wordCount } from "@/lib/utils";
 import { parseBlogTags, serializeBlogTags } from "@/lib/blog-tags";
 import { useCricGeekSession } from "@/hooks/useCricGeekSession";
+import { useTheme } from "@/context/ThemeContext";
 
 const PLACEHOLDERS = [
   "Start your innings here...",
@@ -77,7 +78,11 @@ function WriteBlogPageContent() {
   const [tags, setTags] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [nightMode, setNightMode] = useState(true);
+  const { theme } = useTheme();
+  const [nightMode, setNightMode] = useState(theme === "dark");
+  useEffect(() => {
+    setNightMode(theme === "dark");
+  }, [theme]);
   const [fontStyle, setFontStyle] = useState("correspondent");
   const [placeholderIdx, setPlaceholderIdx] = useState(0);
   const [showFontPicker, setShowFontPicker] = useState(false);
@@ -522,10 +527,10 @@ function WriteBlogPageContent() {
   const currentFont = FONT_STYLES.find((f) => f.id === fontStyle) || FONT_STYLES[1];
 
   return (
-    <div className={`min-h-screen ${nightMode ? "bg-cg-dark" : "bg-[#FAFAF5]"}`}>
+    <div className={`min-h-screen ${nightMode ? "bg-cg-dark" : "bg-[#F3F1E8]"}`}>
       {publishPhase !== "idle" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm">
-          <div className={`w-full max-w-4xl rounded-3xl border ${nightMode ? "border-gray-800 bg-cg-dark-2" : "border-gray-200 bg-white"} shadow-2xl`}>
+          <div className={`w-full max-w-4xl rounded-3xl border ${nightMode ? "border-gray-800 bg-cg-dark-2" : "border-[#DAD7C9] bg-[#FCFBF7]"} shadow-2xl`}>
             {publishPhase === "scoring" && (
               <div className="rounded-3xl p-6 sm:p-8">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
@@ -1019,7 +1024,7 @@ function WriteBlogPageContent() {
       </div>
 
       {/* Writing Metrics Bar — fixed bottom */}
-      <div className={`fixed bottom-0 left-0 right-0 border-t ${nightMode ? "bg-cg-dark-2/95 border-gray-800" : "bg-white/95 border-gray-200"} backdrop-blur-sm z-40`}>
+      <div className={`cg-writing-metrics-bar fixed left-0 right-0 border-t ${nightMode ? "bg-cg-dark-2/95 border-gray-800" : "bg-white/95 border-gray-200"} backdrop-blur-sm z-40`}>
         <div className="max-w-3xl mx-auto px-4 py-2 flex items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-4">
             <span className={nightMode ? "text-gray-400" : "text-gray-600"}>

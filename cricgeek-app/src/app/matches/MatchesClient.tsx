@@ -54,12 +54,12 @@ export default function MatchesClient({ initialMatches, source }: MatchesClientP
       {/* Live Scores Ticker */}
       <LiveScoresTicker />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="flex items-start justify-between mb-6 gap-4">
-          <div>
-            <h1 className="text-3xl font-black text-white flex items-center gap-3">
-              <Zap className="text-cg-green" />
+        <div className="flex flex-wrap sm:flex-nowrap items-start justify-between mb-5 sm:mb-6 gap-3 sm:gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-2xl sm:text-3xl font-black text-white flex flex-wrap items-center gap-2 sm:gap-3">
+              <Zap className="text-cg-green shrink-0" />
               Matches & Results
             </h1>
             <p className="text-gray-400 text-sm mt-1">
@@ -69,7 +69,7 @@ export default function MatchesClient({ initialMatches, source }: MatchesClientP
             </p>
           </div>
 
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-auto">
             {lastUpdated && (
               <span className="text-xs text-gray-500 hidden sm:block">
                 Updated {lastUpdated}

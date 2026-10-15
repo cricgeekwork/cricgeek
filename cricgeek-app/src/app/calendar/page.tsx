@@ -14,44 +14,53 @@ export default async function CalendarPage() {
   const { matches, source } = await getCalendarMatchesWithSource();
   const matchIds = matches.map((match) => match.id).filter(Boolean);
 
-  const [commentarySessions, blogs] = await Promise.all([
-    matchIds.length > 0
-      ? prisma.liveCommentarySession.findMany({
-          where: {
-            matchId: { in: matchIds },
-            status: { in: ["scheduled", "live", "paused", "ended"] },
-          },
-          select: {
-            id: true,
-            matchId: true,
-            matchName: true,
-            matchType: true,
-            status: true,
-            createdAt: true,
-            moderator: { select: { id: true, name: true } },
-            _count: { select: { entries: true } },
-          },
-          orderBy: [{ status: "asc" }, { createdAt: "desc" }],
-        })
-      : Promise.resolve([]),
-    matchIds.length > 0
-      ? prisma.blog.findMany({
-          where: {
-            status: "approved",
-            matchTag: { in: matchIds },
-          },
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            createdAt: true,
-            matchTag: true,
-            author: { select: { id: true, name: true } },
-          },
-          orderBy: { createdAt: "desc" },
-        })
-      : Promise.resolve([]),
-  ]);
+  let commentarySessions: any[] = [];
+  let blogs: any[] = [];
+
+  try {
+    const [c, b] = await Promise.all([
+      matchIds.length > 0
+        ? prisma.liveCommentarySession.findMany({
+            where: {
+              matchId: { in: matchIds },
+              status: { in: ["scheduled", "live", "paused", "ended"] },
+            },
+            select: {
+              id: true,
+              matchId: true,
+              matchName: true,
+              matchType: true,
+              status: true,
+              createdAt: true,
+              moderator: { select: { id: true, name: true } },
+              _count: { select: { entries: true } },
+            },
+            orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+          })
+        : Promise.resolve([]),
+      matchIds.length > 0
+        ? prisma.blog.findMany({
+            where: {
+              status: "approved",
+              matchTag: { in: matchIds },
+            },
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              createdAt: true,
+              matchTag: true,
+              author: { select: { id: true, name: true } },
+            },
+            orderBy: { createdAt: "desc" },
+          })
+        : Promise.resolve([]),
+    ]);
+    commentarySessions = c;
+    blogs = b;
+  } catch {
+    // If DB is offline, fall back to empty sessions/blogs
+  }
 
   const sessionsByMatchId = new Map<string, typeof commentarySessions>();
   commentarySessions.forEach((session) => {

@@ -56,7 +56,7 @@ export default function LeaderboardPage() {
     <div>
       {/* ── Leaderboard ad strip — immediately below navbar ── */}
       <div className="w-full border-b border-gray-800/60 bg-cg-dark">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-3">
           {/* Desktop leaderboard */}
           <div className="hidden lg:flex justify-center">
             <AdSlot slot="leaderboard-top" size="leaderboard" placeholder className="mx-auto" />
@@ -68,10 +68,10 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-black text-white flex items-center justify-center gap-3">
+          <h1 className="text-2xl sm:text-4xl font-black text-white flex flex-wrap items-center justify-center gap-2 sm:gap-3">
             <Trophy className="text-cg-green" />
             Leaderboard
           </h1>
@@ -87,7 +87,7 @@ export default function LeaderboardPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex items-center justify-center gap-2",
+                "flex-1 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2",
                 activeTab === tab.id
                   ? "bg-cg-green text-black"
                   : "text-gray-400 hover:text-white hover:bg-gray-800"
@@ -105,7 +105,7 @@ export default function LeaderboardPage() {
             {/* Main Rankings */}
             <div className="lg:col-span-2">
               {/* Sort controls */}
-              <div className="flex gap-2 mb-4">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {[
                   { key: "bqs" as const, label: "EQS Score", icon: Target },
                   { key: "blogs" as const, label: "Expression Count", icon: Users },
@@ -115,7 +115,7 @@ export default function LeaderboardPage() {
                     key={s.key}
                     onClick={() => setSortBy(s.key)}
                     className={cn(
-                      "px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5",
+                      "px-2 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5",
                       sortBy === s.key
                         ? "bg-cg-green text-black"
                         : "bg-gray-800 text-gray-300 hover:bg-gray-700"
@@ -132,7 +132,7 @@ export default function LeaderboardPage() {
                 {sortedWriters.slice(0, 3).map((writer, i) => (
                   <Link key={writer.id} href={`/writer/${writer.id}`} className="block group">
                     <div className={cn(
-                      "bg-cg-dark-2 border rounded-xl p-4 text-center transition-all hover:border-cg-green/30",
+                      "bg-cg-dark-2 border rounded-xl p-2 sm:p-4 text-center transition-all hover:border-cg-green/30",
                       i === 0 ? "border-yellow-500/30 bg-gradient-to-b from-yellow-500/5 to-transparent" :
                         i === 1 ? "border-gray-400/20" : "border-amber-700/20"
                     )}>
@@ -155,7 +155,7 @@ export default function LeaderboardPage() {
               {/* Rest of rankings */}
               <div className="space-y-2">
                 {sortedWriters.slice(3).map((writer, i) => (
-                  <div key={writer.id} className="flex items-center gap-3 bg-cg-dark-2 border border-gray-800 rounded-xl p-3 hover:border-cg-green/20 transition-all">
+                  <div key={writer.id} className="flex min-w-0 items-center gap-2 sm:gap-3 bg-cg-dark-2 border border-gray-800 rounded-xl p-2 sm:p-3 hover:border-cg-green/20 transition-all">
                     <span className="text-gray-600 font-bold text-sm w-6 text-center">{i + 4}</span>
                     <WriterProfileCard
                       id={writer.id}
@@ -176,7 +176,7 @@ export default function LeaderboardPage() {
             {/* Sidebar */}
             <div className="space-y-4">
               {/* Expression of the Week */}
-              <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-5">
+              <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-3 sm:p-5">
                 <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
                   <Flame size={16} className="text-orange-400" />
                   Expression of the Week
@@ -196,7 +196,7 @@ export default function LeaderboardPage() {
               </div>
 
               {/* Rising Stars */}
-              <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-5">
+              <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-3 sm:p-5">
                 <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
                   <Star size={16} className="text-yellow-400" />
                   Rising Stars
@@ -225,7 +225,7 @@ export default function LeaderboardPage() {
               </div>
 
               {/* Hot Streaks */}
-              <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-5">
+              <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-3 sm:p-5">
                 <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
                   🔥 Hot Streaks
                 </h3>
@@ -254,7 +254,7 @@ export default function LeaderboardPage() {
               {BADGE_DEFINITIONS.map((badge) => (
                 <div
                   key={badge.id}
-                  className="bg-cg-dark-2 border border-gray-800 rounded-xl p-5 hover:border-cg-green/20 transition-all"
+                  className="bg-cg-dark-2 border border-gray-800 rounded-xl p-3 sm:p-5 hover:border-cg-green/20 transition-all"
                 >
                   <div className="flex items-start gap-4">
                     <div className={cn(
@@ -297,7 +297,7 @@ export default function LeaderboardPage() {
                 {ACHIEVEMENT_DEFINITIONS.map((ach, i) => (
                   <div
                     key={ach.id}
-                    className="bg-cg-dark-2 border border-gray-800 rounded-xl p-4 flex items-center gap-4 hover:border-cg-green/20 transition-all"
+                    className="bg-cg-dark-2 border border-gray-800 rounded-xl p-3 sm:p-4 flex items-center gap-3 sm:gap-4 hover:border-cg-green/20 transition-all"
                   >
                     <div className="w-10 h-10 rounded-full bg-cg-green/10 flex items-center justify-center text-cg-green font-bold text-sm shrink-0">
                       {i + 1}

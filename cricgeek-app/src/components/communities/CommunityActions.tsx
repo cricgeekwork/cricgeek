@@ -31,8 +31,8 @@ function FollowButton({
       onClick={onClick}
       className={`py-2.5 px-4 rounded-xl text-sm font-bold transition-all border ${
         following
-          ? "bg-gray-800 text-white border-gray-700 hover:bg-gray-700"
-          : "bg-transparent text-gray-200 border-gray-600 hover:border-gray-400 hover:bg-gray-800/60"
+          ? "bg-[var(--tag-bg)] text-[var(--text-secondary)] border-[var(--border-color)] hover:bg-[var(--border-color)]"
+          : "bg-[var(--btn-secondary-bg)] text-[var(--text-primary)] border-[var(--border-muted)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-hover-2)]"
       }`}
     >
       {following ? "Following" : "Follow"}
@@ -58,10 +58,10 @@ function JoinButton({
       disabled={disabled && label === "Joined"}
       className={`py-2.5 px-4 rounded-xl text-sm font-bold transition-all ${
         joined
-          ? "bg-gray-800 text-white border border-gray-700"
+          ? "bg-[var(--tag-bg)] text-[var(--text-secondary)] border border-[var(--border-color)]"
           : pending
-            ? "bg-gray-800 text-white border border-gray-700 hover:bg-gray-700"
-            : "bg-cg-green text-black hover:bg-cg-green-dark"
+            ? "bg-[var(--tag-bg)] text-[var(--text-secondary)] border border-[var(--border-color)] hover:bg-[var(--border-color)]"
+            : "cg-btn-primary"
       } ${disabled && label === "Joined" ? "cursor-default" : ""}`}
     >
       {label}

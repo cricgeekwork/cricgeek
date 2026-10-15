@@ -26,7 +26,7 @@ export default function SessionCard({ session }: SessionCardProps) {
 
   return (
     <Link href={`/commentary/${session.id}`}>
-      <div className="group bg-cg-dark-2 border border-gray-800 rounded-xl p-5 hover:border-cg-green/30 hover:bg-cg-dark-3 transition-all duration-200 cursor-pointer">
+      <div className="group bg-cg-dark-2 border border-gray-800 rounded-xl p-3 sm:p-5 hover:border-cg-green/30 hover:bg-cg-dark-3 transition-all duration-200 cursor-pointer">
         {/* Status badge */}
         <div className="flex items-center justify-between mb-3">
           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
@@ -56,12 +56,12 @@ export default function SessionCard({ session }: SessionCardProps) {
           <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cg-green to-cg-green-dark flex items-center justify-center text-black text-xs font-bold">
             {session.moderator.name.charAt(0).toUpperCase()}
           </div>
-          <span className="text-gray-400 text-sm">{session.moderator.name}</span>
+          <span className="min-w-0 truncate text-gray-400 text-sm">{session.moderator.name}</span>
           <Mic size={12} className="text-gray-500" />
         </div>
 
         {/* Stats */}
-        <div className="flex items-center gap-4 text-gray-500 text-xs">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-gray-500 text-xs">
           <div className="flex items-center gap-1">
             <MessageSquare size={12} />
             <span>{session._count.entries} entries</span>

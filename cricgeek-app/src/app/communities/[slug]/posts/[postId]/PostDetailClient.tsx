@@ -27,7 +27,7 @@ export default function PostDetailClient({
 
   if (!resolvedPost) {
     return (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.08),transparent_40%),linear-gradient(180deg,#060606,#0a0a0a)] text-white">
+      <div className="min-h-screen cg-page-shell">
         <div className="mx-auto max-w-[1440px] px-4 py-16 text-center text-gray-400">
           {mounted ? "This discussion could not be found." : "Loading discussion..."}
         </div>
@@ -38,7 +38,7 @@ export default function PostDetailClient({
   const authorHref = resolvedPost.authorId ? `/writer/${resolvedPost.authorId}` : null;
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.08),transparent_40%),linear-gradient(180deg,#060606,#0a0a0a)] text-white">
+    <div className="min-h-screen cg-page-shell">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 xl:px-20 py-8">
         
         <div className="mb-6">
@@ -50,7 +50,7 @@ export default function PostDetailClient({
         <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_300px] xl:gap-8 flex flex-col">
 
           <main className="flex-1 w-full min-w-0 flex flex-col gap-8">
-            <article className="bg-white/[0.02] border border-gray-800 rounded-3xl p-6 sm:p-10 shadow-sm">
+            <article className="cg-panel rounded-3xl p-6 sm:p-10 shadow-sm">
               <div className="mb-8">
                 <div className="inline-flex rounded-full border border-cg-green/20 bg-cg-green/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-cg-green mb-4">
                   {resolvedPost.category}

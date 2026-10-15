@@ -97,12 +97,12 @@ export default function CommentaryListClient({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Header */}
-      <div className="flex items-start justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-black text-white flex items-center gap-3">
-            <Radio className="text-cg-green" />
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 sm:mb-8 gap-4">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-black text-white flex flex-wrap items-center gap-2 sm:gap-3">
+            <Radio className="text-cg-green shrink-0" />
             Live Commentary
           </h1>
           <p className="text-gray-400 text-sm mt-1">
@@ -112,7 +112,7 @@ export default function CommentaryListClient({
         {canStartCommentary && (
           <button
             onClick={() => setShowCreate(!showCreate)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cg-green text-black font-bold text-sm hover:bg-cg-green-dark transition shrink-0"
+            className="flex w-full sm:w-auto justify-center items-center gap-2 px-4 py-2.5 rounded-xl bg-cg-green text-black font-bold text-sm hover:bg-cg-green-dark transition shrink-0"
           >
             <Plus size={16} />
             Start Commentary
@@ -121,7 +121,7 @@ export default function CommentaryListClient({
       </div>
 
       {canStartCommentary ? (
-        <div className="bg-gradient-to-br from-cg-green/10 via-cg-dark-2 to-cg-dark-3 border border-cg-green/20 rounded-2xl p-5 mb-8">
+        <div className="bg-cg-dark-2 border border-cg-green/20 rounded-xl sm:rounded-2xl p-4 sm:p-5 mb-6 sm:mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <p className="text-white font-bold text-lg">
@@ -153,7 +153,7 @@ export default function CommentaryListClient({
           </div>
         </div>
       ) : (
-        <div className="bg-cg-dark-2 border border-gray-800 rounded-2xl p-5 mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="bg-cg-dark-2 border border-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <p className="text-white font-bold text-lg">Sign in to start commentary</p>
             <p className="text-gray-400 text-sm mt-1">
@@ -172,7 +172,7 @@ export default function CommentaryListClient({
 
       {/* Create session form */}
       {showCreate && canStartCommentary && !userLiveSession && (
-        <div className="bg-cg-dark-2 border border-cg-green/20 rounded-2xl p-6 mb-8 animate-[fadeSlideIn_0.3s_ease-out]">
+        <div className="bg-cg-dark-2 border border-cg-green/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 animate-[fadeSlideIn_0.3s_ease-out]">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-white font-bold text-lg flex items-center gap-2">
               <Mic size={18} className="text-cg-green" />
@@ -260,12 +260,12 @@ export default function CommentaryListClient({
       )}
 
       {/* Filter tabs */}
-      <div className="flex items-center gap-2 mb-6">
+      <div className="flex flex-wrap items-center gap-2 mb-6">
         {(["all", "live", "scheduled", "ended"] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
+            className={`px-3 sm:px-4 py-2 rounded-xl text-sm font-medium transition ${
               filter === f
                 ? "bg-cg-green/15 text-cg-green border border-cg-green/30"
                 : "bg-gray-800 text-gray-400 border border-gray-700 hover:text-white"

@@ -15,19 +15,18 @@ export default async function HomePage() {
   return (
     <div>
       {/* ── Main two-column layout: content (left) + rail ads (right) ── */}
-      <div className="max-w-[1440px] mx-auto px-[80px]">
+      <div className="max-w-[1440px] mx-auto px-3 sm:px-6 lg:px-[80px]">
         <div className="lg:flex lg:items-start lg:gap-8">
 
           {/* ── Left: hero + all content ── */}
           <div className="min-w-0 lg:flex-1">
 
             {/* Hero */}
-            <section className="relative bg-gradient-to-b from-cg-dark via-green-950/30 to-cg-dark overflow-hidden cg-section-reveal" style={{"--cg-section-delay": "100ms"} as React.CSSProperties}>
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(34,197,94,0.08),transparent_50%)]" />
-              <div className="relative py-16 sm:py-24">
+            <section className="relative cg-hero-section rounded-3xl overflow-hidden cg-section-reveal" style={{"--cg-section-delay": "100ms"} as React.CSSProperties}>
+              <div className="relative py-10 sm:py-24 px-3 sm:px-8">
                 <div className="max-w-3xl">
                   <div className="flex items-center gap-2 mb-4">
-                    <span className="bg-cg-green/10 text-cg-green text-xs font-bold px-3 py-1 rounded-full border border-cg-green/20">
+                    <span className="cg-hero-live-badge text-xs font-bold px-3 py-1 rounded-full border">
                       🏏 LIVE NOW
                     </span>
                     {liveMatches.length > 0 && (
@@ -36,7 +35,7 @@ export default async function HomePage() {
                       </span>
                     )}
                   </div>
-                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
+                  <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
                     Cricket.{" "}
                     <span className="text-cg-green">Live.</span>
                     <br />
@@ -46,10 +45,10 @@ export default async function HomePage() {
                     Real-time scores, expert analysis, and community-driven discussion.
                     Your ultimate cricket companion for World Cup, IPL, and every international match.
                   </p>
-                  <div className="flex flex-wrap gap-3 mt-8">
+                  <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 mt-8">
                     <Link
                       href="/matches"
-                      className="bg-cg-green text-black px-6 py-3 rounded-xl font-bold text-sm hover:bg-cg-green-dark transition-all inline-flex items-center gap-2"
+                      className="bg-cg-green text-black px-6 py-3 rounded-xl font-bold text-sm hover:bg-cg-green-dark transition-all inline-flex items-center justify-center gap-2 w-full sm:w-auto"
                     >
                       <Zap size={18} />
                       Live Scores
@@ -57,21 +56,21 @@ export default async function HomePage() {
                     </Link>
                     <Link
                       href="/calendar"
-                      className="bg-white/5 text-white px-6 py-3 rounded-xl font-medium text-sm hover:bg-white/10 transition-all border border-gray-700 inline-flex items-center gap-2"
+                      className="bg-white/5 text-white px-6 py-3 rounded-xl font-medium text-sm hover:bg-white/10 transition-all border border-gray-700 inline-flex items-center justify-center gap-2 w-full sm:w-auto"
                     >
                       <Calendar size={18} />
                       Match Calendar
                     </Link>
                     <Link
                       href="/blog"
-                      className="bg-white/5 text-white px-6 py-3 rounded-xl font-medium text-sm hover:bg-white/10 transition-all border border-gray-700 inline-flex items-center gap-2"
+                      className="bg-white/5 text-white px-6 py-3 rounded-xl font-medium text-sm hover:bg-white/10 transition-all border border-gray-700 inline-flex items-center justify-center gap-2 w-full sm:w-auto"
                     >
                       <PenSquare size={18} />
                       Express Yourself
                     </Link>
                     <Link
                       href="/insights"
-                      className="bg-white/5 text-white px-6 py-3 rounded-xl font-medium text-sm hover:bg-white/10 transition-all border border-gray-700 inline-flex items-center gap-2"
+                      className="bg-white/5 text-white px-6 py-3 rounded-xl font-medium text-sm hover:bg-white/10 transition-all border border-gray-700 inline-flex items-center justify-center gap-2 w-full sm:w-auto"
                     >
                       <BrainCircuit size={18} />
                       AI Insights

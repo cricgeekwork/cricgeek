@@ -45,7 +45,7 @@ function CommunityCard({ community }: { community: Community }) {
       tabIndex={0}
       role="link"
       aria-label={`View ${community.name} community`}
-      className="rounded-3xl border border-gray-800 bg-[linear-gradient(160deg,rgba(17,17,17,0.95),rgba(12,28,18,0.9))] p-5 shadow-sm transition-all hover:border-gray-700 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-cg-green focus-visible:border-transparent"
+      className="rounded-xl sm:rounded-3xl border border-gray-800 cg-community-card p-3 sm:p-5 shadow-sm transition-all hover:border-cg-green/40 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-cg-green focus-visible:border-transparent"
     >
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div className="flex-1">
@@ -70,7 +70,7 @@ function CommunityCard({ community }: { community: Community }) {
           {community.topWriters.length > 0 && (
             <div className="mt-5 flex flex-col gap-2">
               <span className="text-xs text-gray-500 uppercase tracking-widest font-semibold mr-1">Popular Writers:</span>
-              <div className="flex flex-col sm:flex-row flex-wrap gap-3 mt-1">
+              <div className="flex flex-row flex-wrap gap-3 mt-1">
                 {community.topWriters.map((writer) => (
                   <Link key={writer.id} href={`/writer/${writer.id}`} onClick={(event) => event.stopPropagation()} className="flex items-center gap-2 rounded-sm outline-none hover:text-cg-green focus-visible:ring-2 focus-visible:ring-cg-green">
                     <div className="w-6 h-6 rounded-full bg-cg-dark-2 border border-gray-700 flex items-center justify-center text-[9px] font-bold text-cg-green">
@@ -109,19 +109,19 @@ export default function CommunitiesClient() {
   });
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.08),transparent_40%),linear-gradient(180deg,#060606,#0a0a0a)] text-white">
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 xl:px-20 py-8">
+    <div className="min-h-screen cg-page-shell">
+      <div className="mx-auto max-w-[1440px] px-3 sm:px-6 xl:px-20 py-6 sm:py-8">
         
         <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_300px] xl:gap-8 flex flex-col">
 
           <main className="flex-1 w-full min-w-0 flex flex-col gap-8">
             
-            <section className="bg-white/[0.02] border border-gray-800 rounded-3xl p-6 sm:p-8">
+            <section className="cg-panel rounded-2xl sm:rounded-3xl p-4 sm:p-8">
               <div className="inline-flex items-center gap-2 rounded-full border border-cg-green/20 bg-cg-green/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.26em] text-cg-green mb-6">
                 <Users size={14} />
                 Network
               </div>
-              <h1 className="text-3xl sm:text-4xl font-black tracking-tight mb-3">
+              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-3">
                 Communities
               </h1>
               <p className="text-gray-400 text-sm sm:text-base leading-relaxed mb-6">
@@ -129,11 +129,11 @@ export default function CommunitiesClient() {
               </p>
 
               <div className="relative flex items-center">
-                <SearchIcon size={20} className="absolute left-4 text-gray-500" />
+                <SearchIcon size={20} className="absolute left-4 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search communities, players, teams, or topics..."
-                  className="w-full bg-black/40 border border-gray-700 hover:border-gray-500 focus:border-cg-green transition-all rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-gray-600 outline-none"
+                  className="w-full min-w-0 bg-[var(--bg-input)] border border-gray-700 hover:border-gray-500 focus:border-cg-green transition-all rounded-xl sm:rounded-2xl py-3 sm:py-4 pl-10 sm:pl-12 pr-3 sm:pr-4 text-white placeholder:text-gray-500 outline-none"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />

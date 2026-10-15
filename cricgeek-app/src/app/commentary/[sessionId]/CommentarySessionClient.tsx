@@ -48,7 +48,7 @@ export default function CommentarySessionClient({ session, isModerator }: Props)
   const isScheduled = status === "scheduled";
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Breadcrumb */}
       <Link
         href="/commentary"

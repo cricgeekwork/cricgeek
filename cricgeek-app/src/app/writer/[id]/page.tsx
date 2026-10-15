@@ -37,10 +37,10 @@ interface WriterData {
 }
 
 const TIER_COLORS: Record<string, string> = {
-  bronze: "from-amber-700 to-amber-900 border-amber-600/50",
-  silver: "from-gray-300 to-gray-500 border-gray-400/50",
-  gold: "from-yellow-400 to-yellow-600 border-yellow-500/50",
-  platinum: "from-indigo-300 to-purple-400 border-indigo-400/50",
+  bronze: "border-amber-600/50",
+  silver: "border-gray-400/50",
+  gold: "border-yellow-500/50",
+  platinum: "border-indigo-400/50",
 };
 
 function getOwnerEarnings(writer: Pick<WriterData, "recentBlogs" | "profile">): WriterData["earnings"] {
@@ -121,7 +121,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
 
   if (!writer) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-20 text-center">
+      <div className="max-w-5xl mx-auto px-3 py-12 sm:px-4 sm:py-20 text-center">
         <h1 className="text-2xl font-black text-white">Writer unavailable</h1>
         <p className="mt-2 text-sm text-gray-400">{error || "We could not load this writer profile."}</p>
         <Link
@@ -142,7 +142,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
   const popularBlogs = [...writer.recentBlogs].sort((a, b) => b.views - a.views).slice(0, 3);
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 xl:px-20 py-8">
+    <div className="max-w-[1440px] mx-auto px-3 sm:px-6 xl:px-20 py-6 sm:py-8">
       <Link href="/leaderboard" className="text-gray-400 hover:text-white text-sm flex items-center gap-1 mb-6">
         <ArrowLeft size={14} /> Back to Leaderboard
       </Link>
@@ -151,10 +151,10 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
         <main className="max-w-5xl w-full min-w-0">
 
       {/* Header */}
-      <div className="bg-cg-dark-2 border border-gray-800 rounded-2xl p-6 sm:p-8 mb-6">
-        <div className="flex flex-col sm:flex-row items-start gap-6">
+      <div className="bg-cg-dark-2 border border-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-8 mb-6">
+        <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
           {/* Avatar */}
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cg-green/20 to-cg-dark-3 flex items-center justify-center text-3xl font-black text-cg-green border-2 border-cg-green/30 shrink-0">
+          <div className="w-20 h-20 rounded-full bg-[var(--bg-surface-2)] flex items-center justify-center text-3xl font-black text-cg-green border-2 border-cg-green/30 shrink-0">
             {writer.avatar ? (
               <img src={writer.avatar} alt={writer.name} className="w-full h-full rounded-full object-cover" />
             ) : (
@@ -203,7 +203,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
                 <span>{xpProgress}/100 XP</span>
               </div>
               <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-cg-green to-cg-green-light rounded-full xp-fill" style={{ width: `${xpProgress}%` }} />
+                <div className="h-full bg-cg-green rounded-full xp-fill" style={{ width: `${xpProgress}%` }} />
               </div>
             </div>
           </div>
@@ -223,7 +223,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
             { icon: Trophy, label: "Runs", value: writer.profile.totalRuns?.toLocaleString() ?? "0" },
             { icon: Award, label: "Badges", value: writer.badges.length },
           ].map((stat) => (
-            <div key={stat.label} className="bg-cg-dark-3/50 rounded-lg p-3 text-center">
+            <div key={stat.label} className="bg-cg-dark-3/50 rounded-lg p-2 sm:p-3 text-center">
               <stat.icon size={16} className="text-cg-green mx-auto mb-1" />
               <p className="text-white font-bold text-lg">{stat.value}</p>
               <p className="text-[10px] text-gray-500">{stat.label}</p>
@@ -236,7 +236,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
         {/* Left Column: DNA + Badges */}
         <div className="space-y-6">
           {/* Writer DNA */}
-          <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-5">
+          <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-3 sm:p-5">
             <h2 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
               🧬 Writer DNA
             </h2>
@@ -252,7 +252,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
           </div>
 
           {/* Badges */}
-          <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-5">
+          <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-3 sm:p-5">
             <h2 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
               <Award size={16} className="text-cg-green" />
               Badges ({writer.badges.length})
@@ -264,10 +264,9 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
                 {writer.badges.map((badge) => (
                   <div
                     key={badge.badge}
-                    className={`relative bg-gradient-to-br ${TIER_COLORS[badge.tier] || TIER_COLORS.bronze} rounded-lg p-3 text-center border overflow-hidden`}
+                    className={`relative bg-[var(--bg-surface-2)] ${TIER_COLORS[badge.tier] || TIER_COLORS.bronze} rounded-lg p-3 text-center border overflow-hidden`}
                     title={badge.description}
                   >
-                    <div className="absolute inset-0 badge-shine" />
                     <p className="text-xl mb-1">
                       {badge.badge === "first_blood" ? "🏏" :
                        badge.badge === "stat_master" ? "📊" :
@@ -290,7 +289,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
         {/* Right Column: Expressions + Achievements */}
         <div className="lg:col-span-2 space-y-6">
           {/* Recent Expressions */}
-          <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-5">
+          <div className="bg-cg-dark-2 border border-gray-800 rounded-xl p-3 sm:p-5">
             <h2 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
               <FileText size={16} className="text-cg-green" />
               Recent Expressions
@@ -298,7 +297,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
             <div className="space-y-3">
               {writer.recentBlogs.map((blog) => (
                 <Link key={blog.id} href={blog.slug.startsWith("/") ? blog.slug : `/blog/${blog.slug}`} className="block group">
-                  <div className="flex items-center gap-4 p-3 rounded-lg hover:bg-cg-dark-3/50 transition-all">
+                  <div className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-lg hover:bg-cg-dark-3/50 transition-all">
                     {blog.score?.processingStatus === "processing" ? (
                       <div className="w-10 h-10 rounded-lg flex flex-col items-center justify-center text-[9px] font-black uppercase tracking-[0.16em] border border-amber-500/30 bg-amber-500/10 text-amber-300 shrink-0">
                         <span>Live</span>
@@ -318,7 +317,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
                       {blog.score?.processingStatus === "processing" ? (
                         <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-300">Scoring in progress</p>
                       ) : null}
-                      <div className="flex items-center gap-3 mt-1 text-[10px] text-gray-500">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1 text-[10px] text-gray-500">
                         <span className="flex items-center gap-1"><Eye size={10} /> {blog.views}</span>
                         {"runs" in blog && <span className="text-orange-400">🏏 {blog.runs as number}</span>}
                         <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
@@ -361,7 +360,7 @@ export default function WriterProfilePage({ params }: { params: Promise<{ id: st
       </div>
 
       <div className="flex flex-col">
-      <section className="order-2 mb-6 rounded-lg border border-gray-800 bg-cg-dark-2 p-4">
+      <section className="order-2 mb-6 rounded-lg border border-gray-800 bg-cg-dark-2 p-3 sm:p-4">
         <button
           type="button"
           onClick={() => setShowPopularExpressions((isOpen) => !isOpen)}

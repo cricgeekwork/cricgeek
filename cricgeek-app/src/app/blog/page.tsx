@@ -164,19 +164,19 @@ function BlogPageContent() {
   return (
     <div>
       <div className="w-full border-b border-gray-800/80 bg-cg-dark">
-        <div className="mx-auto max-w-[1440px] px-4 py-3 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1440px] px-3 py-3 sm:px-6 lg:px-8">
           <div className="flex justify-center">
             <AdSlot slot="expressions-top" size="leaderboard" placeholder className="mx-auto" />
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-black text-white flex items-center gap-3">
-              <PenSquare className="text-cg-green" />
+            <h1 className="text-2xl sm:text-3xl font-black text-white flex flex-wrap items-center gap-2 sm:gap-3">
+              <PenSquare className="text-cg-green shrink-0" />
               Expressions
             </h1>
             <p className="text-gray-400 text-sm mt-1">
@@ -185,8 +185,8 @@ function BlogPageContent() {
                 : "AI-scored cricket expressions, opinions, and discussion"}
             </p>
           </div>
-          <div className="flex gap-2">
-            <div className="hidden sm:flex items-center gap-1 rounded-lg border border-gray-800 bg-cg-dark-2 p-1">
+          <div className="flex w-full sm:w-auto flex-wrap gap-2">
+            <div className="flex w-full sm:w-auto items-center gap-1 rounded-lg border border-gray-800 bg-cg-dark-2 p-1">
               {[
                 { id: "latest", label: "Latest" },
                 { id: "for-you", label: "For You" },
@@ -196,7 +196,7 @@ function BlogPageContent() {
                   key={option.id}
                   type="button"
                   onClick={() => setFeed(option.id as "latest" | "for-you" | "saved")}
-                  className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-all ${
+                  className={`flex-1 sm:flex-none rounded-md px-2 sm:px-3 py-1.5 text-xs font-semibold transition-all ${
                     feed === option.id
                       ? "bg-cg-green text-black"
                       : "text-gray-400 hover:bg-white/5 hover:text-white"
@@ -208,14 +208,14 @@ function BlogPageContent() {
             </div>
             <Link
               href="/leaderboard"
-              className="bg-white/5 text-white px-4 py-2.5 rounded-lg font-medium text-sm hover:bg-white/10 transition-all border border-gray-700 inline-flex items-center gap-2"
+              className="flex-1 sm:flex-none justify-center bg-white/5 text-white px-3 sm:px-4 py-2.5 rounded-lg font-medium text-sm hover:bg-white/10 transition-all border border-gray-700 inline-flex items-center gap-2"
             >
               <Trophy size={16} className="text-yellow-400" />
               Leaderboard
             </Link>
             <Link
               href="/blog/write"
-              className="bg-cg-green text-black px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-cg-green-dark transition-all inline-flex items-center gap-2"
+              className="flex-1 sm:flex-none justify-center bg-cg-green text-black px-3 sm:px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-cg-green-dark transition-all inline-flex items-center gap-2"
             >
               <PenSquare size={16} />
               Express Yourself
@@ -278,8 +278,8 @@ function BlogPageContent() {
               </div>
             ) : (
               filteredBlogs.map((blog) => (
-                <article key={blog.id} className="bg-cg-dark-2 border border-gray-800 rounded-xl p-5 hover:border-cg-green/50 transition-all group">
-                  <div className="flex items-start gap-4">
+                <article key={blog.id} className="bg-cg-dark-2 border border-gray-800 rounded-xl p-3 sm:p-5 hover:border-cg-green/50 transition-all group">
+                  <div className="flex items-start gap-3 sm:gap-4">
                     {blog.score?.processingStatus === "processing" ? (
                       <div className="w-12 h-12 rounded-xl flex flex-col items-center justify-center shrink-0 border border-amber-500/30 bg-amber-500/10 text-amber-300">
                         <span className="text-[9px] font-black uppercase tracking-[0.18em]">Live</span>

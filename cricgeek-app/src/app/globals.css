@@ -24,13 +24,129 @@
   --color-cg-score-low: #EF4444;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   CricGeek Theme Tokens
+   Dark mode is the default.  Light mode overrides via [data-theme="light"].
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root,
+[data-theme="dark"] {
+  /* Backgrounds */
+  --bg-base:          #0A0A0A;
+  --bg-surface:       #111111;
+  --bg-surface-2:     #1A1A2E;
+  --bg-card:          #111111;
+  --bg-input:         #111111;
+  --bg-hover:         rgba(255,255,255,0.05);
+  --bg-hover-2:       rgba(255,255,255,0.08);
+
+  /* Announcement strip */
+  --announcement-bg:  #0c2317;
+
+  /* Text */
+  --text-primary:     #ffffff;
+  --text-secondary:   #9ca3af;   /* gray-400 */
+  --text-muted:       #6b7280;   /* gray-500 */
+  --text-faint:       #4b5563;   /* gray-600 */
+  --text-on-accent:   #000000;
+
+  /* Borders */
+  --border-color:     #1f2937;   /* gray-800 */
+  --border-muted:     #374151;   /* gray-700 */
+  --border-strong:    #4b5563;   /* gray-600 */
+
+  /* Brand */
+  --accent:           #22C55E;
+  --accent-dark:      #16A34A;
+  --accent-muted:     rgba(34,197,94,0.10);
+  --accent-border:    rgba(34,197,94,0.30);
+
+  /* Primary button */
+  --btn-primary-bg:   #22C55E;
+  --btn-primary-text: #000000;
+
+  /* Interactive states */
+  --btn-secondary-bg: rgba(255,255,255,0.05);
+  --btn-secondary-border: #374151;
+  --tag-bg:           #1f2937;
+  --tag-text:         #9ca3af;
+
+  /* Secondary highlight */
+  --highlight:        #FBBF24;
+
+  /* Dropdown */
+  --dropdown-bg:      #111111;
+  --dropdown-border:  #1f2937;
+  --dropdown-hover:   #1f2937;
+
+  /* Scrollbar */
+  --scrollbar-track:  #0A0A0A;
+  --scrollbar-thumb:  #333333;
+}
+
+[data-theme="light"] {
+  /* Backgrounds — Paper & Lichen palette */
+  --bg-base:          #F3F1E8;
+  --bg-surface:       #FCFBF7;
+  --bg-surface-2:     #F0EEE4;
+  --bg-card:          #FCFBF7;
+  --bg-input:         #FCFBF7;
+  --bg-hover:         rgba(68,112,90,0.06);
+  --bg-hover-2:       rgba(68,112,90,0.10);
+
+  /* Announcement strip */
+  --announcement-bg:  #e3f2ea;
+
+  /* Text */
+  --text-primary:     #1C2520;
+  --text-secondary:   #56615B;
+  --text-muted:       #56615B;
+  --text-faint:       #8A9490;
+  --text-on-accent:   #F6F4EA;
+
+  /* Borders */
+  --border-color:     #DAD7C9;
+  --border-muted:     #DAD7C9;
+  --border-strong:    #b8b5a8;
+
+  /* Brand */
+  --accent:           #44705A;
+  --accent-dark:      #1E3B2E;
+  --accent-muted:     rgba(68,112,90,0.10);
+  --accent-border:    rgba(68,112,90,0.30);
+
+  /* Primary button */
+  --btn-primary-bg:   #1E3B2E;
+  --btn-primary-text: #F6F4EA;
+
+  /* Interactive states */
+  --btn-secondary-bg: #FCFBF7;
+  --btn-secondary-border: #DAD7C9;
+  --tag-bg:           #E9E6DA;
+  --tag-text:         #56615B;
+
+  /* Secondary highlight */
+  --highlight:        #8F6416;
+
+  /* Dropdown */
+  --dropdown-bg:      #FCFBF7;
+  --dropdown-border:  #DAD7C9;
+  --dropdown-hover:   #F0EEE4;
+
+  /* Scrollbar */
+  --scrollbar-track:  #F3F1E8;
+  --scrollbar-thumb:  #c0bdb0;
+}
+
 html {
-  background-color: #0A0A0A;
+  background-color: var(--bg-base);
+  transition: background-color 0.3s ease;
 }
 
 body {
-  background-color: #0A0A0A;
-  color: #ffffff;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Custom scrollbar */
@@ -39,16 +155,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0A0A0A;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #22C55E;
+  background: var(--accent);
 }
 
 /* Animations */
@@ -112,9 +228,7 @@ body {
 }
 
 .badge-shine {
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: badgeShine 3s ease-in-out infinite;
+  display: none;
 }
 
 /* Ball delivered animation */
@@ -327,15 +441,7 @@ body {
 }
 
 .innings-stage::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 18% -8%, rgba(34, 197, 94, 0.12), transparent 42%),
-    radial-gradient(circle at 85% 8%, rgba(56, 163, 255, 0.14), transparent 35%);
-  pointer-events: none;
-  z-index: -1;
-  animation: inningsGlow 8s ease-in-out infinite;
+  display: none;
 }
 
 .innings-content-reveal {
@@ -361,8 +467,8 @@ body {
   justify-content: center;
   gap: 0;
   border-radius: 999px;
-  border: 1px solid rgba(181, 228, 199, 0.22);
-  background: linear-gradient(120deg, rgba(16, 26, 22, 0.95), rgba(13, 21, 18, 0.82));
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface-2);
   padding: 0.38rem 0.56rem;
   transition: transform 0.2s ease, filter 0.2s ease, border-color 0.2s ease;
 }
@@ -370,7 +476,7 @@ body {
 .innings-ball-trigger:hover {
   transform: translateY(-1px);
   filter: brightness(1.07);
-  border-color: color-mix(in srgb, var(--team-accent, #22c55e) 50%, #d8f4e3 50%);
+  border-color: var(--accent);
 }
 
 .inning-ball-code {
@@ -386,16 +492,9 @@ body {
 }
 
 .innings-ball-trigger.is-active {
-  border-color: color-mix(in srgb, var(--team-accent, #22c55e) 72%, #ffffff 28%);
-  background: linear-gradient(
-    120deg,
-    color-mix(in srgb, var(--team-accent, #22c55e) 18%, #0f1a15 82%),
-    rgba(13, 21, 18, 0.9)
-  );
-  box-shadow:
-    inset 0 -8px 16px rgba(0, 0, 0, 0.32),
-    0 6px 14px rgba(0, 0, 0, 0.32),
-    0 0 0 2px color-mix(in srgb, var(--team-accent, #22c55e) 28%, transparent 72%);
+  border-color: var(--accent);
+  background: var(--accent-muted);
+  box-shadow: 0 0 0 2px var(--accent-border);
   transform: translateY(-1px) scale(1.02);
 }
 
@@ -404,9 +503,7 @@ body {
 }
 
 .scorecard-shell {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.015), transparent 18%),
-    linear-gradient(0deg, rgba(6, 8, 9, 0.28), rgba(6, 8, 9, 0.28));
+  background: var(--bg-card);
 }
 
 .scorecard-row-reveal {
@@ -624,3 +721,436 @@ body {
   }
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   CricGeek Semantic Component Classes
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Announcement strip — themed via custom class */
+.cg-announcement-strip {
+  background: linear-gradient(to right, #0b1f13, #0f2d1d, #0b1f13);
+}
+[data-theme="light"] .cg-announcement-strip {
+  background: linear-gradient(to right, #d4ede1, #c8e6d7, #d4ede1);
+}
+
+/* Homepage Hero section */
+.cg-hero-section {
+  background-color: var(--bg-surface);
+}
+
+.cg-hero-live-badge {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #22C55E;
+  border-color: rgba(34, 197, 94, 0.2);
+}
+[data-theme="light"] .cg-hero-live-badge {
+  background-color: rgba(68, 112, 90, 0.12);
+  color: #44705A;
+  border-color: rgba(68, 112, 90, 0.3);
+}
+
+/* Full-page shell for rich pages (Communities, Match Detail, etc.) */
+.cg-page-shell {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+}
+
+/* Content panels / heroes */
+.cg-panel {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+}
+
+/* Community cards */
+.cg-community-card {
+  background-color: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+.cg-mobile-bottom-nav {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 60;
+  box-sizing: border-box;
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+}
+
+.cg-mobile-bottom-nav__viewport {
+  position: relative;
+  height: 4rem;
+  overflow: hidden;
+  padding-right: 1px;
+  touch-action: pan-y;
+}
+
+.cg-mobile-bottom-nav__track {
+  display: flex;
+  width: 140%;
+  height: 4rem;
+  transform: translateX(0);
+  transition: width 320ms cubic-bezier(0.2, 0.75, 0.25, 1), transform 320ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  will-change: width, transform;
+}
+
+.cg-mobile-bottom-nav__track.is-secondary {
+  box-sizing: border-box;
+  width: 120%;
+  padding-left: calc(20% + 30px);
+  transform: translateX(-16.666667%);
+}
+
+.cg-mobile-bottom-nav__item {
+  display: flex;
+  flex: 0 0 calc(100% / 7);
+  min-width: 0;
+  min-height: 44px;
+  height: 4rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 2px;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  transition: flex-basis 320ms cubic-bezier(0.2, 0.75, 0.25, 1), opacity 160ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cg-mobile-bottom-nav__track.is-secondary .cg-mobile-bottom-nav__item:not(.cg-mobile-bottom-nav__item--live):not(.cg-mobile-bottom-nav__item--more) {
+  flex-basis: calc(100% / 5);
+}
+
+.cg-mobile-bottom-nav__track.is-secondary .cg-mobile-bottom-nav__item--live,
+.cg-mobile-bottom-nav__track.is-secondary .cg-mobile-bottom-nav__item--more {
+  flex-basis: 0;
+  width: 0;
+  overflow: hidden;
+  padding-inline: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cg-mobile-bottom-nav__back {
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 2;
+  display: flex;
+  width: 30px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  opacity: 0.68;
+  animation: cgMobileBackIn 160ms ease-out both;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes cgMobileBackIn {
+  from { opacity: 0; }
+  to { opacity: 0.68; }
+}
+
+.cg-mobile-bottom-nav__back:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.cg-mobile-bottom-nav__item.is-active {
+  color: var(--accent);
+}
+
+.cg-mobile-bottom-nav__item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.cg-mobile-account-menu {
+  transform-origin: top right;
+  animation: cgMobileAccountIn 160ms ease-out both;
+}
+
+@keyframes cgMobileAccountIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.cg-mobile-page-spacing {
+  padding-bottom: 0;
+}
+
+.cg-writing-metrics-bar {
+  bottom: 0;
+}
+
+@media (max-width: 767px) {
+  .cg-mobile-page-spacing {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+
+  .cg-writing-metrics-bar {
+    bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cg-mobile-bottom-nav__track,
+  .cg-mobile-account-menu,
+  .cg-mobile-bottom-nav__item,
+  .cg-mobile-bottom-nav__back {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Blog detail stadium header */
+.cg-stadium-header {
+  background: linear-gradient(135deg, #052e16 0%, #0f172a 50%, #1e1b4b 100%);
+}
+[data-theme="light"] .cg-stadium-header {
+  background: linear-gradient(135deg, #FCFBF7 0%, #F0EEE4 50%, #E9E6DA 100%);
+  border-color: #DAD7C9;
+}
+
+/* Semantic buttons */
+.cg-btn-primary {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+.cg-btn-primary:hover {
+  background-color: var(--accent-dark);
+}
+
+.cg-btn-secondary {
+  background-color: var(--btn-secondary-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+.cg-btn-secondary:hover {
+  background-color: var(--bg-hover-2);
+}
+
+[data-theme="light"] .shimmer {
+  background: linear-gradient(90deg, #E9E6DA 0%, #F3F1E8 50%, #E9E6DA 100%);
+  background-size: 400px 100%;
+}
+
+/* Innings ball rack / trigger — adapts to light theme */
+[data-theme="light"] .innings-ball-rack {
+  background: rgba(220,218,210,0.88);
+  border-color: rgba(68,112,90,0.22);
+}
+
+[data-theme="light"] .innings-ball-trigger {
+  background: linear-gradient(120deg, rgba(240,238,228,0.95), rgba(244,242,234,0.82));
+  border-color: rgba(68,112,90,0.28);
+}
+
+[data-theme="light"] .scorecard-shell {
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.02), transparent 18%),
+    linear-gradient(0deg, rgba(240,238,228,0.6), rgba(240,238,228,0.6));
+}
+
+/* Theme-aware hover glow using var(--accent) */
+[data-theme="light"] .cg-hover-lift:hover {
+  box-shadow: 0 4px 12px rgba(68,112,90,0.12),
+              0 0 0 1px rgba(68,112,90,0.10);
+}
+
+[data-theme="light"] .cg-hover-glow:hover {
+  border-color: rgba(68,112,90,0.35);
+  box-shadow: 0 0 16px rgba(68,112,90,0.08);
+}
+
+/* Intro overlay — keep dark in light mode (it's a splash screen) */
+[data-theme="light"] .cg-intro-glow {
+  box-shadow: 0 0 30px rgba(68,112,90,0.35),
+              0 0 60px rgba(68,112,90,0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Light-mode Global Utility Overrides
+   ═══════════════════════════════════════════════════════════════════ */
+
+[data-theme="light"] .bg-cg-dark {
+  background-color: var(--bg-base) !important;
+}
+[data-theme="light"] .bg-cg-dark-2 {
+  background-color: var(--bg-card) !important;
+}
+[data-theme="light"] .bg-cg-dark-3,
+[data-theme="light"] .bg-cg-dark-3\/50,
+[data-theme="light"] .bg-cg-dark-3\/30 {
+  background-color: var(--bg-surface-2) !important;
+}
+
+/* Background utilities with dark values */
+[data-theme="light"] .bg-gray-700 {
+  background-color: var(--tag-bg) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme="light"] .bg-gray-800 {
+  background-color: var(--tag-bg) !important;
+}
+[data-theme="light"] .bg-gray-900\/30 {
+  background-color: var(--bg-hover) !important;
+}
+
+/* Semi-transparent black overlays used in dark theme containers */
+[data-theme="light"] .bg-black\/40,
+[data-theme="light"] .bg-black\/35,
+[data-theme="light"] .bg-black\/30,
+[data-theme="light"] .bg-black\/25,
+[data-theme="light"] .bg-black\/20,
+[data-theme="light"] .bg-black\/15 {
+  background-color: var(--bg-surface-2) !important;
+}
+
+[data-theme="light"] .bg-white\/\[0\.02\],
+[data-theme="light"] .bg-white\/\[0\.03\],
+[data-theme="light"] .bg-white\/\[0\.01\] {
+  background-color: var(--bg-card) !important;
+}
+
+/* Borders */
+[data-theme="light"] .border-gray-800 {
+  border-color: var(--border-color) !important;
+}
+[data-theme="light"] .border-gray-700 {
+  border-color: var(--border-muted) !important;
+}
+[data-theme="light"] .border-gray-600 {
+  border-color: var(--border-muted) !important;
+}
+[data-theme="light"] .border-slate-800 {
+  border-color: var(--border-color) !important;
+}
+[data-theme="light"] .border-white\/8,
+[data-theme="light"] .border-white\/10,
+[data-theme="light"] .border-white\/6 {
+  border-color: var(--border-color) !important;
+}
+
+/* Text overrides */
+[data-theme="light"] .text-white {
+  color: var(--text-primary) !important;
+}
+[data-theme="light"] .text-gray-200 {
+  color: var(--text-primary) !important;
+}
+[data-theme="light"] .text-gray-300 {
+  color: var(--text-secondary) !important;
+}
+[data-theme="light"] .text-gray-400 {
+  color: var(--text-secondary) !important;
+}
+[data-theme="light"] .text-gray-500 {
+  color: var(--text-muted) !important;
+}
+[data-theme="light"] .text-gray-600 {
+  color: var(--text-faint) !important;
+}
+
+/* Placeholder text */
+[data-theme="light"] ::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Input/form controls */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+[data-theme="light"] input:focus,
+[data-theme="light"] textarea:focus {
+  border-color: var(--accent);
+}
+
+/* Tag / pill text */
+[data-theme="light"] .text-gray-400.bg-gray-800,
+[data-theme="light"] .bg-gray-800 .text-gray-400 {
+  color: var(--tag-text) !important;
+}
+
+/* Hover surfaces */
+[data-theme="light"] .hover\:bg-gray-800:hover,
+[data-theme="light"] .hover\:bg-gray-800\/50:hover,
+[data-theme="light"] .hover\:bg-gray-800\/60:hover,
+[data-theme="light"] .hover\:bg-gray-700:hover {
+  background-color: var(--bg-hover-2) !important;
+}
+[data-theme="light"] .hover\:bg-white\/5:hover,
+[data-theme="light"] .hover\:bg-white\/10:hover {
+  background-color: var(--bg-hover) !important;
+}
+
+/* Dropdown panels */
+[data-theme="light"] .bg-cg-dark-2.border-gray-700.rounded-xl.shadow-xl {
+  background-color: var(--dropdown-bg);
+  border-color: var(--dropdown-border);
+}
+
+/* Accent color adapt */
+[data-theme="light"] .text-cg-green {
+  color: var(--accent) !important;
+}
+[data-theme="light"] .border-cg-green {
+  border-color: var(--accent) !important;
+}
+[data-theme="light"] .border-cg-green\/20,
+[data-theme="light"] .border-cg-green\/30,
+[data-theme="light"] .border-cg-green\/15 {
+  border-color: var(--accent-border) !important;
+}
+[data-theme="light"] .bg-cg-green\/10,
+[data-theme="light"] .bg-cg-green\/20,
+[data-theme="light"] .bg-cg-green\/5 {
+  background-color: var(--accent-muted) !important;
+}
+
+/* Primary buttons in light mode: #1E3B2E bg with #F6F4EA text */
+[data-theme="light"] button.bg-cg-green,
+[data-theme="light"] a.bg-cg-green,
+[data-theme="light"] .cg-btn-primary {
+  background-color: var(--btn-primary-bg) !important;
+  color: var(--btn-primary-text) !important;
+}
+[data-theme="light"] button.bg-cg-green:hover,
+[data-theme="light"] a.bg-cg-green:hover,
+[data-theme="light"] .cg-btn-primary:hover {
+  background-color: var(--accent-dark) !important;
+}
+
+/* Keep the CG navbar/footer logo text dark or distinct */
+[data-theme="light"] .w-10.h-10.bg-cg-green .text-black,
+[data-theme="light"] .w-14.h-14.bg-cg-green .text-black {
+  color: #000000 !important;
+}
+
+/* Secondary button surfaces */
+[data-theme="light"] .bg-white\/5 {
+  background-color: var(--btn-secondary-bg) !important;
+  border-color: var(--btn-secondary-border) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Skeleton pulse blocks */
+[data-theme="light"] .bg-gray-800.rounded {
+  background-color: var(--border-color) !important;
+}
