@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import NotificationBell from "@/components/layout/NotificationBell";
@@ -33,18 +33,36 @@ const navLinks = [
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
 ];
 
+function subscribeToClientReady() {
+  return () => {};
+}
+
+function getClientReadySnapshot() {
+  return true;
+}
+
+function getServerReadySnapshot() {
+  return false;
+}
+
 export default function Navbar() {
   const { user, status, isLocalUser } = useCricGeekSession();
+  const hasHydrated = useSyncExternalStore(
+    subscribeToClientReady,
+    getClientReadySnapshot,
+    getServerReadySnapshot
+  );
   const pathname = usePathname();
   const [openMorePath, setOpenMorePath] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const mobileAccountRef = useRef<HTMLDivElement>(null);
+  const desktopAccountRef = useRef<HTMLDivElement>(null);
   const mobileNavSwipeRef = useRef<{ x: number; y: number } | null>(null);
   const suppressNavClickRef = useRef(false);
   const previousShowMoreRef = useRef(false);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
   const firstSecondaryLinkRef = useRef<HTMLAnchorElement>(null);
-  const authLoading = status === "loading";
+  const authLoading = status === "loading" || !hasHydrated;
   const showMore = openMorePath === pathname;
 
   const isActivePath = (href: string) =>
@@ -77,7 +95,8 @@ export default function Navbar() {
     const closeOnOutsidePointer = (event: PointerEvent) => {
       if (
         event.target instanceof Node &&
-        !mobileAccountRef.current?.contains(event.target)
+        !mobileAccountRef.current?.contains(event.target) &&
+        !desktopAccountRef.current?.contains(event.target)
       ) {
         setShowDropdown(false);
       }
@@ -104,7 +123,7 @@ export default function Navbar() {
   };
 
   const visibleNavLinks =
-    user?.role === "admin"
+    hasHydrated && user?.role === "admin"
       ? [...navLinks, { href: "/admin", label: "Admin", icon: Shield }]
       : navLinks;
 
@@ -194,7 +213,7 @@ export default function Navbar() {
               <div className="h-10 w-28 animate-pulse rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)]" />
             ) : user ? (
               /* Logged in — User Dropdown */
-              <div className="relative flex items-center gap-2">
+              <div className="relative flex items-center gap-2" ref={desktopAccountRef}>
                 <NotificationBell />
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
@@ -293,7 +312,7 @@ export default function Navbar() {
               <Search size={18} />
             </button>
             <ThemeToggle />
-            {user && <NotificationBell />}
+            {user && !authLoading && <NotificationBell />}
 
             <div className="relative" ref={mobileAccountRef}>
               {authLoading ? (
@@ -318,9 +337,10 @@ export default function Navbar() {
                   </button>
                   {showDropdown && (
                     <div id="cg-mobile-account-menu" className="cg-mobile-account-menu absolute right-0 top-full z-[70] mt-2 w-56 max-w-[calc(100vw-1.5rem)] overflow-hidden rounded-xl border border-[var(--dropdown-border)] bg-[var(--dropdown-bg)] shadow-xl">
-                      <p className="border-b border-[var(--border-color)] px-4 py-3 text-sm font-semibold text-[var(--text-primary)]">
-                        {user.name}
-                      </p>
+                      <div className="border-b border-[var(--border-color)] px-4 py-3">
+                        <p className="text-sm font-semibold text-[var(--text-primary)]">{user.name}</p>
+                        <p className="break-all text-[10px] leading-4 text-[var(--text-muted)]">{user.email}</p>
+                      </div>
                       <Link
                         href={`/writer/${user.id}`}
                         onClick={() => setShowDropdown(false)}

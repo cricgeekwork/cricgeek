@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useCallback,
+  useLayoutEffect,
   useSyncExternalStore,
   type ReactNode,
 } from "react";
@@ -39,9 +40,25 @@ function applyTheme(theme: Theme) {
 }
 
 function getThemeSnapshot(): Theme {
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    if (saved === "light" || saved === "dark") return saved;
+  } catch {
+    // Fall back to the early root attribute if storage is unavailable.
+  }
+
   return document.documentElement.getAttribute("data-theme") === "light"
     ? "light"
     : "dark";
+}
+
+function getSavedTheme(): Theme | null {
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    return saved === "light" || saved === "dark" ? saved : null;
+  } catch {
+    return null;
+  }
 }
 
 function getServerThemeSnapshot(): Theme {
@@ -60,8 +77,25 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     getServerThemeSnapshot
   );
 
+  useLayoutEffect(() => {
+    const resolvedTheme = getSavedTheme() ?? theme;
+    const root = document.documentElement;
+    const hasDarkClass = root.classList.contains("dark");
+
+    if (
+      root.getAttribute("data-theme") !== resolvedTheme ||
+      hasDarkClass !== (resolvedTheme === "dark")
+    ) {
+      applyTheme(resolvedTheme);
+    }
+  }, [theme]);
+
   const setTheme = useCallback((t: Theme) => {
-    localStorage.setItem(STORAGE_KEY, t);
+    try {
+      localStorage.setItem(STORAGE_KEY, t);
+    } catch {
+      // The active theme should still change when storage is unavailable.
+    }
     applyTheme(t);
   }, []);
 
