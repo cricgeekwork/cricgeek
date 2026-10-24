@@ -158,20 +158,20 @@ export default function MatchLiveCommentary({
   const isSessionPaused = session?.status === "paused";
 
   return (
-    <div className="bg-cg-dark-2 border border-gray-800 rounded-xl overflow-hidden mb-6">
+    <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl overflow-hidden mb-6">
       {/* Panel header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-cg-dark border-b border-gray-800">
+      <div className="flex items-center justify-between px-4 py-3 bg-[var(--bg-surface-2)] border-b border-[var(--border-color)]">
         <div className="flex items-center gap-2">
-          <Radio size={15} className={isSessionLive ? "text-red-400 animate-pulse" : "text-gray-500"} />
-          <span className="text-sm font-semibold text-white">Live Text Commentary</span>
+          <Radio size={15} className={isSessionLive ? "text-red-500 animate-pulse" : "text-[var(--text-muted)]"} />
+          <span className="text-sm font-semibold text-[var(--text-primary)]">Live Text Commentary</span>
           {isSessionLive && (
-            <span className="flex items-center gap-1 text-xs font-medium text-red-400 ml-1">
+            <span className="flex items-center gap-1 text-xs font-medium text-red-500 ml-1">
               <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
               LIVE
             </span>
           )}
           {isSessionPaused && (
-            <span className="text-xs font-medium text-yellow-400 ml-1">PAUSED</span>
+            <span className="text-xs font-medium text-amber-600 dark:text-yellow-400 ml-1">PAUSED</span>
           )}
         </div>
 
@@ -200,32 +200,32 @@ export default function MatchLiveCommentary({
       {/* Body */}
       <div className="px-4 py-3">
         {loading ? (
-          <div className="flex items-center gap-2 py-4 text-gray-500 text-sm">
+          <div className="flex items-center gap-2 py-4 text-[var(--text-muted)] text-sm">
             <Loader2 size={14} className="animate-spin" />
             Loading commentary…
           </div>
         ) : error ? (
-          <p className="text-red-400 text-xs py-3">{error}</p>
+          <p className="text-red-600 dark:text-red-400 text-xs py-3">{error}</p>
         ) : !session ? (
           /* No active session — Option A: always show placeholder */
           <div className="py-4 text-center">
-            <Radio size={28} className="text-gray-700 mx-auto mb-2" />
-            <p className="text-gray-500 text-sm font-medium">
+            <Radio size={28} className="text-[var(--text-muted)] mx-auto mb-2 opacity-50" />
+            <p className="text-[var(--text-secondary)] text-sm font-medium">
               No live text commentary yet for this match
             </p>
             {canStartSession ? (
-              <p className="text-gray-600 text-xs mt-1">
+              <p className="text-[var(--text-muted)] text-xs mt-1">
                 You can start a session using the{" "}
                 <button
                   onClick={handleGoLive}
-                  className="text-cg-green underline underline-offset-2 hover:no-underline"
+                  className="text-cg-green underline underline-offset-2 hover:no-underline font-medium"
                 >
                   Go Live
                 </button>{" "}
                 button above.
               </p>
             ) : (
-              <p className="text-gray-600 text-xs mt-1">
+              <p className="text-[var(--text-muted)] text-xs mt-1">
                 Check back when a commentator goes live.
               </p>
             )}
@@ -233,23 +233,23 @@ export default function MatchLiveCommentary({
         ) : entries.length === 0 ? (
           /* Session exists but no entries yet */
           <div className="py-4 text-center">
-            <p className="text-gray-500 text-sm">
+            <p className="text-[var(--text-secondary)] text-sm">
               {session.moderator.name} is live — first entry coming soon…
             </p>
           </div>
         ) : (
           /* Entry feed — Cricbuzz style */
-          <div className="divide-y divide-gray-800/60">
+          <div className="divide-y divide-[var(--border-color)]">
             {entries.slice(0, MAX_ENTRIES_SHOWN).map((entry) => {
               const badge = inferCommentaryBadge(entry.text);
               return (
-                <div key={entry.id} className="flex gap-0 hover:bg-white/[0.02] transition-colors">
+                <div key={entry.id} className="flex gap-0 hover:bg-[var(--bg-hover)] transition-colors">
                   {/* Over / time */}
                   <div className="w-20 shrink-0 flex flex-col items-center justify-start pt-4 pb-4 gap-2">
-                    <span className="text-lg font-semibold text-slate-300 leading-none">
+                    <span className="text-lg font-semibold text-[var(--text-primary)] leading-none">
                       {entry.overText ?? "Live"}
                     </span>
-                    <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.18em] text-slate-500">
+                    <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
                       <Clock3 size={10} />
                       {formatCommentaryTimestamp(entry.createdAt)}
                     </span>
@@ -264,23 +264,23 @@ export default function MatchLiveCommentary({
                         {badge.label}
                       </div>
                     ) : (
-                      <div className="w-9 h-9 rounded-md border border-slate-800 bg-slate-950/50 flex items-center justify-center">
-                        <span className="text-slate-500 text-base leading-none">•</span>
+                      <div className="w-9 h-9 rounded-md border border-[var(--border-color)] bg-[var(--tag-bg)] flex items-center justify-center">
+                        <span className="text-[var(--text-muted)] text-base leading-none">•</span>
                       </div>
                     )}
                   </div>
                   {/* Text */}
                   <div className="flex-1 py-4 pr-4 min-w-0">
-                    <p className="text-[10px] font-semibold tracking-[0.22em] text-slate-400 uppercase mb-2">
+                    <p className="text-[10px] font-semibold tracking-[0.22em] text-[var(--text-secondary)] uppercase mb-2">
                       {entry.source === "voice" ? "Voice Commentary" : "Live Update"}
                       {entry.overText && (
-                        <span className="ml-2 text-slate-500 normal-case tracking-normal font-normal">· Over {entry.overText}</span>
+                        <span className="ml-2 text-[var(--text-muted)] normal-case tracking-normal font-normal">· Over {entry.overText}</span>
                       )}
                     </p>
-                    <p className="text-[17px] text-slate-100 leading-8">
+                    <p className="text-[17px] text-[var(--text-primary)] leading-8">
                       {renderCommentaryText(entry.text)}
                     </p>
-                    <p className="mt-2 text-xs text-slate-500">
+                    <p className="mt-2 text-xs text-[var(--text-muted)]">
                       Logged {timeAgo(entry.createdAt)}
                     </p>
                   </div>
@@ -293,10 +293,10 @@ export default function MatchLiveCommentary({
 
       {/* Footer — moderator credit + link */}
       {session && (
-        <div className="px-4 py-2.5 bg-cg-dark border-t border-gray-800 flex items-center justify-between text-xs text-gray-500">
+        <div className="px-4 py-2.5 bg-[var(--bg-surface-2)] border-t border-[var(--border-color)] flex items-center justify-between text-xs text-[var(--text-muted)]">
           <span>
             Commentated by{" "}
-            <span className="text-gray-300 font-medium">{session.moderator.name}</span>
+            <span className="text-[var(--text-primary)] font-medium">{session.moderator.name}</span>
             {" · "}{session._count.entries} entr{session._count.entries === 1 ? "y" : "ies"}
           </span>
           <Link

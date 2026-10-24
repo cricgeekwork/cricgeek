@@ -61,7 +61,7 @@ function RiskRing({ risk }: { risk: number }) {
 
   return (
     <svg width="40" height="40" viewBox="0 0 40 40" className="flex-shrink-0">
-      <circle cx="20" cy="20" r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="4" />
+      <circle cx="20" cy="20" r={r} fill="none" stroke="currentColor" className="text-gray-300 dark:text-white/10" strokeWidth="4" />
       <circle
         cx="20"
         cy="20"
@@ -94,9 +94,9 @@ function formatInterval(interval?: MetricUncertainty | null) {
 }
 
 function confidenceBadgeClass(confidence?: MetricConfidenceTier) {
-  if (confidence === "high") return "border-emerald-500/25 bg-emerald-500/10 text-emerald-200";
-  if (confidence === "medium") return "border-amber-400/25 bg-amber-400/10 text-amber-100";
-  return "border-red-400/25 bg-red-400/10 text-red-100";
+  if (confidence === "high") return "border-emerald-500/25 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200";
+  if (confidence === "medium") return "border-amber-400/25 bg-amber-400/10 text-amber-900 dark:text-amber-100";
+  return "border-red-400/25 bg-red-400/10 text-red-800 dark:text-red-100";
 }
 
 function InsightText({
@@ -157,7 +157,7 @@ function QualityStrip({ card }: { card: PostMatchEdaCard }) {
     <div className="mt-3 space-y-2">
       <div className="flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em]">
         {quality?.sampleSize !== undefined && quality?.sampleSize !== null ? (
-          <span className="rounded-full border border-gray-700 bg-black/20 px-2 py-1 text-gray-300">
+          <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-2 py-1 text-[var(--text-secondary)]">
             n={quality.sampleSize}
           </span>
         ) : null}
@@ -167,34 +167,34 @@ function QualityStrip({ card }: { card: PostMatchEdaCard }) {
           </span>
         ) : null}
         {quality?.provenance ? (
-          <span className="rounded-full border border-gray-700 bg-black/20 px-2 py-1 text-gray-400">
+          <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-2 py-1 text-[var(--text-muted)]">
             {quality.provenance}
           </span>
         ) : null}
       </div>
-      {card.subValue ? <p className="text-[11px] text-gray-500">{card.subValue}</p> : null}
-      {intervalLabel ? <p className="text-[11px] text-gray-500">{intervalLabel}</p> : null}
+      {card.subValue ? <p className="text-[11px] text-[var(--text-muted)]">{card.subValue}</p> : null}
+      {intervalLabel ? <p className="text-[11px] text-[var(--text-muted)]">{intervalLabel}</p> : null}
       {quality?.readiness ? (
-        <div className="space-y-2 rounded-xl border border-sky-500/15 bg-sky-500/[0.06] px-3 py-3">
-          <div className="flex items-center justify-between gap-3 text-[11px] text-sky-100">
+        <div className="space-y-2 rounded-xl border border-sky-500/25 bg-sky-500/10 px-3 py-3">
+          <div className="flex items-center justify-between gap-3 text-[11px] font-semibold text-sky-900 dark:text-sky-100">
             <span>Collecting enough live data…</span>
             <span>
               {quality.readiness.current}/{quality.readiness.required} {quality.readiness.unit}
             </span>
           </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/20">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-sky-200/60 dark:bg-black/20">
             <div
-              className="h-full rounded-full bg-sky-400 transition-all duration-500"
+              className="h-full rounded-full bg-sky-600 dark:bg-sky-400 transition-all duration-500"
               style={{
                 width: `${Math.min(100, (quality.readiness.current / Math.max(quality.readiness.required, 1)) * 100)}%`,
               }}
             />
           </div>
-          <p className="text-[11px] text-sky-100/90">{quality.readiness.label}</p>
+          <p className="text-[11px] font-medium text-sky-800 dark:text-sky-100/90">{quality.readiness.label}</p>
         </div>
       ) : null}
       {quality?.warning ? (
-        <p className="rounded-xl border border-amber-500/20 bg-amber-500/8 px-3 py-2 text-[11px] text-amber-100">
+        <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] font-medium text-amber-900 dark:text-amber-100">
           {quality.warning}
         </p>
       ) : null}
@@ -210,18 +210,18 @@ function WinProbabilityCard({ card }: { card: PostMatchEdaCard }) {
   return (
     <CardFrame
       card={card}
-      className="rounded-xl border border-violet-500/25 bg-gradient-to-br from-[#1a1035]/80 to-[#0f0b22]/80 p-4"
+      className="win-prob-card rounded-xl p-4 shadow-sm"
     >
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-violet-400/80">{card.label}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-400">{card.label}</p>
         <ToneIcon tone={card.tone} />
       </div>
       <div className="mt-2 flex items-baseline gap-2">
-        <p className="text-3xl font-black text-white">{card.value}</p>
-        {ci95 ? <span className="text-[11px] text-gray-500">±{Math.round((ci95[1] - ci95[0]) / 2)}%</span> : null}
+        <p className="text-3xl font-black text-[var(--text-primary)]">{card.value}</p>
+        {ci95 ? <span className="text-[11px] text-[var(--text-muted)]">±{Math.round((ci95[1] - ci95[0]) / 2)}%</span> : null}
       </div>
       <ProbabilityGauge value={prob} ci95={ci95} />
-      <InsightText text={card.insight} className="mt-3 text-xs leading-relaxed text-gray-400" />
+      <InsightText text={card.insight} className="mt-3 text-xs leading-relaxed text-[var(--text-secondary)]" />
     </CardFrame>
   );
 }
@@ -231,12 +231,12 @@ function ResourceCard({ card }: { card: PostMatchEdaCard }) {
   const color = val >= 50 ? "bg-emerald-500" : val >= 25 ? "bg-violet-500" : "bg-amber-500";
 
   return (
-    <CardFrame card={card} className="rounded-xl border border-gray-800 bg-cg-dark-2 p-4">
+    <CardFrame card={card} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm">
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">{card.label}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">{card.label}</p>
         <ToneIcon tone={card.tone} />
       </div>
-      <p className="mt-2 text-2xl font-black text-white">{card.value}</p>
+      <p className="mt-2 text-2xl font-black text-[var(--text-primary)]">{card.value}</p>
       <MeterBar value={val} color={color} />
       <InsightText text={card.insight} />
     </CardFrame>
@@ -250,18 +250,18 @@ function CascadeRiskCard({ card }: { card: PostMatchEdaCard }) {
     <CardFrame
       card={card}
       className={cn(
-        "rounded-xl border p-4",
-        risk >= 40 ? "border-amber-500/25 bg-amber-500/5" : "border-gray-800 bg-cg-dark-2"
+        "rounded-xl border p-4 shadow-sm",
+        risk >= 40 ? "border-amber-500/30 bg-amber-500/10" : "border-[var(--border-color)] bg-[var(--bg-card)]"
       )}
     >
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">{card.label}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">{card.label}</p>
       </div>
       <div className="mt-2 flex items-center gap-3">
         <RiskRing risk={risk} />
         <div>
-          <p className="text-xl font-black text-white">{card.value}</p>
-          <p className="text-[10px] text-gray-500">next 3 overs</p>
+          <p className="text-xl font-black text-[var(--text-primary)]">{card.value}</p>
+          <p className="text-[10px] text-[var(--text-muted)]">next 3 overs</p>
         </div>
       </div>
       <InsightText text={card.insight} />
@@ -281,34 +281,34 @@ function MomentumCard({ card }: { card: PostMatchEdaCard }) {
         : "bg-gradient-to-r from-violet-600 to-violet-400";
 
   return (
-    <CardFrame card={card} className="rounded-xl border border-gray-800 bg-cg-dark-2 p-4">
+    <CardFrame card={card} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm">
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">{card.label}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">{card.label}</p>
         {delta > 5 ? (
-          <TrendingUp size={12} className="text-emerald-400 flex-shrink-0" />
+          <TrendingUp size={12} className="text-emerald-500 flex-shrink-0" />
         ) : delta < -5 ? (
-          <TrendingDown size={12} className="text-amber-400 flex-shrink-0" />
+          <TrendingDown size={12} className="text-amber-500 flex-shrink-0" />
         ) : (
-          <Minus size={12} className="text-gray-600 flex-shrink-0" />
+          <Minus size={12} className="text-[var(--text-muted)] flex-shrink-0" />
         )}
       </div>
       <div className="mt-2 flex items-baseline gap-2">
-        <p className="text-2xl font-black text-white">{val}</p>
-        <span className="text-xs text-gray-500">/100</span>
+        <p className="text-2xl font-black text-[var(--text-primary)]">{val}</p>
+        <span className="text-xs text-[var(--text-muted)]">/100</span>
         {Math.abs(delta) > 3 ? (
-          <span className={cn("text-xs font-semibold", delta > 0 ? "text-emerald-400" : "text-amber-400")}>
+          <span className={cn("text-xs font-semibold", delta > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400")}>
             {delta > 0 ? "+" : ""}
             {delta.toFixed(0)}
           </span>
         ) : null}
       </div>
-      <div className="relative mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/5">
+      <div className="relative mt-2 h-1.5 w-full overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
         {delta >= 0 ? (
           <div className={cn("absolute h-full rounded-r-full", barColor)} style={{ left: "50%", width: `${Math.min(50, delta)}%` }} />
         ) : (
           <div className={cn("absolute h-full rounded-l-full", barColor)} style={{ right: "50%", width: `${Math.min(50, -delta)}%` }} />
         )}
-        <div className="absolute h-full w-px bg-white/20" style={{ left: "50%" }} />
+        <div className="absolute h-full w-px bg-black/30 dark:bg-white/30" style={{ left: "50%" }} />
       </div>
       <InsightText text={card.insight} />
     </CardFrame>
@@ -322,14 +322,14 @@ function DeathForecastCard({ card }: { card: PostMatchEdaCard }) {
     <CardFrame
       card={card}
       className={cn(
-        "rounded-xl border p-4",
-        card.tone === "good" ? "border-emerald-500/20 bg-emerald-500/5" : "border-gray-800 bg-cg-dark-2"
+        "rounded-xl border p-4 shadow-sm",
+        card.tone === "good" ? "border-emerald-500/30 bg-emerald-500/10" : "border-[var(--border-color)] bg-[var(--bg-card)]"
       )}
     >
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">{card.label}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">{card.label}</p>
       <div className="mt-2 flex items-baseline gap-1">
-        <p className={cn("text-2xl font-black", isInDeath ? "text-gray-400" : "text-white")}>{card.value}</p>
-        {!isInDeath ? <span className="text-sm text-gray-500">runs</span> : null}
+        <p className={cn("text-2xl font-black", isInDeath ? "text-[var(--text-muted)]" : "text-[var(--text-primary)]")}>{card.value}</p>
+        {!isInDeath ? <span className="text-sm text-[var(--text-muted)]">runs</span> : null}
       </div>
       <InsightText text={card.insight} />
     </CardFrame>
@@ -344,17 +344,17 @@ function RpiCard({ card }: { card: PostMatchEdaCard }) {
     <CardFrame
       card={card}
       className={cn(
-        "rounded-xl border p-4",
-        val >= 60 ? "border-emerald-500/20 bg-emerald-500/5" : val <= 40 ? "border-amber-500/20 bg-amber-500/5" : "border-gray-800 bg-cg-dark-2"
+        "rounded-xl border p-4 shadow-sm",
+        val >= 60 ? "border-emerald-500/30 bg-emerald-500/10" : val <= 40 ? "border-amber-500/30 bg-amber-500/10" : "border-[var(--border-color)] bg-[var(--bg-card)]"
       )}
     >
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">{card.label}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">{card.label}</p>
         <ToneIcon tone={card.tone} />
       </div>
       <div className="mt-2 flex items-baseline gap-1">
-        <p className="text-2xl font-black text-white">{val}</p>
-        <span className="text-xs text-gray-500">/100</span>
+        <p className="text-2xl font-black text-[var(--text-primary)]">{val}</p>
+        <span className="text-xs text-[var(--text-muted)]">/100</span>
       </div>
       <MeterBar value={val} color={color} />
       <InsightText text={card.insight} />
@@ -367,17 +367,17 @@ function DefaultCard({ card }: { card: PostMatchEdaCard }) {
     <CardFrame
       card={card}
       className={cn(
-        "rounded-xl border p-4",
-        card.tone === "good" && "border-emerald-500/20 bg-emerald-500/5",
-        card.tone === "warning" && "border-amber-500/20 bg-amber-500/5",
-        (!card.tone || card.tone === "neutral") && "border-gray-800 bg-cg-dark-2"
+        "rounded-xl border p-4 shadow-sm",
+        card.tone === "good" && "border-emerald-500/30 bg-emerald-500/10",
+        card.tone === "warning" && "border-amber-500/30 bg-amber-500/10",
+        (!card.tone || card.tone === "neutral") && "border-[var(--border-color)] bg-[var(--bg-card)]"
       )}
     >
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">{card.label}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">{card.label}</p>
         <ToneIcon tone={card.tone} />
       </div>
-      <p className="mt-2 text-2xl font-black text-white">{card.value}</p>
+      <p className="mt-2 text-2xl font-black text-[var(--text-primary)]">{card.value}</p>
       <InsightText text={card.insight} />
     </CardFrame>
   );

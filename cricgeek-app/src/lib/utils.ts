@@ -36,19 +36,13 @@ export function truncate(text: string, length: number): string {
 }
 
 export function getMatchTypeColor(type: string): string {
-  switch (type?.toUpperCase()) {
-    case "T20":
-    case "T20I":
-      return "bg-green-500";
-    case "ODI":
-      return "bg-blue-500";
-    case "TEST":
-      return "bg-red-500";
-    case "IPL":
-      return "bg-amber-500";
-    default:
-      return "bg-gray-500";
-  }
+  const normalized = (type || "").trim().toUpperCase();
+  if (normalized.includes("T20")) return "bg-green-500";
+  if (normalized.includes("ODI")) return "bg-blue-500";
+  if (normalized.includes("TEST")) return "bg-red-500";
+  if (normalized.includes("IPL")) return "bg-amber-500";
+  if (normalized.includes("FC") || normalized.includes("FIRST CLASS")) return "bg-rose-500";
+  return "bg-gray-500";
 }
 
 export function wordCount(text: string): number {

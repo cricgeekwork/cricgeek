@@ -36,7 +36,7 @@ function NewsImage({ imageUrl, title }: { imageUrl: string; title: string }) {
 
   if (!imageUrl || failed) {
     return (
-      <div className="flex h-28 w-full items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-[#173743] via-[#0f232f] to-[#0d171c] text-[11px] font-semibold uppercase tracking-[0.14em] text-[#97b7c4]">
+      <div className="flex h-28 w-full items-center justify-center rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface-2)] text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-secondary)]">
         Cricket Update
       </div>
     );
@@ -123,21 +123,21 @@ export default function CricketNewsSidebar({
   }, [queryString]);
 
   return (
-    <section className={`rounded-[24px] border border-white/8 bg-[#171a1b] p-5 ${className || ""}`}>
+    <section className={`rounded-[24px] border border-[var(--border-color)] bg-[var(--bg-card)] p-5 ${className || ""}`}>
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-[#7ac0ff]">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] text-sky-600 dark:text-[#7ac0ff]">
             <Newspaper size={15} />
           </span>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8e887d]">Cricket News</p>
-            <p className="text-xs text-[#9f988c]">Provider: {provider}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">Cricket News</p>
+            <p className="text-xs text-[var(--text-secondary)]">Provider: {provider}</p>
           </div>
         </div>
       </div>
 
       {stale && (
-        <p className="mt-4 rounded-xl border border-amber-400/20 bg-amber-400/10 px-3 py-2 text-xs text-amber-200">
+        <p className="mt-4 rounded-xl border border-amber-400/20 bg-amber-400/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
           Showing last cached stories while provider updates are delayed.
         </p>
       )}
@@ -145,18 +145,18 @@ export default function CricketNewsSidebar({
       {loading && (
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
           {[1, 2, 3].map((skeleton) => (
-            <div key={skeleton} className="rounded-xl border border-white/10 bg-white/[0.03] p-3 animate-pulse">
-              <div className="h-24 rounded-lg bg-white/10" />
-              <div className="mt-3 h-3 rounded bg-white/10" />
-              <div className="mt-2 h-3 w-4/5 rounded bg-white/10" />
-              <div className="mt-3 h-2 w-1/2 rounded bg-white/10" />
+            <div key={skeleton} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface-2)] p-3 animate-pulse">
+              <div className="h-24 rounded-lg bg-[var(--border-color)]" />
+              <div className="mt-3 h-3 rounded bg-[var(--border-color)]" />
+              <div className="mt-2 h-3 w-4/5 rounded bg-[var(--border-color)]" />
+              <div className="mt-3 h-2 w-1/2 rounded bg-[var(--border-color)]" />
             </div>
           ))}
         </div>
       )}
 
       {!loading && articles.length === 0 && (
-        <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-5 text-sm text-[#b4ad9f]">
+        <div className="mt-4 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-5 text-sm text-[var(--text-secondary)]">
           {error || "No cricket news is available yet."}
         </div>
       )}
@@ -164,21 +164,21 @@ export default function CricketNewsSidebar({
       {!loading && articles.length > 0 && (
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
           {articles.map((article) => (
-            <article key={article.id} className="rounded-xl border border-white/10 bg-white/[0.03] p-3 transition-colors hover:bg-white/[0.05]">
+            <article key={article.id} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface-2)] p-3 transition-colors hover:bg-[var(--bg-hover-2)]">
               <NewsImage imageUrl={article.imageUrl} title={article.title} />
               <a
                 href={article.articleUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 inline-flex items-start gap-1 text-sm font-semibold leading-5 text-white hover:text-[#8bc9ff]"
+                className="mt-3 inline-flex items-start gap-1 text-sm font-semibold leading-5 text-[var(--text-primary)] hover:text-cg-green"
               >
                 <span style={clampStyle(2)}>{article.title}</span>
                 <ExternalLink size={14} className="mt-0.5 shrink-0" />
               </a>
-              <p className="mt-2 text-xs text-[#a7a194]" style={clampStyle(3)}>
+              <p className="mt-2 text-xs text-[var(--text-secondary)]" style={clampStyle(3)}>
                 {article.description || "Read the full update for details."}
               </p>
-              <div className="mt-3 flex items-center justify-between text-[11px] uppercase tracking-[0.14em] text-[#8f897d]">
+              <div className="mt-3 flex items-center justify-between text-[11px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
                 <span style={clampStyle(1)}>{article.sourceName}</span>
                 <span>{formatPublishedAt(article.publishedAt)}</span>
               </div>
@@ -188,7 +188,7 @@ export default function CricketNewsSidebar({
       )}
 
       {!loading && error && articles.length > 0 && (
-        <p className="mt-3 text-xs text-amber-200">{error}</p>
+        <p className="mt-3 text-xs text-amber-800 dark:text-amber-200">{error}</p>
       )}
     </section>
   );

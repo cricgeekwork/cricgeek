@@ -18,7 +18,7 @@ type LiveEdaChartsProps = {
 
 function EmptyChart({ message }: { message: string }) {
   return (
-    <div className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-6 text-sm text-gray-400">
+    <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-6 text-sm text-[var(--text-muted)]">
       {message}
     </div>
   );
@@ -38,16 +38,16 @@ function ProgressChart({
   const progress = Math.min(100, (current / Math.max(required, 1)) * 100);
   return (
     <div className="space-y-3 rounded-lg border border-sky-500/20 bg-sky-500/[0.06] px-4 py-5">
-      <div className="flex items-center justify-between gap-3 text-sm text-sky-100">
+      <div className="flex items-center justify-between gap-3 text-sm text-sky-800 dark:text-sky-100">
         <span>Collecting enough live data…</span>
         <span>
           {current}/{required} {unit}
         </span>
       </div>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-black/20">
-        <div className="h-full rounded-full bg-sky-400 transition-all duration-500" style={{ width: `${progress}%` }} />
+      <div className="h-2 w-full overflow-hidden rounded-full bg-black/10 dark:bg-black/20">
+        <div className="h-full rounded-full bg-sky-500 dark:bg-sky-400 transition-all duration-500" style={{ width: `${progress}%` }} />
       </div>
-      <p className="text-sm text-sky-100/90">{message}</p>
+      <p className="text-sm text-sky-800/90 dark:text-sky-100/90">{message}</p>
     </div>
   );
 }
@@ -64,9 +64,9 @@ function ChartFrame({
   className?: string;
 }) {
   return (
-    <section className={cn("rounded-xl border border-gray-800 bg-cg-dark-2 p-5", className)}>
-      <h4 className="text-base font-bold text-white">{title}</h4>
-      <p className="mt-1 text-sm text-gray-400">{subtitle}</p>
+    <section className={cn("rounded-xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5", className)}>
+      <h4 className="text-base font-bold text-[var(--text-primary)]">{title}</h4>
+      <p className="mt-1 text-sm text-[var(--text-secondary)]">{subtitle}</p>
       <div className="mt-4">{children}</div>
     </section>
   );
@@ -135,18 +135,18 @@ function LineChart({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between text-xs text-gray-500">
+      <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
         <span>{yLabel}</span>
         <span>{sampled[0]?.label} to {sampled[sampled.length - 1]?.label}</span>
       </div>
-      <svg viewBox={`0 0 ${width} ${height}`} className="h-56 w-full overflow-visible rounded-lg border border-gray-800 bg-cg-dark">
+      <svg viewBox={`0 0 ${width} ${height}`} className="h-56 w-full overflow-visible rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)]">
         {[0, 0.25, 0.5, 0.75, 1].map((tick) => {
           const y = height - padding - tick * (height - padding * 2);
           const value = minValue + (maxValue - minValue) * tick;
           return (
             <g key={tick}>
-              <line x1={padding} y1={y} x2={width - padding} y2={y} stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-              <text x={6} y={y + 4} fill="rgba(255,255,255,0.45)" fontSize="10">
+              <line x1={padding} y1={y} x2={width - padding} y2={y} stroke="currentColor" className="text-gray-300 dark:text-white/10" strokeWidth="1" />
+              <text x={6} y={y + 4} fill="currentColor" className="text-gray-500 dark:text-white/45" fontSize="10">
                 {formatAxisValue(value)}
               </text>
             </g>
@@ -180,10 +180,10 @@ function LineChart({
       </svg>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         {sampled.slice(-3).map((point) => (
-          <div key={point.id} className="rounded-lg border border-gray-800 bg-cg-dark px-3 py-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">{point.label}</p>
-            <p className="mt-1 text-lg font-bold text-white">{formatAxisValue(point.value)}</p>
-            <p className="mt-1 text-xs text-gray-400">{point.note}</p>
+          <div key={point.id} className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-3 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">{point.label}</p>
+            <p className="mt-1 text-lg font-bold text-[var(--text-primary)]">{formatAxisValue(point.value)}</p>
+            <p className="mt-1 text-xs text-[var(--text-secondary)]">{point.note}</p>
           </div>
         ))}
       </div>
@@ -211,27 +211,27 @@ function DivergingBars({
       {data.map((entry) => {
         const width = `${(Math.abs(entry.delta) / maxMagnitude) * 100}%`;
         return (
-          <div key={entry.label} className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-3">
+          <div key={entry.label} className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-4 py-3">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold text-white">{entry.label}</p>
-                <p className="mt-1 text-xs text-gray-500">{entry.note}</p>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">{entry.label}</p>
+                <p className="mt-1 text-xs text-[var(--text-muted)]">{entry.note}</p>
               </div>
               <div className="text-right">
-                <p className={cn("text-lg font-black", entry.delta >= 0 ? "text-cg-green" : "text-amber-300")}>
+                <p className={cn("text-lg font-black", entry.delta >= 0 ? "text-cg-green" : "text-amber-600 dark:text-amber-300")}>
                   {entry.delta >= 0 ? "+" : ""}{entry.delta}
                 </p>
-                {entry.sample ? <p className="text-xs text-gray-500">{entry.sample} balls</p> : null}
+                {entry.sample ? <p className="text-xs text-[var(--text-muted)]">{entry.sample} balls</p> : null}
               </div>
             </div>
-            <div className="mt-3 h-2 rounded-full bg-white/5">
+            <div className="mt-3 h-2 rounded-full bg-black/10 dark:bg-white/5">
               <div
-                className={cn("h-full rounded-full", entry.delta >= 0 ? "bg-cg-green" : "bg-amber-400")}
+                className={cn("h-full rounded-full", entry.delta >= 0 ? "bg-cg-green" : "bg-amber-500")}
                 style={{ width }}
               />
             </div>
             {(entry.actual !== undefined || entry.expected !== undefined) ? (
-              <p className="mt-2 text-xs text-gray-400">
+              <p className="mt-2 text-xs text-[var(--text-secondary)]">
                 {metricLabel}: actual {entry.actual ?? 0}, expected {entry.expected ?? 0}
               </p>
             ) : null}
@@ -260,18 +260,18 @@ function HorizontalBars({
   return (
     <div className="space-y-3">
       {data.map((entry) => (
-        <div key={entry.label} className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-3">
+        <div key={entry.label} className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-4 py-3">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-sm font-semibold text-white">{entry.label}</p>
-            <p className="text-sm font-black text-white">{entry.value.toFixed(1)}</p>
+            <p className="text-sm font-semibold text-[var(--text-primary)]">{entry.label}</p>
+            <p className="text-sm font-black text-[var(--text-primary)]">{entry.value.toFixed(1)}</p>
           </div>
-          <div className="mt-3 h-2 rounded-full bg-white/5">
+          <div className="mt-3 h-2 rounded-full bg-black/10 dark:bg-white/5">
             <div
               className={cn("h-full rounded-full", colorClass)}
               style={{ width: `${(Math.abs(entry.value) / maxValue) * 100}%` }}
             />
           </div>
-          <p className="mt-2 text-xs text-gray-400">{entry.note}</p>
+          <p className="mt-2 text-xs text-[var(--text-secondary)]">{entry.note}</p>
         </div>
       ))}
     </div>
@@ -288,23 +288,23 @@ function PartnershipBars({ data }: { data: LivePartnershipDatum[] }) {
   return (
     <div className="space-y-3">
       {data.map((entry) => (
-        <div key={`${entry.label}-${entry.pair}`} className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-3">
+        <div key={`${entry.label}-${entry.pair}`} className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-4 py-3">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-semibold text-white">{entry.pair}</p>
-              <p className="mt-1 text-xs text-gray-500">{entry.runs} runs from {entry.balls} balls</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{entry.pair}</p>
+              <p className="mt-1 text-xs text-[var(--text-muted)]">{entry.runs} runs from {entry.balls} balls</p>
             </div>
-            <p className={cn("text-lg font-black", entry.influence >= 0 ? "text-cg-green" : "text-amber-300")}>
+            <p className={cn("text-lg font-black", entry.influence >= 0 ? "text-cg-green" : "text-amber-600 dark:text-amber-300")}>
               {entry.influence >= 0 ? "+" : ""}{entry.influence}
             </p>
           </div>
-          <div className="mt-3 h-2 rounded-full bg-white/5">
+          <div className="mt-3 h-2 rounded-full bg-black/10 dark:bg-white/5">
             <div
-              className={cn("h-full rounded-full", entry.influence >= 0 ? "bg-cg-green" : "bg-amber-400")}
+              className={cn("h-full rounded-full", entry.influence >= 0 ? "bg-cg-green" : "bg-amber-500")}
               style={{ width: `${(Math.abs(entry.influence) / maxValue) * 100}%` }}
             />
           </div>
-          <p className="mt-2 text-xs text-gray-400">{entry.note}</p>
+          <p className="mt-2 text-xs text-[var(--text-secondary)]">{entry.note}</p>
         </div>
       ))}
     </div>
@@ -321,19 +321,19 @@ function ScenarioBars({ data }: { data: LiveScenarioDatum[] }) {
   return (
     <div className="space-y-3">
       {data.map((entry) => (
-        <div key={entry.label} className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-3">
+        <div key={entry.label} className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-4 py-3">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-semibold text-white">{entry.label}</p>
-              <p className="mt-1 text-xs text-gray-500">{entry.note}</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{entry.label}</p>
+              <p className="mt-1 text-xs text-[var(--text-muted)]">{entry.note}</p>
             </div>
             <div className="text-right">
-              <p className="text-lg font-black text-white">{Math.round(entry.projectedTotal)}</p>
-              <p className="text-xs text-cg-green">WP {Math.round(entry.winProbability)}%</p>
+              <p className="text-lg font-black text-[var(--text-primary)]">{Math.round(entry.projectedTotal)}</p>
+              <p className="text-xs text-cg-green font-semibold">WP {Math.round(entry.winProbability)}%</p>
             </div>
           </div>
-          <div className="mt-3 h-2 rounded-full bg-white/5">
-            <div className="h-full rounded-full bg-blue-400" style={{ width: `${(entry.projectedTotal / maxProjected) * 100}%` }} />
+          <div className="mt-3 h-2 rounded-full bg-black/10 dark:bg-white/5">
+            <div className="h-full rounded-full bg-blue-500" style={{ width: `${(entry.projectedTotal / maxProjected) * 100}%` }} />
           </div>
         </div>
       ))}
@@ -354,7 +354,7 @@ function Heatmap({ cells }: { cells: LiveHeatmapCell[] }) {
       <div className="min-w-[420px] space-y-2">
         {overs.map((over) => (
           <div key={over} className="grid grid-cols-[70px_repeat(6,minmax(0,1fr))] gap-2">
-            <div className="rounded-lg border border-gray-800 bg-cg-dark px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">
+            <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
               Over {over}
             </div>
             {[1, 2, 3, 4, 5, 6].map((ball) => {
@@ -368,10 +368,10 @@ function Heatmap({ cells }: { cells: LiveHeatmapCell[] }) {
                   className={cn(
                     "rounded-lg border px-2 py-3 text-center text-xs font-semibold",
                     cell?.isWicket
-                      ? "border-red-500/30 bg-red-500/15 text-red-100"
+                      ? "border-red-500/30 bg-red-500/15 text-red-700 dark:text-red-100"
                       : cell?.isDot
-                        ? "border-amber-500/25 text-amber-100"
-                        : "border-gray-800 text-white"
+                        ? "border-amber-500/30 bg-amber-500/15 text-amber-800 dark:text-amber-100"
+                        : "border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-primary)]"
                   )}
                   style={
                     cell && !cell.isWicket && !cell.isDot
@@ -406,9 +406,9 @@ function MatchupMatrix({ data }: { data: LiveMatchupCell[] }) {
       <table className="min-w-[720px] w-full border-separate border-spacing-2">
         <thead>
           <tr>
-            <th className="px-3 py-2 text-left text-xs uppercase tracking-[0.18em] text-gray-500">Batter</th>
+            <th className="px-3 py-2 text-left text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Batter</th>
             {bowlers.map((bowler) => (
-              <th key={bowler} className="px-3 py-2 text-left text-xs uppercase tracking-[0.18em] text-gray-500">
+              <th key={bowler} className="px-3 py-2 text-left text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
                 {bowler}
               </th>
             ))}
@@ -417,7 +417,7 @@ function MatchupMatrix({ data }: { data: LiveMatchupCell[] }) {
         <tbody>
           {batters.map((batter) => (
             <tr key={batter}>
-              <td className="rounded-lg border border-gray-800 bg-cg-dark px-3 py-3 text-sm font-semibold text-white">
+              <td className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-3 py-3 text-sm font-semibold text-[var(--text-primary)]">
                 {batter}
               </td>
               {bowlers.map((bowler) => {
@@ -426,19 +426,19 @@ function MatchupMatrix({ data }: { data: LiveMatchupCell[] }) {
                 return (
                   <td
                     key={`${batter}-${bowler}`}
-                    className="rounded-lg border border-gray-800 px-3 py-3 align-top"
+                    className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-3 py-3 align-top"
                     style={cell ? { backgroundColor: `rgba(34,197,94,${opacity})` } : undefined}
                   >
                     {cell ? (
                       <div className="space-y-1">
-                        <p className="text-sm font-bold text-white">{cell.runs}/{cell.balls}</p>
-                        <p className="text-xs text-gray-100">SR {cell.strikeRate}</p>
-                        <p className="text-xs text-gray-200">
+                        <p className="text-sm font-bold text-[var(--text-primary)]">{cell.runs}/{cell.balls}</p>
+                        <p className="text-xs text-[var(--text-secondary)]">SR {cell.strikeRate}</p>
+                        <p className="text-xs text-[var(--text-muted)]">
                           Dot {cell.dotPct}%{cell.dismissals > 0 ? ` | ${cell.dismissals} wicket` : ""}
                         </p>
                       </div>
                     ) : (
-                      <p className="text-xs text-gray-500">No tracked balls</p>
+                      <p className="text-xs text-[var(--text-muted)]">No tracked balls</p>
                     )}
                   </td>
                 );
@@ -461,29 +461,29 @@ function BoundaryPressurePanel({ summary }: { summary: LiveBoundaryPressureSumma
   return (
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-3">
-          <p className="text-xs uppercase tracking-[0.18em] text-gray-500">{summary.recentOversLabel}</p>
-          <p className="mt-1 text-lg font-black text-white">{summary.recentBoundaryBalls} boundaries</p>
-          <p className="mt-1 text-xs text-gray-400">{summary.recentFours}x4, {summary.recentSixes}x6</p>
+        <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{summary.recentOversLabel}</p>
+          <p className="mt-1 text-lg font-black text-[var(--text-primary)]">{summary.recentBoundaryBalls} boundaries</p>
+          <p className="mt-1 text-xs text-[var(--text-secondary)]">{summary.recentFours}x4, {summary.recentSixes}x6</p>
         </div>
-        <div className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-3">
-          <p className="text-xs uppercase tracking-[0.18em] text-gray-500">Measured rate</p>
-          <p className="mt-1 text-lg font-black text-white">{summary.recentBoundaryRate}/over</p>
-          <p className="mt-1 text-xs text-gray-400">Innings rate {summary.inningsBoundaryRate}/over</p>
+        <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Measured rate</p>
+          <p className="mt-1 text-lg font-black text-[var(--text-primary)]">{summary.recentBoundaryRate}/over</p>
+          <p className="mt-1 text-xs text-[var(--text-secondary)]">Innings rate {summary.inningsBoundaryRate}/over</p>
         </div>
-        <div className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-3">
-          <p className="text-xs uppercase tracking-[0.18em] text-gray-500">Forecast rate</p>
-          <p className="mt-1 text-lg font-black text-white">{summary.forecastBoundaryRate}/over</p>
-          <p className="mt-1 text-xs text-gray-400">Phase baseline {summary.expectedBoundaryRate}/over</p>
+        <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Forecast rate</p>
+          <p className="mt-1 text-lg font-black text-[var(--text-primary)]">{summary.forecastBoundaryRate}/over</p>
+          <p className="mt-1 text-xs text-[var(--text-secondary)]">Phase baseline {summary.expectedBoundaryRate}/over</p>
         </div>
-        <div className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-3">
-          <p className="text-xs uppercase tracking-[0.18em] text-gray-500">Boundary share</p>
-          <p className="mt-1 text-lg font-black text-white">{summary.recentBoundaryRunShare}%</p>
-          <p className="mt-1 text-xs text-gray-400">Pressure index {summary.pressureIndex}</p>
+        <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Boundary share</p>
+          <p className="mt-1 text-lg font-black text-[var(--text-primary)]">{summary.recentBoundaryRunShare}%</p>
+          <p className="mt-1 text-xs text-[var(--text-secondary)]">Pressure index {summary.pressureIndex}</p>
         </div>
       </div>
 
-      <div className="space-y-3 rounded-lg border border-gray-800 bg-cg-dark px-4 py-4">
+      <div className="space-y-3 rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-4 py-4">
         {[
           { label: "Measured", value: summary.recentBoundaryRate, colorClass: "bg-cg-green" },
           { label: "Forecast", value: summary.forecastBoundaryRate, colorClass: "bg-blue-400" },
@@ -491,10 +491,10 @@ function BoundaryPressurePanel({ summary }: { summary: LiveBoundaryPressureSumma
         ].map((entry) => (
           <div key={entry.label}>
             <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-semibold text-white">{entry.label}</p>
-              <p className="text-sm font-black text-white">{entry.value}/over</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{entry.label}</p>
+              <p className="text-sm font-black text-[var(--text-primary)]">{entry.value}/over</p>
             </div>
-            <div className="mt-2 h-2 rounded-full bg-white/5">
+            <div className="mt-2 h-2 rounded-full bg-black/10 dark:bg-white/5">
               <div
                 className={cn("h-full rounded-full", entry.colorClass)}
                 style={{ width: `${(entry.value / rateMax) * 100}%` }}
@@ -504,7 +504,7 @@ function BoundaryPressurePanel({ summary }: { summary: LiveBoundaryPressureSumma
         ))}
       </div>
 
-      <p className="text-sm text-gray-400">{summary.note}</p>
+      <p className="text-sm text-[var(--text-secondary)]">{summary.note}</p>
     </div>
   );
 }

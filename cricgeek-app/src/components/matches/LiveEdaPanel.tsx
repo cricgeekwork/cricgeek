@@ -30,35 +30,35 @@ export default function LiveEdaPanel({ matchId, enabled }: LiveEdaPanelProps) {
   }
 
   return (
-    <section className="rounded-xl border border-gray-800 bg-cg-dark-2 p-5">
+    <section className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-cg-green/20 bg-cg-green/10 text-cg-green">
               <Activity size={16} />
             </span>
-            <h3 className="text-lg font-bold text-white">Live Intelligence</h3>
-            <span className="inline-flex items-center gap-1 rounded-full border border-red-500/20 bg-red-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-red-200">
-              <span className="h-1.5 w-1.5 rounded-full bg-red-300 animate-pulse" />
+            <h3 className="text-lg font-bold text-[var(--text-primary)]">Live Intelligence</h3>
+            <span className="inline-flex items-center gap-1 rounded-full border border-red-500/20 bg-red-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-red-600 dark:text-red-200">
+              <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
               Live
             </span>
           </div>
-          <p className="mt-2 text-sm text-gray-400">
+          <p className="mt-2 text-sm text-[var(--text-secondary)]">
             Real-time command-center analytics refreshed every 15 seconds from the latest live score state, commentary flow, and venue context.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-400">
+        <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
           {isRefreshing ? <Loader2 size={14} className="animate-spin" /> : null}
-          <span className="rounded-full bg-white/5 px-3 py-1.5">
+          <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-1.5 text-[var(--text-secondary)]">
             Auto-refresh every {report?.pollIntervalSeconds ?? LIVE_EDA_POLL_INTERVAL_SECONDS}s
           </span>
           {report ? (
-            <span className="rounded-full bg-white/5 px-3 py-1.5">
+            <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-1.5 text-[var(--text-secondary)]">
               {report.ballsTracked} balls tracked
             </span>
           ) : null}
           {report ? (
-            <span className="rounded-full bg-white/5 px-3 py-1.5">
+            <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-1.5 text-[var(--text-secondary)]">
               Confidence {Math.round(report.confidence.score)}% | {report.confidence.label}
             </span>
           ) : null}
@@ -66,13 +66,13 @@ export default function LiveEdaPanel({ matchId, enabled }: LiveEdaPanelProps) {
       </div>
 
       {error ? (
-        <p className="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+        <p className="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
           {error}
         </p>
       ) : null}
 
       {!report && !isLoading ? (
-        <div className="mt-4 rounded-lg border border-gray-800 bg-cg-dark px-4 py-4 text-sm text-gray-400">
+        <div className="mt-4 rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-4 text-sm text-[var(--text-muted)]">
           Waiting for the current live state to generate the first EDA snapshot.
         </div>
       ) : null}
@@ -80,16 +80,16 @@ export default function LiveEdaPanel({ matchId, enabled }: LiveEdaPanelProps) {
       {report ? (
         <div className="mt-5 space-y-5">
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(270px,0.75fr)]">
-            <div className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-4">
-              <p className="text-sm leading-7 text-gray-200">{report.summary}</p>
-              <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-400">
-                <span className="rounded-full bg-white/5 px-3 py-1.5">
+            <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-4">
+              <p className="text-sm leading-7 text-[var(--text-primary)]">{report.summary}</p>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs text-[var(--text-secondary)]">
+                <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-1.5">
                   Phase {report.snapshot.phase}
                 </span>
-                <span className="rounded-full bg-white/5 px-3 py-1.5">
+                <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-1.5">
                   {report.snapshot.battingTeam} {report.snapshot.runs}/{report.snapshot.wickets}
                 </span>
-                <span className="rounded-full bg-white/5 px-3 py-1.5">
+                <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-1.5">
                   Generated {new Date(report.freshness.generatedAt).toLocaleTimeString("en-IN", {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -100,20 +100,20 @@ export default function LiveEdaPanel({ matchId, enabled }: LiveEdaPanelProps) {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-              <div className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">Current rate</p>
-                <p className="mt-2 text-2xl font-black text-white">{report.snapshot.currentRunRate}</p>
-                <p className="mt-2 text-xs text-gray-400">Scoring tempo right now</p>
+              <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">Current rate</p>
+                <p className="mt-2 text-2xl font-black text-[var(--text-primary)]">{report.snapshot.currentRunRate}</p>
+                <p className="mt-2 text-xs text-[var(--text-secondary)]">Scoring tempo right now</p>
               </div>
-              <div className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">Pressure</p>
-                <p className="mt-2 text-2xl font-black text-white">{report.snapshot.pressureIndex}</p>
-                <p className="mt-2 text-xs text-gray-400">Live scoreboard squeeze</p>
+              <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">Pressure</p>
+                <p className="mt-2 text-2xl font-black text-[var(--text-primary)]">{report.snapshot.pressureIndex}</p>
+                <p className="mt-2 text-xs text-[var(--text-secondary)]">Live scoreboard squeeze</p>
               </div>
-              <div className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">Required rate</p>
-                <p className="mt-2 text-2xl font-black text-white">{report.snapshot.requiredRunRate ?? "NA"}</p>
-                <p className="mt-2 text-xs text-gray-400">Only active in a chase</p>
+              <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">Required rate</p>
+                <p className="mt-2 text-2xl font-black text-[var(--text-primary)]">{report.snapshot.requiredRunRate ?? "NA"}</p>
+                <p className="mt-2 text-xs text-[var(--text-secondary)]">Only active in a chase</p>
               </div>
             </div>
           </div>
@@ -142,12 +142,12 @@ export default function LiveEdaPanel({ matchId, enabled }: LiveEdaPanelProps) {
           {report.warnings.length > 0 ? (
             <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-4">
               <div className="flex items-center gap-2">
-                <TriangleAlert size={16} className="text-amber-200" />
-                <p className="text-sm font-semibold text-amber-100">Operational notes</p>
+                <TriangleAlert size={16} className="text-amber-600 dark:text-amber-300" />
+                <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">Operational notes</p>
               </div>
               <div className="mt-3 space-y-2">
                 {report.warnings.map((warning) => (
-                  <p key={warning} className="text-sm text-amber-200">
+                  <p key={warning} className="text-sm text-amber-800 dark:text-amber-200">
                     {warning}
                   </p>
                 ))}
@@ -155,9 +155,9 @@ export default function LiveEdaPanel({ matchId, enabled }: LiveEdaPanelProps) {
             </div>
           ) : null}
 
-          <div className="rounded-lg border border-gray-800 bg-cg-dark px-4 py-4">
-            <h4 className="text-sm font-semibold text-white">Recommendation cadence</h4>
-            <p className="mt-3 text-sm leading-7 text-gray-400">
+          <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-4">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)]">Recommendation cadence</h4>
+            <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
               Live player recommendations are now shown in the dedicated trigger-aware panel above the commentary feed.
               Batting calls refresh only after wickets, while bowling calls refresh after completed overs once enough data
               exists. This keeps the advice stable between events instead of churning every polling cycle.

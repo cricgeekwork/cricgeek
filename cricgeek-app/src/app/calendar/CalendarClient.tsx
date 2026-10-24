@@ -110,8 +110,8 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
-      <h1 className="text-3xl font-black text-white mb-2">Cricket Calendar</h1>
-      <p className="text-gray-400 text-sm mb-8">
+      <h1 className="text-3xl font-black text-[var(--text-primary)] mb-2">Cricket Calendar</h1>
+      <p className="text-[var(--text-secondary)] text-sm mb-8">
         Upcoming fixtures, live games, and recent results in one timeline.
       </p>
 
@@ -119,14 +119,14 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
       <div className="flex items-center justify-between mb-4 sm:mb-6">
         <button
           onClick={prevMonth}
-          className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white transition-all"
+          className="p-2 rounded-lg border border-[var(--border-color)] bg-[var(--btn-secondary-bg)] hover:bg-[var(--bg-hover-2)] text-[var(--text-primary)] transition-all"
         >
           <ChevronLeft size={20} />
         </button>
-        <h2 className="text-xl font-bold text-white">{monthName}</h2>
+        <h2 className="text-xl font-bold text-[var(--text-primary)]">{monthName}</h2>
         <button
           onClick={nextMonth}
-          className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white transition-all"
+          className="p-2 rounded-lg border border-[var(--border-color)] bg-[var(--btn-secondary-bg)] hover:bg-[var(--bg-hover-2)] text-[var(--text-primary)] transition-all"
         >
           <ChevronRight size={20} />
         </button>
@@ -134,8 +134,8 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
 
       {matches.length === 0 && (
         <div className="mb-8 rounded-2xl border border-amber-500/20 bg-amber-500/10 p-5">
-          <p className="text-sm font-semibold text-amber-300">No calendar matches available right now.</p>
-          <p className="mt-1 text-sm text-amber-200/80">
+          <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">No calendar matches available right now.</p>
+          <p className="mt-1 text-sm text-amber-900/80 dark:text-amber-200/80">
             {source === "sportmonks"
               ? "SportMonks returned no fixtures for the current calendar window. This usually means there are no fixtures or results in the requested range, or the API quota has been exhausted."
               : source === "mock"
@@ -146,13 +146,13 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
       )}
 
       {/* Calendar Grid */}
-      <div className="bg-cg-dark-2 border border-gray-800 rounded-xl overflow-hidden">
+      <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl overflow-hidden">
         {/* Day headers */}
-        <div className="grid grid-cols-7 border-b border-gray-800">
+        <div className="grid grid-cols-7 border-b border-[var(--border-color)] bg-[var(--bg-surface-2)]">
           {days.map((day) => (
             <div
               key={day}
-              className="px-0 py-2 sm:px-2 sm:py-3 text-center text-[9px] sm:text-xs font-semibold text-gray-400 uppercase"
+              className="px-0 py-2 sm:px-2 sm:py-3 text-center text-[9px] sm:text-xs font-semibold text-[var(--text-secondary)] uppercase"
             >
               {day}
             </div>
@@ -165,7 +165,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
           {Array.from({ length: firstDayOfWeek }).map((_, i) => (
             <div
               key={`empty-${i}`}
-              className="min-h-12 sm:min-h-[120px] border-b border-r border-gray-800/50 bg-gray-900/30"
+              className="min-h-12 sm:min-h-[120px] border-b border-r border-[var(--border-color)] bg-[var(--bg-surface-2)]/40"
             />
           ))}
 
@@ -181,8 +181,8 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                 key={day}
                 onClick={() => dayMatches.length > 0 && setSelectedDate(dateStr)}
                 className={cn(
-                  "min-h-12 cursor-default sm:min-h-[120px] border-b border-r border-gray-800/50 p-0.5 sm:p-1.5 transition-all",
-                  dayMatches.length > 0 && "cursor-pointer hover:bg-white/5",
+                  "min-h-12 cursor-default sm:min-h-[120px] border-b border-r border-[var(--border-color)] p-0.5 sm:p-1.5 transition-all",
+                  dayMatches.length > 0 && "cursor-pointer hover:bg-[var(--bg-hover)]",
                   isToday && "bg-cg-green/5",
                   selectedDate === dateStr && "ring-1 ring-inset ring-cg-green/40"
                 )}
@@ -192,7 +192,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                     "text-[10px] sm:text-xs font-medium inline-block w-5 h-5 sm:w-6 sm:h-6 rounded-full text-center leading-5 sm:leading-6",
                     isToday
                       ? "bg-[var(--accent)] text-[var(--text-on-accent)] font-bold"
-                      : "text-gray-400"
+                      : "text-[var(--text-secondary)]"
                   )}
                 >
                   {day}
@@ -243,11 +243,11 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
         </div>
       </div>
 
-      <div className="mt-6 sm:mt-8 rounded-xl sm:rounded-2xl border border-gray-800 bg-cg-dark-2 p-3 sm:p-5">
+      <div className="mt-6 sm:mt-8 rounded-xl sm:rounded-2xl border border-[var(--border-color)] bg-[var(--bg-card)] p-3 sm:p-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h3 className="text-lg font-bold text-white">Match Board</h3>
-            <p className="text-sm text-gray-400">
+            <h3 className="text-lg font-bold text-[var(--text-primary)]">Match Board</h3>
+            <p className="text-sm text-[var(--text-secondary)]">
               {selectedMatches.length > 0
                 ? `Fixtures, results, and linked coverage for ${selectedDate}`
                 : `No matches found for ${selectedDate}`}
@@ -261,13 +261,13 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
         </div>
 
         {selectedMatches.length === 0 ? (
-          <div className="mt-4 rounded-xl border border-dashed border-gray-700 bg-cg-dark px-4 py-8 text-center text-sm text-gray-500">
+          <div className="mt-4 rounded-xl border border-dashed border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-8 text-center text-sm text-[var(--text-muted)]">
             Pick another date in the calendar to preview upcoming, live, or completed matches.
           </div>
         ) : (
           <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
             {selectedMatches.map((match) => (
-              <div key={match.id} className="rounded-lg sm:rounded-xl border border-gray-800 bg-cg-dark p-3 sm:p-4">
+              <div key={match.id} className="rounded-lg sm:rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface-2)] p-3 sm:p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <span
@@ -278,11 +278,11 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                     >
                       {match.matchType}
                     </span>
-                    <h4 className="mt-3 text-lg font-bold text-white">{match.name}</h4>
-                    <p className="mt-1 text-sm text-gray-400">{match.venue}</p>
+                    <h4 className="mt-3 text-lg font-bold text-[var(--text-primary)]">{match.name}</h4>
+                    <p className="mt-1 text-sm text-[var(--text-secondary)]">{match.venue}</p>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs text-gray-500">{match.date}</span>
+                    <span className="text-xs text-[var(--text-muted)]">{match.date}</span>
                     <p className="mt-2 text-[11px] font-semibold uppercase tracking-wide text-cg-green">
                       {match.matchEnded ? "Completed" : match.matchStarted ? "Live" : "Upcoming"}
                     </p>
@@ -290,12 +290,12 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                 </div>
 
                 {match.score && match.score.length > 0 && (
-                  <div className="mt-4 rounded-lg border border-gray-800 bg-cg-dark-2/80 p-3">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">Score Snapshot</p>
+                  <div className="mt-4 rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-3">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">Score Snapshot</p>
                     <div className="mt-2 space-y-1">
                       {match.score.map((score) => (
-                        <p key={`${match.id}-${score.inning}`} className="text-sm text-gray-300">
-                          <span className="font-medium text-white">{score.inning}</span>: {score.r}/{score.w} ({score.o} ov)
+                        <p key={`${match.id}-${score.inning}`} className="text-sm text-[var(--text-secondary)]">
+                          <span className="font-medium text-[var(--text-primary)]">{score.inning}</span>: {score.r}/{score.w} ({score.o} ov)
                         </p>
                       ))}
                     </div>
@@ -305,21 +305,21 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Link
                     href={`/matches/${match.id}`}
-                    className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-semibold text-white hover:bg-white/10"
+                    className="inline-flex items-center gap-1 rounded-lg border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover-2)]"
                   >
                     Match Centre
                   </Link>
                   {match.matchEnded ? (
                     <Link
                       href={`/matches/${match.id}/post-match`}
-                      className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-semibold text-white hover:bg-white/10"
+                      className="inline-flex items-center gap-1 rounded-lg border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover-2)]"
                     >
                       Analysis
                     </Link>
                   ) : (
                     <Link
                       href={`/matches/${match.id}?tab=squads`}
-                      className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-semibold text-white hover:bg-white/10"
+                      className="inline-flex items-center gap-1 rounded-lg border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover-2)]"
                     >
                       Squad Preview
                     </Link>
@@ -327,7 +327,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                   {getPrimaryCommentary(match) ? (
                     <Link
                       href={`/commentary/${getPrimaryCommentary(match)!.id}`}
-                      className="inline-flex items-center gap-1 rounded-lg bg-cg-green/10 px-3 py-2 text-xs font-semibold text-cg-green hover:bg-cg-green/20"
+                      className="inline-flex items-center gap-1 rounded-lg border border-cg-green/30 bg-cg-green/10 px-3 py-2 text-xs font-semibold text-cg-green hover:bg-cg-green/20"
                     >
                       <Radio size={12} />
                       {getCommentaryLabel(getPrimaryCommentary(match)!.status)}
@@ -335,7 +335,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                   ) : !match.matchEnded ? (
                     <Link
                       href={`/commentary?matchId=${encodeURIComponent(match.id)}&matchName=${encodeURIComponent(match.name)}&matchType=${encodeURIComponent(match.matchType)}&status=scheduled`}
-                      className="inline-flex items-center gap-1 rounded-lg bg-cg-green/10 px-3 py-2 text-xs font-semibold text-cg-green hover:bg-cg-green/20"
+                      className="inline-flex items-center gap-1 rounded-lg border border-cg-green/30 bg-cg-green/10 px-3 py-2 text-xs font-semibold text-cg-green hover:bg-cg-green/20"
                     >
                       <Mic size={12} />
                       Schedule Commentary
@@ -344,7 +344,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                   {match.matchEnded && (
                     <Link
                       href={`/blog/write?matchId=${encodeURIComponent(match.id)}&matchName=${encodeURIComponent(match.name)}`}
-                      className="inline-flex items-center gap-1 rounded-lg bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-300 hover:bg-blue-500/20"
+                      className="inline-flex items-center gap-1 rounded-lg border border-blue-500/20 bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-500/20"
                     >
                       <PenSquare size={12} />
                       Write Recap
@@ -353,40 +353,40 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                 </div>
 
                 <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="rounded-lg border border-gray-800 bg-cg-dark-2/80 p-3">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">Commentary</p>
+                  <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-3">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">Commentary</p>
                     {match.commentarySessions.length > 0 ? (
                       <div className="mt-2 space-y-1">
                         {match.commentarySessions.slice(0, 2).map((session) => (
                           <Link
                             key={session.id}
                             href={`/commentary/${session.id}`}
-                            className="block text-sm text-cg-green hover:text-cg-green-light"
+                            className="block text-sm text-cg-green hover:text-cg-green-dark"
                           >
                             {session.status === "ended" ? "ARCHIVED" : session.status.toUpperCase()} by {session.moderator.name}
                           </Link>
                         ))}
                       </div>
                     ) : (
-                      <p className="mt-2 text-sm text-gray-400">No commentary sessions linked yet.</p>
+                      <p className="mt-2 text-sm text-[var(--text-secondary)]">No commentary sessions linked yet.</p>
                     )}
                   </div>
-                  <div className="rounded-lg border border-gray-800 bg-cg-dark-2/80 p-3">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">Blogs</p>
+                  <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-3">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">Blogs</p>
                     {match.blogs.length > 0 ? (
                       <div className="mt-2 space-y-1">
                         {match.blogs.slice(0, 2).map((blog) => (
                           <Link
                             key={blog.id}
                             href={`/blog/${blog.slug}`}
-                            className="block text-sm text-blue-300 hover:text-blue-200"
+                            className="block text-sm text-blue-600 dark:text-blue-300 hover:text-blue-700"
                           >
                             {blog.title}
                           </Link>
                         ))}
                         <Link
                           href={`/blog?matchId=${encodeURIComponent(match.id)}`}
-                          className="inline-flex items-center gap-1 pt-1 text-xs font-semibold text-blue-300 hover:text-blue-200"
+                          className="inline-flex items-center gap-1 pt-1 text-xs font-semibold text-blue-600 dark:text-blue-300 hover:text-blue-700"
                         >
                           <FileText size={12} />
                           View all linked blogs
@@ -394,10 +394,10 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                       </div>
                     ) : (
                       <div className="mt-2">
-                        <p className="text-sm text-gray-400">No match blogs yet.</p>
+                        <p className="text-sm text-[var(--text-secondary)]">No match blogs yet.</p>
                         <Link
                           href={`/blog/write?matchId=${encodeURIComponent(match.id)}&matchName=${encodeURIComponent(match.name)}`}
-                          className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-blue-300 hover:text-blue-200"
+                          className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-300 hover:text-blue-700"
                         >
                           <PenSquare size={12} />
                           {match.matchEnded ? "Write the recap" : "Write the preview"}
@@ -414,10 +414,10 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
 
       <div className="mt-8 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2">
         <div className="min-w-0">
-          <h3 className="text-lg font-bold text-white mb-4">Upcoming Matches</h3>
+          <h3 className="text-lg font-bold text-[var(--text-primary)] mb-4">Upcoming Matches</h3>
           <div className="min-w-0 space-y-2">
             {upcomingMatches.map((match) => (
-              <div key={match.id} className="min-w-0 bg-cg-dark-2 border border-gray-800 rounded-lg p-3 hover:border-cg-green/50 transition-all flex items-center gap-3">
+              <div key={match.id} className="min-w-0 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-lg p-3 hover:border-cg-green/50 transition-all flex items-center gap-3">
                   <span
                     className={cn(
                       "text-[10px] font-bold px-2 py-0.5 rounded text-white shrink-0",
@@ -427,27 +427,27 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                     {match.matchType}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-white text-sm font-medium truncate">
+                    <p className="text-[var(--text-primary)] text-sm font-medium truncate">
                       {match.name}
                     </p>
-                    <p className="text-gray-500 text-xs truncate">{match.venue}</p>
+                    <p className="text-[var(--text-muted)] text-xs truncate">{match.venue}</p>
                     <div className="mt-2 flex flex-wrap gap-2">
                       <Link
                         href={`/matches/${match.id}`}
-                        className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-2 py-1 text-[11px] font-medium text-white hover:bg-white/10"
+                        className="inline-flex items-center gap-1 rounded-lg border border-[var(--border-color)] bg-[var(--tag-bg)] px-2 py-1 text-[11px] font-medium text-[var(--text-primary)] hover:bg-[var(--bg-hover-2)]"
                       >
                         View Match
                       </Link>
                       <Link
                         href={`/matches/${match.id}?tab=squads`}
-                        className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-2 py-1 text-[11px] font-medium text-white hover:bg-white/10"
+                        className="inline-flex items-center gap-1 rounded-lg border border-[var(--border-color)] bg-[var(--tag-bg)] px-2 py-1 text-[11px] font-medium text-[var(--text-primary)] hover:bg-[var(--bg-hover-2)]"
                       >
                         Squads
                       </Link>
                       {getPrimaryCommentary(match) ? (
                         <Link
                           href={`/commentary/${getPrimaryCommentary(match)!.id}`}
-                          className="inline-flex items-center gap-1 rounded-lg bg-cg-green/10 px-2 py-1 text-[11px] font-medium text-cg-green hover:bg-cg-green/20"
+                          className="inline-flex items-center gap-1 rounded-lg border border-cg-green/30 bg-cg-green/10 px-2 py-1 text-[11px] font-medium text-cg-green hover:bg-cg-green/20"
                         >
                           <Radio size={12} />
                           {getCommentaryLabel(getPrimaryCommentary(match)!.status)}
@@ -455,7 +455,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                       ) : (
                         <Link
                           href={`/commentary?matchId=${encodeURIComponent(match.id)}&matchName=${encodeURIComponent(match.name)}&matchType=${encodeURIComponent(match.matchType)}&status=scheduled`}
-                          className="inline-flex items-center gap-1 rounded-lg bg-cg-green/10 px-2 py-1 text-[11px] font-medium text-cg-green hover:bg-cg-green/20"
+                          className="inline-flex items-center gap-1 rounded-lg border border-cg-green/30 bg-cg-green/10 px-2 py-1 text-[11px] font-medium text-cg-green hover:bg-cg-green/20"
                         >
                           <Mic size={12} />
                           Schedule Commentary
@@ -463,7 +463,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                       )}
                       <Link
                         href={`/blog/write?matchId=${encodeURIComponent(match.id)}&matchName=${encodeURIComponent(match.name)}`}
-                        className="inline-flex items-center gap-1 rounded-lg bg-blue-500/10 px-2 py-1 text-[11px] font-medium text-blue-300 hover:bg-blue-500/20"
+                        className="inline-flex items-center gap-1 rounded-lg border border-blue-500/20 bg-blue-500/10 px-2 py-1 text-[11px] font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-500/20"
                       >
                         <PenSquare size={12} />
                         Write Expression
@@ -471,7 +471,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                       {match.blogs.length > 0 && (
                         <Link
                           href={`/blog?matchId=${encodeURIComponent(match.id)}`}
-                          className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-2 py-1 text-[11px] font-medium text-gray-300 hover:bg-white/10"
+                          className="inline-flex items-center gap-1 rounded-lg border border-[var(--border-color)] bg-[var(--tag-bg)] px-2 py-1 text-[11px] font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover-2)]"
                         >
                           <FileText size={12} />
                           {match.blogs.length} Expression{match.blogs.length === 1 ? "" : "s"}
@@ -481,7 +481,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                     {(match.commentarySessions.length > 0 || match.blogs.length > 0) && (
                       <div className="mt-2 space-y-1">
                         {match.commentarySessions.slice(0, 1).map((session) => (
-                          <p key={session.id} className="text-[11px] text-gray-400 truncate">
+                          <p key={session.id} className="text-[11px] text-[var(--text-muted)] truncate">
                             Commentary: {session.status === "ended" ? "ARCHIVED" : session.status.toUpperCase()} by {session.moderator.name}
                           </p>
                         ))}
@@ -489,7 +489,7 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                           <Link
                             key={blog.id}
                             href={`/blog/${blog.slug}`}
-                            className="block text-[11px] text-blue-300 truncate hover:text-blue-200"
+                            className="block text-[11px] text-blue-600 dark:text-blue-300 truncate hover:text-blue-700"
                           >
                             {blog.title}
                           </Link>
@@ -497,11 +497,11 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                       </div>
                     )}
                   </div>
-                  <span className="text-gray-400 text-xs shrink-0">{match.date}</span>
+                  <span className="text-[var(--text-muted)] text-xs shrink-0">{match.date}</span>
                 </div>
             ))}
             {upcomingMatches.length === 0 && (
-              <div className="rounded-lg border border-gray-800 bg-cg-dark-2 p-4 text-sm text-gray-400">
+              <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-4 text-sm text-[var(--text-muted)]">
                 No upcoming matches are available from the current API response.
               </div>
             )}
@@ -509,24 +509,24 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
         </div>
 
         <div>
-          <h3 className="text-lg font-bold text-white mb-4">Recent Results</h3>
+          <h3 className="text-lg font-bold text-[var(--text-primary)] mb-4">Recent Results</h3>
           <div className="space-y-2">
             {recentMatches.map((match) => (
-              <div key={match.id} className="bg-cg-dark-2 border border-gray-800 rounded-lg p-3 hover:border-cg-green/50 transition-all">
+              <div key={match.id} className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-lg p-3 hover:border-cg-green/50 transition-all">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-white text-sm font-medium">{match.name}</p>
-                      <p className="text-gray-500 text-xs mt-1">{match.venue}</p>
+                      <p className="text-[var(--text-primary)] text-sm font-medium">{match.name}</p>
+                      <p className="text-[var(--text-muted)] text-xs mt-1">{match.venue}</p>
                     </div>
-                    <span className="rounded-full bg-white/5 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-gray-300">
+                    <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
                       Result
                     </span>
                   </div>
                   {match.score && match.score.length > 0 && (
                     <div className="mt-3 space-y-1">
                       {match.score.map((score) => (
-                        <p key={`${match.id}-${score.inning}`} className="text-[12px] text-gray-300">
-                          <span className="font-medium text-white">{score.inning}</span>: {score.r}/{score.w} ({score.o} ov)
+                        <p key={`${match.id}-${score.inning}`} className="text-[12px] text-[var(--text-secondary)]">
+                          <span className="font-medium text-[var(--text-primary)]">{score.inning}</span>: {score.r}/{score.w} ({score.o} ov)
                         </p>
                       ))}
                     </div>
@@ -534,31 +534,31 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
                   <div className="mt-3 flex flex-wrap gap-2">
                     <Link
                       href={`/matches/${match.id}`}
-                      className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-2 py-1 text-[11px] font-medium text-white hover:bg-white/10"
+                      className="inline-flex items-center gap-1 rounded-lg border border-[var(--border-color)] bg-[var(--tag-bg)] px-2 py-1 text-[11px] font-medium text-[var(--text-primary)] hover:bg-[var(--bg-hover-2)]"
                     >
                       Match Centre
                     </Link>
                     <Link
                       href={`/matches/${match.id}/post-match`}
-                      className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-2 py-1 text-[11px] font-medium text-white hover:bg-white/10"
+                      className="inline-flex items-center gap-1 rounded-lg border border-[var(--border-color)] bg-[var(--tag-bg)] px-2 py-1 text-[11px] font-medium text-[var(--text-primary)] hover:bg-[var(--bg-hover-2)]"
                     >
                       Analysis
                     </Link>
                     {getPrimaryCommentary(match) && (
                       <Link
                         href={`/commentary/${getPrimaryCommentary(match)!.id}`}
-                        className="inline-flex items-center gap-1 rounded-lg bg-cg-green/10 px-2 py-1 text-[11px] font-medium text-cg-green hover:bg-cg-green/20"
+                        className="inline-flex items-center gap-1 rounded-lg border border-cg-green/30 bg-cg-green/10 px-2 py-1 text-[11px] font-medium text-cg-green hover:bg-cg-green/20"
                       >
                         <Radio size={12} />
                         {getCommentaryLabel(getPrimaryCommentary(match)!.status)}
                       </Link>
                     )}
                   </div>
-                  <p className="mt-3 text-[11px] text-gray-400">{match.status}</p>
+                  <p className="mt-3 text-[11px] text-[var(--text-muted)]">{match.status}</p>
                 </div>
             ))}
             {recentMatches.length === 0 && (
-              <div className="rounded-lg border border-gray-800 bg-cg-dark-2 p-4 text-sm text-gray-400">
+              <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-4 text-sm text-[var(--text-muted)]">
                 No completed matches are available from the current API response.
               </div>
             )}

@@ -13,7 +13,7 @@ import LiveEdaPanel from "@/components/matches/LiveEdaPanel";
 import LiveRecommendationBubble from "@/components/matches/LiveRecommendationBubble";
 import AdSlot from "@/components/ads/AdSlot";
 import CricketNewsSidebar from "@/components/news/CricketNewsSidebar";
-import { cn } from "@/lib/utils";
+import { cn, getMatchTypeColor } from "@/lib/utils";
 
 type Tab = "live" | "scorecard" | "commentary" | "squads" | "analysis";
 
@@ -351,9 +351,9 @@ function InningsSplitView({ scorecards, selectedInning, onSelectInning }: Inning
   }
 
   return (
-    <div className="innings-stage overflow-hidden rounded-[24px] border border-white/8 bg-[#171a1b]">
+    <div className="innings-stage overflow-hidden rounded-[24px] border border-[var(--border-color)] bg-[var(--bg-card)]">
       {/* Innings toggle tabs */}
-      <div className="border-b border-white/8 bg-[#141718]/90">
+      <div className="border-b border-[var(--border-color)] bg-[var(--bg-surface-2)]">
         {/* Header row with innings label + toggle tabs */}
         <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-end">
           {scorecards.length > 1 && (
@@ -544,12 +544,17 @@ export default function MatchDetailClient({
       <div className="mb-6 overflow-hidden rounded-[28px] border border-[var(--border-color)] bg-[var(--bg-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)]">
         <div className="border-b border-[var(--border-color)] px-6 py-4">
           <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--text-secondary)]">
-            <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-2.5 py-1 font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
+            <span
+              className={cn(
+                "rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm",
+                getMatchTypeColor(liveMatch.matchType)
+              )}
+            >
               {liveMatch.matchType}
             </span>
             {isLive && (
-              <span className="inline-flex items-center gap-1.5 font-semibold text-[#ff5b5b]">
-                <span className="h-2 w-2 rounded-full bg-[#ff5b5b] animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 font-semibold text-red-500">
+                <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
                 Live
               </span>
             )}
@@ -878,40 +883,40 @@ export default function MatchDetailClient({
 
         {/* Sidebar */}
         <div className="space-y-4">
-          <div className="rounded-[24px] border border-white/8 bg-[#171a1b] p-5">
-            <h4 className="mb-4 text-sm font-bold uppercase tracking-[0.18em] text-[#8e887d]">Match Info</h4>
+          <div className="rounded-[24px] border border-[var(--border-color)] bg-[var(--bg-card)] p-5">
+            <h4 className="mb-4 text-sm font-bold uppercase tracking-[0.18em] text-[var(--text-muted)]">Match Info</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-[#9e988d]">Type</span>
-                <span className="text-white">{liveMatch.matchType}</span>
+                <span className="text-[var(--text-secondary)]">Type</span>
+                <span className="font-medium text-[var(--text-primary)]">{liveMatch.matchType}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#9e988d]">Date</span>
-                <span className="text-white">{liveMatch.date}</span>
+                <span className="text-[var(--text-secondary)]">Date</span>
+                <span className="font-medium text-[var(--text-primary)]">{liveMatch.date}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#9e988d]">Venue</span>
-                <span className="text-white text-right text-xs max-w-[150px]">
+                <span className="text-[var(--text-secondary)]">Venue</span>
+                <span className="max-w-[150px] text-right text-xs font-medium text-[var(--text-primary)]">
                   {liveMatch.venue}
                 </span>
               </div>
             </div>
-            <div className="mt-5 space-y-2 border-t border-white/8 pt-5">
+            <div className="mt-5 space-y-2 border-t border-[var(--border-color)] pt-5">
               <Link
                 href={`/matches/${liveMatch.id}/preview`}
-                className="block rounded-xl bg-white/[0.05] px-3 py-3 text-center text-xs font-semibold text-white hover:bg-white/[0.09]"
+                className="block rounded-xl border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-3 text-center text-xs font-semibold text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-hover-2)]"
               >
                 Match Preview Page
               </Link>
               <Link
                 href={`/matches/${liveMatch.id}/post-match`}
-                className="block rounded-xl bg-[#0f2a17] px-3 py-3 text-center text-xs font-semibold text-[#31d260] hover:bg-[#16361f]"
+                className="block rounded-xl border border-cg-green/30 bg-cg-green/10 px-3 py-3 text-center text-xs font-semibold text-cg-green transition-colors hover:bg-cg-green/20"
               >
                 Post-Match Analysis Page
               </Link>
               <Link
                 href={`/insights?matchId=${encodeURIComponent(liveMatch.id)}`}
-                className="block rounded-xl bg-white/[0.05] px-3 py-3 text-center text-xs font-semibold text-white hover:bg-white/[0.09]"
+                className="block rounded-xl border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-3 text-center text-xs font-semibold text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-hover-2)]"
               >
                 AI Insights Page
               </Link>
