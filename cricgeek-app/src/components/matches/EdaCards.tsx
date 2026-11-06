@@ -141,7 +141,7 @@ function CardFrame({
   children: ReactNode;
 }) {
   return (
-    <div className={cn(className, card.quality?.suppressed && "opacity-70")}>
+    <div className={cn("min-w-0 max-w-full max-sm:[overflow-wrap:anywhere]", className, card.quality?.suppressed && "opacity-70")}>
       {children}
       <QualityStrip card={card} />
     </div>
@@ -385,7 +385,7 @@ function DefaultCard({ card }: { card: PostMatchEdaCard }) {
 
 export default function EdaCards({ cards }: EdaCardsProps) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid min-w-0 max-w-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {cards.map((card) => {
         switch (card.id) {
           case "win-probability":

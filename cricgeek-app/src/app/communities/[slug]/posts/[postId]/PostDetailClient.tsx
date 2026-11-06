@@ -99,7 +99,7 @@ export default function PostDetailClient({
               </div>
             </article>
             
-            <div className="xl:hidden w-full flex justify-center my-4">
+            <div className="xl:hidden w-full flex justify-center my-1">
                <AdSlot slot="post-detail-mobile-1" size="mobile-banner" placeholder />
             </div>
 

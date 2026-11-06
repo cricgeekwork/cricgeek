@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import type {
   LiveAnalyticsBundle,
@@ -64,10 +65,10 @@ function ChartFrame({
   className?: string;
 }) {
   return (
-    <section className={cn("rounded-xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5", className)}>
+    <section className={cn("min-w-0 max-w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5", className)}>
       <h4 className="text-base font-bold text-[var(--text-primary)]">{title}</h4>
       <p className="mt-1 text-sm text-[var(--text-secondary)]">{subtitle}</p>
-      <div className="mt-4">{children}</div>
+      <div className="mt-4 min-w-0 max-w-full">{children}</div>
     </section>
   );
 }
@@ -113,11 +114,27 @@ function LineChart({
   secondaryColor?: string;
   yLabel: string;
 }) {
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const [chartWidth, setChartWidth] = useState(680);
+
+  useEffect(() => {
+    const container = chartContainerRef.current;
+    if (!container || typeof ResizeObserver === "undefined") return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      const nextWidth = Math.round(entry.contentRect.width);
+      if (nextWidth > 0) setChartWidth(nextWidth);
+    });
+    observer.observe(container);
+
+    return () => observer.disconnect();
+  }, []);
+
   if (points.length === 0) {
     return <EmptyChart message="Waiting for enough tracked balls to draw this timeline." />;
   }
 
-  const width = 680;
+  const width = chartWidth;
   const height = 220;
   const padding = 26;
   const sampled = samplePoints(points);
@@ -134,12 +151,12 @@ function LineChart({
       : "";
 
   return (
-    <div className="space-y-3">
+    <div ref={chartContainerRef} className="min-w-0 max-w-full space-y-3">
       <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
         <span>{yLabel}</span>
         <span>{sampled[0]?.label} to {sampled[sampled.length - 1]?.label}</span>
       </div>
-      <svg viewBox={`0 0 ${width} ${height}`} className="h-56 w-full overflow-visible rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)]">
+      <svg viewBox={`0 0 ${width} ${height}`} className="block h-56 w-full max-w-full overflow-hidden rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)]">
         {[0, 0.25, 0.5, 0.75, 1].map((tick) => {
           const y = height - padding - tick * (height - padding * 2);
           const value = minValue + (maxValue - minValue) * tick;
@@ -180,7 +197,7 @@ function LineChart({
       </svg>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         {sampled.slice(-3).map((point) => (
-          <div key={point.id} className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-3 py-3">
+          <div key={point.id} className="min-w-0 rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-3 py-3 [overflow-wrap:anywhere]">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">{point.label}</p>
             <p className="mt-1 text-lg font-bold text-[var(--text-primary)]">{formatAxisValue(point.value)}</p>
             <p className="mt-1 text-xs text-[var(--text-secondary)]">{point.note}</p>
@@ -350,13 +367,13 @@ function Heatmap({ cells }: { cells: LiveHeatmapCell[] }) {
   const cellMap = new Map(cells.map((cell) => [`${cell.over}-${cell.ball}`, cell]));
 
   return (
-    <div className="overflow-x-auto">
-      <div className="min-w-[420px] space-y-2">
+    <div className="min-w-0 max-w-full space-y-3">
         {overs.map((over) => (
-          <div key={over} className="grid grid-cols-[70px_repeat(6,minmax(0,1fr))] gap-2">
-            <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
+        <div key={over} className="min-w-0 space-y-2">
+          <div className="inline-flex max-w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
               Over {over}
-            </div>
+          </div>
+          <div className="grid min-w-0 grid-cols-6 gap-1.5 sm:gap-2">
             {[1, 2, 3, 4, 5, 6].map((ball) => {
               const cell = cellMap.get(`${over}-${ball}`);
               const pressure = cell?.pressure ?? 0;
@@ -366,7 +383,7 @@ function Heatmap({ cells }: { cells: LiveHeatmapCell[] }) {
                 <div
                   key={`${over}-${ball}`}
                   className={cn(
-                    "rounded-lg border px-2 py-3 text-center text-xs font-semibold",
+                    "min-w-0 rounded-lg border px-1 py-3 text-center text-xs font-semibold",
                     cell?.isWicket
                       ? "border-red-500/30 bg-red-500/15 text-red-700 dark:text-red-100"
                       : cell?.isDot
@@ -385,8 +402,8 @@ function Heatmap({ cells }: { cells: LiveHeatmapCell[] }) {
               );
             })}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -402,52 +419,87 @@ function MatchupMatrix({ data }: { data: LiveMatchupCell[] }) {
   const maxThreat = Math.max(...data.map((entry) => Math.abs(entry.threat)), 1);
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-[720px] w-full border-separate border-spacing-2">
-        <thead>
-          <tr>
-            <th className="px-3 py-2 text-left text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Batter</th>
-            {bowlers.map((bowler) => (
-              <th key={bowler} className="px-3 py-2 text-left text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                {bowler}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {batters.map((batter) => (
-            <tr key={batter}>
-              <td className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-3 py-3 text-sm font-semibold text-[var(--text-primary)]">
-                {batter}
-              </td>
+    <>
+      <div className="min-w-0 space-y-3 md:hidden">
+        {batters.map((batter) => (
+          <div key={batter} className="min-w-0 rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] p-3">
+            <p className="break-words text-sm font-semibold text-[var(--text-primary)]">{batter}</p>
+            <div className="mt-3 space-y-2">
               {bowlers.map((bowler) => {
                 const cell = cellMap.get(`${batter}::${bowler}`);
                 const opacity = cell ? Math.max(0.12, Math.min(0.85, Math.abs(cell.threat) / maxThreat)) : 0;
                 return (
-                  <td
+                  <div
                     key={`${batter}-${bowler}`}
-                    className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-3 py-3 align-top"
+                    className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-3 rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-3 py-2"
                     style={cell ? { backgroundColor: `rgba(34,197,94,${opacity})` } : undefined}
                   >
+                    <p className="min-w-0 break-words text-sm font-medium text-[var(--text-primary)]">{bowler}</p>
                     {cell ? (
-                      <div className="space-y-1">
+                      <div className="min-w-0 text-right">
                         <p className="text-sm font-bold text-[var(--text-primary)]">{cell.runs}/{cell.balls}</p>
                         <p className="text-xs text-[var(--text-secondary)]">SR {cell.strikeRate}</p>
-                        <p className="text-xs text-[var(--text-muted)]">
+                        <p className="max-w-[120px] text-xs text-[var(--text-muted)] [overflow-wrap:anywhere]">
                           Dot {cell.dotPct}%{cell.dismissals > 0 ? ` | ${cell.dismissals} wicket` : ""}
                         </p>
                       </div>
                     ) : (
-                      <p className="text-xs text-[var(--text-muted)]">No tracked balls</p>
+                      <p className="max-w-[120px] text-right text-xs text-[var(--text-muted)] [overflow-wrap:anywhere]">No tracked balls</p>
                     )}
-                  </td>
+                  </div>
                 );
               })}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="hidden min-w-0 max-w-full overflow-x-auto md:block">
+        <table className="min-w-[720px] w-full border-separate border-spacing-2">
+          <thead>
+            <tr>
+              <th className="px-3 py-2 text-left text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Batter</th>
+              {bowlers.map((bowler) => (
+                <th key={bowler} className="px-3 py-2 text-left text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                  {bowler}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {batters.map((batter) => (
+              <tr key={batter}>
+                <td className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-3 py-3 text-sm font-semibold text-[var(--text-primary)]">
+                  {batter}
+                </td>
+                {bowlers.map((bowler) => {
+                  const cell = cellMap.get(`${batter}::${bowler}`);
+                  const opacity = cell ? Math.max(0.12, Math.min(0.85, Math.abs(cell.threat) / maxThreat)) : 0;
+                  return (
+                    <td
+                      key={`${batter}-${bowler}`}
+                      className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-3 py-3 align-top"
+                      style={cell ? { backgroundColor: `rgba(34,197,94,${opacity})` } : undefined}
+                    >
+                      {cell ? (
+                        <div className="space-y-1">
+                          <p className="text-sm font-bold text-[var(--text-primary)]">{cell.runs}/{cell.balls}</p>
+                          <p className="text-xs text-[var(--text-secondary)]">SR {cell.strikeRate}</p>
+                          <p className="text-xs text-[var(--text-muted)]">
+                            Dot {cell.dotPct}%{cell.dismissals > 0 ? ` | ${cell.dismissals} wicket` : ""}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-[var(--text-muted)]">No tracked balls</p>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
@@ -460,7 +512,7 @@ function BoundaryPressurePanel({ summary }: { summary: LiveBoundaryPressureSumma
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] px-4 py-3">
           <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{summary.recentOversLabel}</p>
           <p className="mt-1 text-lg font-black text-[var(--text-primary)]">{summary.recentBoundaryBalls} boundaries</p>
@@ -515,7 +567,7 @@ export default function LiveEdaCharts({ analytics, ballsTracked, completedOvers 
   };
 
   return (
-    <div className="grid gap-5 xl:grid-cols-2">
+    <div className="grid min-w-0 max-w-full gap-5 xl:grid-cols-2">
       <ChartFrame
         title="Ball-by-ball win probability chart"
         subtitle="Live win-probability path recalculated on every tracked ball."

@@ -184,8 +184,65 @@ export default function ScorecardTable({ scorecard }: ScorecardTableProps) {
         </div>
       </div>
 
-      {/* Batting */}
-      <div className="overflow-x-auto">
+      {/* Mobile batting */}
+      <div className="md:hidden">
+        <div className="border-b border-white/8 bg-[#151819] px-3 py-2">
+          <h4 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8e887d]">Batting</h4>
+        </div>
+        <table className="w-full table-fixed text-xs">
+          <colgroup>
+            <col style={{ width: "40%" }} />
+            <col style={{ width: "12%" }} />
+            <col style={{ width: "11%" }} />
+            <col style={{ width: "11%" }} />
+            <col style={{ width: "11%" }} />
+            <col style={{ width: "15%" }} />
+          </colgroup>
+          <thead>
+            <tr className="border-b border-white/8 text-[10px] uppercase tracking-[0.04em] text-[#8e887d]">
+              <th className="px-2 py-2 text-left font-semibold">Batter</th>
+              <th className="px-0.5 py-2 text-center font-semibold">R</th>
+              <th className="px-0.5 py-2 text-center font-semibold">B</th>
+              <th className="px-0.5 py-2 text-center font-semibold">4s</th>
+              <th className="px-0.5 py-2 text-center font-semibold">6s</th>
+              <th className="px-0.5 py-2 text-center font-semibold">SR</th>
+            </tr>
+          </thead>
+          <tbody>
+            {scorecard.batting.map((entry, index) => (
+              <tr
+                key={entry.batsman.id}
+                className="scorecard-row-reveal border-b border-white/6 text-[#c5c0b6]"
+                style={{ animationDelay: `${index * 45}ms` }}
+              >
+                <td className="min-w-0 px-2 py-2.5 text-left align-top">
+                  <p className="break-words font-semibold leading-tight text-white">
+                    {entry.batsman.name}
+                    {entry.dismissal === "batting" && <span className="ml-1 text-[#31d260]">*</span>}
+                  </p>
+                  <div className="mt-1 break-words leading-snug">
+                    <DismissalCell dismissal={entry.dismissal} />
+                  </div>
+                </td>
+                <td className="px-0.5 py-2.5 text-center align-top font-bold text-white">{entry.r}</td>
+                <td className="px-0.5 py-2.5 text-center align-top">{entry.b}</td>
+                <td className="px-0.5 py-2.5 text-center align-top">{entry["4s"]}</td>
+                <td className="px-0.5 py-2.5 text-center align-top">{entry["6s"]}</td>
+                <td className="px-0.5 py-2.5 text-center align-top">{entry.sr}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {scorecard.extras && (
+          <div className="border-b border-white/8 px-3 py-2.5 text-xs text-[#8e887d]">
+            <span className="uppercase tracking-[0.12em]">Extras</span>
+            <span className="ml-2 text-[#b5afa5]">{scorecard.extras}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Desktop batting */}
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-white/8 text-[10px] uppercase tracking-[0.18em] text-[#8e887d]">
@@ -243,8 +300,53 @@ export default function ScorecardTable({ scorecard }: ScorecardTableProps) {
         )}
       </div>
 
-      {/* Bowling */}
-      <div className="overflow-x-auto">
+      {/* Mobile bowling */}
+      <div className="md:hidden">
+        <div className="border-y border-white/8 bg-[#151819] px-3 py-2.5">
+          <h4 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8e887d]">Bowling</h4>
+        </div>
+        <table className="w-full table-fixed text-xs">
+          <colgroup>
+            <col style={{ width: "38%" }} />
+            <col style={{ width: "10%" }} />
+            <col style={{ width: "10%" }} />
+            <col style={{ width: "10%" }} />
+            <col style={{ width: "10%" }} />
+            <col style={{ width: "22%" }} />
+          </colgroup>
+          <thead>
+            <tr className="border-b border-white/8 text-[10px] uppercase tracking-[0.04em] text-[#8e887d]">
+              <th className="px-2 py-2 text-left font-semibold">Bowler</th>
+              <th className="px-0.5 py-2 text-center font-semibold">O</th>
+              <th className="px-0.5 py-2 text-center font-semibold">M</th>
+              <th className="px-0.5 py-2 text-center font-semibold">R</th>
+              <th className="px-0.5 py-2 text-center font-semibold">W</th>
+              <th className="px-0.5 py-2 text-center font-semibold">Econ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {scorecard.bowling.map((entry, index) => (
+              <tr
+                key={entry.bowler.id}
+                className="scorecard-row-reveal border-b border-white/6 text-[#c5c0b6]"
+                style={{ animationDelay: `${index * 45 + 80}ms` }}
+              >
+                <td className="min-w-0 break-words px-2 py-2.5 text-left align-top font-semibold text-white">
+                  {entry.bowler.name}
+                </td>
+                <td className="px-0.5 py-2.5 text-center align-top">{entry.o}</td>
+                <td className="px-0.5 py-2.5 text-center align-top">{entry.m}</td>
+                <td className="px-0.5 py-2.5 text-center align-top">{entry.r}</td>
+                <td className="px-0.5 py-2.5 text-center align-top font-bold text-white">{entry.w}</td>
+                <td className="px-0.5 py-2.5 text-center align-top">{entry.eco}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Desktop bowling */}
+      <div className="hidden overflow-x-auto md:block">
         <div className="border-y border-white/8 bg-[#151819] px-5 py-2.5">
           <h4 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8e887d]">
             Bowling

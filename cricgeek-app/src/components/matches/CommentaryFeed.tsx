@@ -72,31 +72,33 @@ export default function CommentaryFeed({ commentary }: CommentaryFeedProps) {
           const badge = scoreBadge(ball.score);
           const overLabel = `${ball.over}.${ball.ball}`;
           return (
-            <div key={ball.id} className="flex gap-0 px-2 hover:bg-[var(--bg-hover)] transition-colors">
-              <div className="w-20 shrink-0 flex items-start justify-center pt-5 pb-5">
-                <span className="text-xl font-semibold text-[var(--text-primary)] leading-none">{overLabel}</span>
-              </div>
+            <div key={ball.id} className="flex gap-2 px-3 py-3 transition-colors hover:bg-[var(--bg-hover)] md:gap-0 md:px-2 md:py-0">
+              <div className="flex w-12 shrink-0 flex-col items-center gap-2 pt-1 md:contents">
+                <div className="md:flex md:w-20 md:shrink-0 md:items-start md:justify-center md:pt-5 md:pb-5">
+                  <span className="text-sm font-semibold leading-none text-[var(--text-primary)] md:text-xl">{overLabel}</span>
+                </div>
 
-              <div className="w-14 shrink-0 flex items-start justify-center pt-5 pb-5">
-                <div className={`min-w-9 h-9 rounded-md flex items-center justify-center px-2 text-sm font-bold ${badge.bg} ${badge.text}`}>
-                  {badge.label}
+                <div className="md:flex md:w-14 md:shrink-0 md:items-start md:justify-center md:pt-5 md:pb-5">
+                  <div className={`flex h-7 min-w-7 items-center justify-center rounded-md px-1.5 text-xs font-bold md:h-9 md:min-w-9 md:px-2 md:text-sm ${badge.bg} ${badge.text}`}>
+                    {badge.label}
+                  </div>
                 </div>
               </div>
 
-              <div className="flex-1 py-5 pr-5 min-w-0">
+              <div className="min-w-0 flex-1 py-1 pr-1 md:py-5 md:pr-5">
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                  <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--text-secondary)] uppercase">
+                  <p className="min-w-0 flex-1 text-[10px] font-semibold tracking-[0.12em] text-[var(--text-secondary)] uppercase md:flex-none md:text-[11px] md:tracking-[0.22em]">
                     {ball.bowler} to {ball.batsman}
                     {ball.score === 6 && ", Six Runs"}
                     {ball.score === 4 && ", Four Runs"}
                     {ball.score === 0 && ", No Run"}
                     {ball.score > 0 && ball.score !== 4 && ball.score !== 6 && `, ${ball.score} Run${ball.score !== 1 ? "s" : ""}`}
                   </p>
-                  <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-2.5 py-1 text-[11px] text-[var(--text-muted)]">
+                  <span className="shrink-0 rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-2 py-0.5 text-[10px] text-[var(--text-muted)] md:px-2.5 md:py-1 md:text-[11px]">
                     {formatCommentaryTimestamp(ball.timestamp, true)}
                   </span>
                 </div>
-                <p className="text-[18px] text-[var(--text-primary)] leading-9">
+                <p className="text-base leading-7 text-[var(--text-primary)] md:text-[18px] md:leading-9">
                   {renderCommentaryText(ball.commentary)}
                 </p>
               </div>

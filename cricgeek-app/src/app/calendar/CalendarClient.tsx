@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Mic, FileText, Radio, PenSquare } from "lucide-react";
 import { cn, getMatchTypeColor } from "@/lib/utils";
+import AdSlot from "@/components/ads/AdSlot";
 import type { CalendarMatch } from "@/types/cricket";
 
 interface LinkedCommentarySession {
@@ -111,9 +112,13 @@ export default function CalendarClient({ matches, source }: CalendarClientProps)
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
       <h1 className="text-3xl font-black text-[var(--text-primary)] mb-2">Cricket Calendar</h1>
-      <p className="text-[var(--text-secondary)] text-sm mb-8">
+      <p className="text-[var(--text-secondary)] text-sm mb-2 md:mb-8">
         Upcoming fixtures, live games, and recent results in one timeline.
       </p>
+
+      <div className="mb-2 md:hidden">
+        <AdSlot slot="calendar-mobile" size="mobile-banner" />
+      </div>
 
       {/* Month Navigation */}
       <div className="flex items-center justify-between mb-4 sm:mb-6">

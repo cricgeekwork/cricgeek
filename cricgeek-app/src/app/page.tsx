@@ -81,7 +81,7 @@ export default async function HomePage() {
             </section>
 
             {/* In-flow mobile banner (after hero, mobile only) */}
-            <div className="py-4 lg:hidden flex justify-center">
+            <div className="py-1 lg:hidden flex justify-center">
               <AdSlot slot="home-mid" size="mobile-banner" placeholder className="mx-auto" />
             </div>
 
@@ -146,7 +146,7 @@ export default async function HomePage() {
             </section>
 
             {/* Banner ad above Features — desktop leaderboard / mobile banner */}
-            <div className="py-6">
+            <div className="py-1 lg:py-6">
               <div className="hidden lg:flex justify-center">
                 <AdSlot slot="home-mid-leaderboard" size="leaderboard" placeholder className="mx-auto" />
               </div>
@@ -178,7 +178,7 @@ export default async function HomePage() {
             </section>
 
             {/* Bottom mobile ad */}
-            <div className="py-4 lg:hidden flex justify-center">
+            <div className="py-1 lg:hidden flex justify-center">
               <AdSlot slot="home-bottom" size="mobile-banner" placeholder className="mx-auto" />
             </div>
           </div>

@@ -56,7 +56,7 @@ export default function LeaderboardPage() {
     <div>
       {/* ── Leaderboard ad strip — immediately below navbar ── */}
       <div className="w-full border-b border-gray-800/60 bg-cg-dark">
-        <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-3">
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-1 lg:py-3">
           {/* Desktop leaderboard */}
           <div className="hidden lg:flex justify-center">
             <AdSlot slot="leaderboard-top" size="leaderboard" placeholder className="mx-auto" />

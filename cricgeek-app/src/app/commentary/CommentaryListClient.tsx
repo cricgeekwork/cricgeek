@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Mic, Radio, Plus, Loader2, X, ArrowRight, LogIn } from "lucide-react";
 import SessionCard from "@/components/commentary/SessionCard";
+import AdSlot from "@/components/ads/AdSlot";
 
 interface Session {
   id: string;
@@ -99,7 +100,7 @@ export default function CommentaryListClient({
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 sm:mb-8 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 md:mb-8 gap-4">
         <div className="min-w-0">
           <h1 className="text-2xl sm:text-3xl font-black text-white flex flex-wrap items-center gap-2 sm:gap-3">
             <Radio className="text-cg-green shrink-0" />
@@ -118,6 +119,10 @@ export default function CommentaryListClient({
             Start Commentary
           </button>
         )}
+      </div>
+
+      <div className="mb-2 md:hidden">
+        <AdSlot slot="commentary-mobile" size="mobile-banner" />
       </div>
 
       {canStartCommentary ? (

@@ -5,6 +5,7 @@ import { ArrowLeft, Mic, Radio, Users } from "lucide-react";
 import Link from "next/link";
 import ModeratorDashboard from "@/components/commentary/ModeratorDashboard";
 import LiveCommentaryFeed from "@/components/commentary/LiveCommentaryFeed";
+import AdSlot from "@/components/ads/AdSlot";
 
 interface Entry {
   id: string;
@@ -59,7 +60,7 @@ export default function CommentarySessionClient({ session, isModerator }: Props)
       </Link>
 
       {/* Match header */}
-      <div className="mb-8">
+      <div className="mb-2 md:mb-8">
         <div className="flex items-center gap-3 mb-2">
           <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
             isLive
@@ -107,6 +108,10 @@ export default function CommentarySessionClient({ session, isModerator }: Props)
             })}
           </span>
         </div>
+      </div>
+
+      <div className="mb-2 md:hidden">
+        <AdSlot slot="commentary-session-mobile" size="mobile-banner" />
       </div>
 
       {/* Main content */}

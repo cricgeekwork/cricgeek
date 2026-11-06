@@ -164,9 +164,12 @@ function BlogPageContent() {
   return (
     <div>
       <div className="w-full border-b border-gray-800/80 bg-cg-dark">
-        <div className="mx-auto max-w-[1440px] px-3 py-3 sm:px-6 lg:px-8">
-          <div className="flex justify-center">
+        <div className="mx-auto max-w-[1440px] px-3 py-1 sm:py-3 sm:px-6 lg:px-8">
+          <div className="hidden justify-center lg:flex">
             <AdSlot slot="expressions-top" size="leaderboard" placeholder className="mx-auto" />
+          </div>
+          <div className="flex justify-center lg:hidden">
+            <AdSlot slot="expressions-top" size="mobile-banner" placeholder className="mx-auto" />
           </div>
         </div>
       </div>

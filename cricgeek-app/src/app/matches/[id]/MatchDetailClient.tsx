@@ -304,6 +304,15 @@ function InningsSplitView({ scorecards, selectedInning, onSelectInning }: Inning
     return inning.replace(/\s+Innings\s+\d+$/i, "").trim();
   }
 
+  function extractMobileTeamName(inning: string): string {
+    return inning.replace(/\s+(?:\d+(?:st|nd|rd|th)\s+Innings|Innings\s+\d+)$/i, "").trim();
+  }
+
+  function extractInningNumber(inning: string): string {
+    const match = inning.match(/(?:\d+(?:st|nd|rd|th)\s+Innings|Innings\s+\d+)$/i);
+    return match?.[0] ?? "Innings";
+  }
+
   function teamCode(name: string): string {
     const words = name.split(/\s+/).filter(Boolean);
     if (words.length === 0) return "TEAM";
@@ -383,7 +392,15 @@ function InningsSplitView({ scorecards, selectedInning, onSelectInning }: Inning
 
         {/* Active innings hero line */}
         <div key={active.inning} className="innings-content-reveal px-5 pb-5">
-          <h3 className="text-[22px] font-semibold leading-tight tracking-tight text-white sm:text-[24px]">
+          <div className="mb-1 sm:hidden">
+            <p className="break-words text-lg font-semibold leading-tight tracking-tight text-white">
+              {extractMobileTeamName(active.inning) || active.inning}
+            </p>
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8e887d]">
+              {extractInningNumber(active.inning)}
+            </p>
+          </div>
+          <h3 className="hidden text-[22px] font-semibold leading-tight tracking-tight text-white sm:block sm:text-[24px]">
             {active.inning}
           </h3>
           <div className="mt-2 flex flex-wrap items-center gap-2.5">
@@ -539,7 +556,7 @@ export default function MatchDetailClient({
   const tournamentHint = liveMatch.name.toUpperCase().includes("IPL") ? "IPL" : liveMatch.matchType;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="mx-auto min-w-0 max-w-full px-4 py-8 sm:px-6 lg:max-w-7xl lg:px-8">
       {/* Match Header */}
       <div className="mb-6 overflow-hidden rounded-[28px] border border-[var(--border-color)] bg-[var(--bg-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)]">
         <div className="border-b border-[var(--border-color)] px-6 py-4">
@@ -691,17 +708,54 @@ export default function MatchDetailClient({
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.85fr)_minmax(320px,1fr)]">
+      <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.85fr)_minmax(320px,1fr)]">
         <div className="min-w-0">
           {activeTab === "live" && primaryScore && (
             <div className="mb-6 overflow-hidden rounded-[24px] border border-[var(--border-color)] bg-[var(--bg-card)]">
               <div className="grid gap-px bg-[var(--border-color)] lg:grid-cols-[1.3fr,0.9fr]">
-                <div className="bg-[var(--bg-card)] px-6 py-5">
+                <div className="min-w-0 bg-[var(--bg-card)] px-3 py-4 sm:px-6 sm:py-5">
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8e887d]">
                     Top batters
                   </p>
                   <p className="mt-1 text-xs text-[#a79f94]">{primaryScore.batterContextLabel}</p>
-                  <div className="mt-4 overflow-x-auto">
+                  <div className="mt-3 md:hidden">
+                    <table className="mx-auto w-full table-fixed text-xs">
+                      <colgroup>
+                        <col style={{ width: "40%" }} />
+                        <col style={{ width: "12%" }} />
+                        <col style={{ width: "12%" }} />
+                        <col style={{ width: "12%" }} />
+                        <col style={{ width: "12%" }} />
+                        <col style={{ width: "12%" }} />
+                      </colgroup>
+                      <thead className="text-[#8f897f]">
+                        <tr>
+                          <th className="pb-2 text-left font-semibold">Name</th>
+                          <th className="pb-2 text-center font-semibold">R</th>
+                          <th className="pb-2 text-center font-semibold">B</th>
+                          <th className="pb-2 text-center font-semibold">4s</th>
+                          <th className="pb-2 text-center font-semibold">6s</th>
+                          <th className="pb-2 text-center font-semibold">SR</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {primaryScore.featuredBatters.map((entry) => (
+                          <tr key={entry.batsman.id} className="border-t border-[var(--border-color)] text-white">
+                            <td className="py-2 pr-1 text-left font-semibold leading-tight break-words">
+                              {entry.batsman.name}
+                              {entry.dismissal === "batting" && <span className="ml-1 text-[#31d260]">*</span>}
+                            </td>
+                            <td className="py-2 text-center font-semibold">{entry.r}</td>
+                            <td className="py-2 text-center text-[#c3bdb2]">{entry.b}</td>
+                            <td className="py-2 text-center text-[#c3bdb2]">{entry["4s"]}</td>
+                            <td className="py-2 text-center text-[#c3bdb2]">{entry["6s"]}</td>
+                            <td className="py-2 text-center text-[#c3bdb2]">{entry.sr}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="mt-4 hidden overflow-x-auto md:block">
                     <table className="w-full min-w-[420px] text-sm">
                       <thead className="text-[#8f897f]">
                         <tr>
@@ -732,12 +786,49 @@ export default function MatchDetailClient({
                   </div>
                 </div>
 
-                <div className="bg-[var(--bg-card)] px-6 py-5">
+                <div className="min-w-0 bg-[var(--bg-card)] px-3 py-4 sm:px-6 sm:py-5">
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8e887d]">
                     Top bowlers
                   </p>
                   <p className="mt-1 text-xs text-[#a79f94]">{primaryScore.bowlerContextLabel}</p>
-                  <div className="mt-4 space-y-4">
+                  <div className="mt-3 md:hidden">
+                    <table className="mx-auto w-full table-fixed text-xs">
+                      <colgroup>
+                        <col style={{ width: "39%" }} />
+                        <col style={{ width: "10%" }} />
+                        <col style={{ width: "10%" }} />
+                        <col style={{ width: "10%" }} />
+                        <col style={{ width: "10%" }} />
+                        <col style={{ width: "21%" }} />
+                      </colgroup>
+                      <thead className="text-[#8f897f]">
+                        <tr>
+                          <th className="pb-2 text-left font-semibold">Bowler</th>
+                          <th className="pb-2 text-center font-semibold">O</th>
+                          <th className="pb-2 text-center font-semibold">M</th>
+                          <th className="pb-2 text-center font-semibold">R</th>
+                          <th className="pb-2 text-center font-semibold">W</th>
+                          <th className="pb-2 text-center font-semibold">Econ</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {primaryScore.featuredBowlers.map((entry) => (
+                          <tr key={entry.bowler.id} className="border-t border-[var(--border-color)] text-white">
+                            <td className="py-2 pr-1 text-left font-semibold leading-tight break-words">{entry.bowler.name}</td>
+                            <td className="py-2 text-center text-[#c3bdb2]">{entry.o}</td>
+                            <td className="py-2 text-center text-[#c3bdb2]">{entry.m}</td>
+                            <td className="py-2 text-center text-[#c3bdb2]">{entry.r}</td>
+                            <td className="py-2 text-center font-semibold">{entry.w}</td>
+                            <td className="py-2 text-center text-[#c3bdb2]">{entry.eco}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    <div className="mt-3 rounded-xl border border-white/8 bg-white/[0.03] px-3 py-2 text-center text-xs text-[#c3bdb2]">
+                      {primaryScore.inning.inning} · {primaryScore.inning.totalRuns}/{primaryScore.inning.totalWickets} ({formatOvers(primaryScore.inning.totalOvers)})
+                    </div>
+                  </div>
+                  <div className="mt-4 hidden space-y-4 md:block">
                     {primaryScore.featuredBowlers.map((entry) => (
                       <div key={entry.bowler.id} className="border-b border-white/6 pb-4 last:border-b-0 last:pb-0">
                         <p className="text-base font-semibold text-white">{entry.bowler.name}</p>
@@ -773,7 +864,7 @@ export default function MatchDetailClient({
             />
           )}
           {activeTab === "live" && (
-            <div className="mt-6">
+            <div className="mt-6 min-w-0 max-w-full">
               <MatchLiveCommentary
                 matchId={liveMatch.id}
                 matchName={liveMatch.name}
@@ -784,7 +875,7 @@ export default function MatchDetailClient({
             </div>
           )}
           {activeTab === "live" && hasCommentary && (
-            <div className="mt-6">
+            <div className="mt-6 min-w-0 max-w-full">
               <CommentaryFeed commentary={liveCommentary!} />
             </div>
           )}

@@ -158,10 +158,10 @@ export default function MatchLiveCommentary({
   const isSessionPaused = session?.status === "paused";
 
   return (
-    <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl overflow-hidden mb-6">
+    <div className="mb-6 min-w-0 max-w-full overflow-hidden rounded-xl border border-[var(--border-color)] bg-[var(--bg-card)]">
       {/* Panel header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-[var(--bg-surface-2)] border-b border-[var(--border-color)]">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-3">
+        <div className="flex min-w-0 items-center gap-2">
           <Radio size={15} className={isSessionLive ? "text-red-500 animate-pulse" : "text-[var(--text-muted)]"} />
           <span className="text-sm font-semibold text-[var(--text-primary)]">Live Text Commentary</span>
           {isSessionLive && (
@@ -175,7 +175,7 @@ export default function MatchLiveCommentary({
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-2">
           {session && (
             <Link
               href={`/commentary/${session.id}`}
@@ -198,7 +198,7 @@ export default function MatchLiveCommentary({
       </div>
 
       {/* Body */}
-      <div className="px-4 py-3">
+      <div className="min-w-0 px-4 py-3">
         {loading ? (
           <div className="flex items-center gap-2 py-4 text-[var(--text-muted)] text-sm">
             <Loader2 size={14} className="animate-spin" />
@@ -243,9 +243,9 @@ export default function MatchLiveCommentary({
             {entries.slice(0, MAX_ENTRIES_SHOWN).map((entry) => {
               const badge = inferCommentaryBadge(entry.text);
               return (
-                <div key={entry.id} className="flex gap-0 hover:bg-[var(--bg-hover)] transition-colors">
+                <div key={entry.id} className="flex min-w-0 gap-0 transition-colors hover:bg-[var(--bg-hover)]">
                   {/* Over / time */}
-                  <div className="w-20 shrink-0 flex flex-col items-center justify-start pt-4 pb-4 gap-2">
+                  <div className="flex w-14 shrink-0 flex-col items-center justify-start gap-2 break-words pb-4 pt-4 sm:w-20">
                     <span className="text-lg font-semibold text-[var(--text-primary)] leading-none">
                       {entry.overText ?? "Live"}
                     </span>
@@ -255,7 +255,7 @@ export default function MatchLiveCommentary({
                     </span>
                   </div>
                   {/* Badge */}
-                  <div className="w-14 shrink-0 flex items-start justify-center pt-4 pb-4">
+                  <div className="flex w-11 shrink-0 items-start justify-center pb-4 pt-4 sm:w-14">
                     {badge ? (
                       <div
                         className={`min-w-9 h-9 rounded-md flex items-center justify-center px-2 text-sm font-bold
@@ -293,7 +293,7 @@ export default function MatchLiveCommentary({
 
       {/* Footer — moderator credit + link */}
       {session && (
-        <div className="px-4 py-2.5 bg-[var(--bg-surface-2)] border-t border-[var(--border-color)] flex items-center justify-between text-xs text-[var(--text-muted)]">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-2.5 text-xs text-[var(--text-muted)]">
           <span>
             Commentated by{" "}
             <span className="text-[var(--text-primary)] font-medium">{session.moderator.name}</span>

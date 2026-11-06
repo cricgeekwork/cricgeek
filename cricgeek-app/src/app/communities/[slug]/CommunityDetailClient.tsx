@@ -106,7 +106,7 @@ export default function CommunityDetailClient({ community }: { community: Commun
             </section>
             
             {/* Mobile Banner */}
-            <div className="xl:hidden w-full flex justify-center my-2">
+            <div className="xl:hidden w-full flex justify-center my-1">
               <AdSlot slot="community-detail-mobile-1" size="mobile-banner" placeholder />
             </div>
 

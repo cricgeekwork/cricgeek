@@ -140,7 +140,7 @@ export default function CommunitiesClient() {
               </div>
             </section>
             
-            <div className="xl:hidden w-full flex justify-center my-2">
+            <div className="xl:hidden w-full flex justify-center my-1">
               <AdSlot slot="communities-mobile-1" size="mobile-banner" placeholder />
             </div>
 
@@ -172,7 +172,7 @@ export default function CommunitiesClient() {
               )}
             </section>
             
-            <div className="xl:hidden w-full flex justify-center my-4">
+            <div className="xl:hidden w-full flex justify-center my-1">
                <AdSlot slot="communities-mobile-2" size="mobile-banner" placeholder />
             </div>
 

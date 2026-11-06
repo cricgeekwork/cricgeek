@@ -20,7 +20,7 @@ export default function LiveEdaPanel({ matchId, enabled }: LiveEdaPanelProps) {
 
   if (!enabled) {
     return (
-      <section className="rounded-xl border border-gray-800 bg-cg-dark-2 p-5">
+      <section className="min-w-0 max-w-full rounded-xl border border-gray-800 bg-cg-dark-2 p-5">
         <h3 className="text-lg font-bold text-white">Live Intelligence</h3>
         <p className="mt-2 text-sm text-gray-400">
           Live EDA unlocks as soon as the match starts and score state begins flowing in from the provider.
@@ -30,9 +30,9 @@ export default function LiveEdaPanel({ matchId, enabled }: LiveEdaPanelProps) {
   }
 
   return (
-    <section className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5">
+    <section className="min-w-0 max-w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-2">
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-cg-green/20 bg-cg-green/10 text-cg-green">
               <Activity size={16} />
@@ -47,7 +47,7 @@ export default function LiveEdaPanel({ matchId, enabled }: LiveEdaPanelProps) {
             Real-time command-center analytics refreshed every 15 seconds from the latest live score state, commentary flow, and venue context.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+        <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
           {isRefreshing ? <Loader2 size={14} className="animate-spin" /> : null}
           <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-1.5 text-[var(--text-secondary)]">
             Auto-refresh every {report?.pollIntervalSeconds ?? LIVE_EDA_POLL_INTERVAL_SECONDS}s
@@ -78,9 +78,9 @@ export default function LiveEdaPanel({ matchId, enabled }: LiveEdaPanelProps) {
       ) : null}
 
       {report ? (
-        <div className="mt-5 space-y-5">
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(270px,0.75fr)]">
-            <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-4">
+        <div className="mt-5 min-w-0 max-w-full space-y-5">
+          <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(270px,0.75fr)]">
+            <div className="min-w-0 rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-4">
               <p className="text-sm leading-7 text-[var(--text-primary)]">{report.summary}</p>
               <div className="mt-3 flex flex-wrap gap-2 text-xs text-[var(--text-secondary)]">
                 <span className="rounded-full border border-[var(--border-color)] bg-[var(--tag-bg)] px-3 py-1.5">
@@ -99,7 +99,7 @@ export default function LiveEdaPanel({ matchId, enabled }: LiveEdaPanelProps) {
               </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+            <div className="grid min-w-0 gap-3 sm:grid-cols-3 lg:grid-cols-1">
               <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-4 py-4">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">Current rate</p>
                 <p className="mt-2 text-2xl font-black text-[var(--text-primary)]">{report.snapshot.currentRunRate}</p>

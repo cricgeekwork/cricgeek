@@ -6,7 +6,7 @@ const AD_SIZES = {
   leaderboard: { width: 1200, height: 90 },
   rectangle: { width: 300, height: 250 },
   "half-page": { width: 300, height: 500 },
-  "mobile-banner": { width: 320, height: 50 },
+  "mobile-banner": { width: 350, height: 60 },
 } as const;
 
 type AdSize = keyof typeof AD_SIZES;
@@ -75,23 +75,35 @@ export default function AdSlot({
   }, [clientId, showPlaceholder]);
 
   if (showPlaceholder) {
-    return (
+    const placeholderContent = (
       <Placeholder
         width={dims?.width}
         height={dims?.height ?? formatMinHeight(format)}
-        className={className}
+        className={size === "mobile-banner" ? "cg-ad-slot__creative cg-ad-slot__creative--placeholder" : className}
       />
+    );
+
+    if (size !== "mobile-banner") return placeholderContent;
+
+    return (
+      <div className={`cg-ad-slot cg-ad-slot--placeholder cg-ad-slot--mobile-banner w-full max-w-full ${className}`}>
+        {placeholderContent}
+      </div>
     );
   }
 
   return (
-    <div className={`w-full max-w-full overflow-hidden ${className}`}>
+    <div className={`cg-ad-slot w-full max-w-full overflow-hidden ${size === "mobile-banner" ? "cg-ad-slot--mobile-banner" : ""} ${className}`}>
       <ins
-        className="adsbygoogle"
+        className="adsbygoogle cg-ad-slot__creative"
         style={{
           display: "block",
           ...(dims
-            ? { width: "100%", maxWidth: dims.width, height: dims.height }
+            ? {
+                width: "100%",
+                maxWidth: dims.width,
+                ...(size === "mobile-banner" ? {} : { height: dims.height }),
+              }
             : undefined),
         }}
         data-ad-client={clientId}
