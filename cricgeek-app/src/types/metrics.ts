@@ -21,6 +21,7 @@ export interface MetricQuality {
   confidence?: MetricConfidenceTier;
   confidenceScore?: number | null;
   warning?: string | null;
+  diagnostic?: string | null;
   suppressed?: boolean;
   uncertainty?: MetricUncertainty | null;
   provenance?: MetricProvenance;

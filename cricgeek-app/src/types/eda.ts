@@ -42,6 +42,7 @@ export interface HistoricalTeamFormSnapshot {
   sampleSize: number;
   confidence: MetricConfidenceTier;
   warning?: string | null;
+  diagnostic?: string | null;
   wins: number;
   losses: number;
   noResult: number;
@@ -60,6 +61,7 @@ export interface HistoricalHeadToHeadSnapshot {
   sampleSize: number;
   confidence: MetricConfidenceTier;
   warning?: string | null;
+  diagnostic?: string | null;
   teamAWins: number;
   teamBWins: number;
   noResult: number;
@@ -76,6 +78,7 @@ export interface HistoricalVenueSnapshot {
   chaseSampleSize?: number;
   confidence: MetricConfidenceTier;
   warning?: string | null;
+  diagnostic?: string | null;
   avgFirstInningsScore: number | null;
   avgFirstInningsInterval?: MetricUncertainty | null;
   chaseWinPct: number | null;

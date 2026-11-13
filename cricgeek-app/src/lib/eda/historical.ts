@@ -41,13 +41,14 @@ function buildMatchTypeFilter(matchType: string): Prisma.HistoricalMatchWhereInp
   };
 }
 
-function unavailableTeamForm(team: string, reason: string): HistoricalTeamFormSnapshot {
+function unavailableTeamForm(team: string, reason: string, diagnostic?: string | null): HistoricalTeamFormSnapshot {
   return {
     team,
     available: false,
     sampleSize: 0,
     confidence: "low",
     warning: reason,
+    diagnostic,
     wins: 0,
     losses: 0,
     noResult: 0,
@@ -63,7 +64,11 @@ function unavailableTeamForm(team: string, reason: string): HistoricalTeamFormSn
 export async function getTeamFormSnapshot(team: string, matchType: string): Promise<HistoricalTeamFormSnapshot> {
   const status = await getHistoricalWarehouseStatus();
   if (!status.available) {
-    return unavailableTeamForm(team, status.error ?? "Historical warehouse is unavailable.");
+    return unavailableTeamForm(
+      team,
+      "Historical data is unavailable because the warehouse cannot be reached right now.",
+      status.error
+    );
   }
 
   const teamKey = normaliseKey(team);
@@ -141,7 +146,7 @@ export async function getTeamFormSnapshot(team: string, matchType: string): Prom
   };
 }
 
-function unavailableHeadToHead(teamA: string, teamB: string, reason: string): HistoricalHeadToHeadSnapshot {
+function unavailableHeadToHead(teamA: string, teamB: string, reason: string, diagnostic?: string | null): HistoricalHeadToHeadSnapshot {
   return {
     available: false,
     teamA,
@@ -149,6 +154,7 @@ function unavailableHeadToHead(teamA: string, teamB: string, reason: string): Hi
     sampleSize: 0,
     confidence: "low",
     warning: reason,
+    diagnostic,
     teamAWins: 0,
     teamBWins: 0,
     noResult: 0,
@@ -166,7 +172,12 @@ export async function getHeadToHeadSnapshot(
 ): Promise<HistoricalHeadToHeadSnapshot> {
   const status = await getHistoricalWarehouseStatus();
   if (!status.available) {
-    return unavailableHeadToHead(teamA, teamB, status.error ?? "Historical warehouse is unavailable.");
+    return unavailableHeadToHead(
+      teamA,
+      teamB,
+      "Historical data is unavailable because the warehouse cannot be reached right now.",
+      status.error
+    );
   }
 
   const teamAKey = normaliseKey(teamA);
@@ -228,7 +239,7 @@ export async function getHeadToHeadSnapshot(
   };
 }
 
-function unavailableVenue(venue: string, reason: string): HistoricalVenueSnapshot {
+function unavailableVenue(venue: string, reason: string, diagnostic?: string | null): HistoricalVenueSnapshot {
   return {
     venue,
     available: false,
@@ -236,6 +247,7 @@ function unavailableVenue(venue: string, reason: string): HistoricalVenueSnapsho
     chaseSampleSize: 0,
     confidence: "low",
     warning: reason,
+    diagnostic,
     avgFirstInningsScore: null,
     avgFirstInningsInterval: null,
     chaseWinPct: null,
@@ -247,7 +259,11 @@ function unavailableVenue(venue: string, reason: string): HistoricalVenueSnapsho
 export async function getVenueSnapshot(venue: string, matchType: string): Promise<HistoricalVenueSnapshot> {
   const status = await getHistoricalWarehouseStatus();
   if (!status.available) {
-    return unavailableVenue(venue, status.error ?? "Historical warehouse is unavailable.");
+    return unavailableVenue(
+      venue,
+      "Historical data is unavailable because the warehouse cannot be reached right now.",
+      status.error
+    );
   }
 
   const venueKey = normaliseKey(venue.split(",")[0] || venue);

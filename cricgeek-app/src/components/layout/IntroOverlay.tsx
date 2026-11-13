@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Logo from "@/components/layout/Logo";
 
 /**
  * IntroOverlay — one-time cricket-broadcast-style intro animation.
@@ -60,12 +61,9 @@ export default function IntroOverlay() {
             : "opacity-0 scale-100"
         }`}
       >
-        <div className="w-16 h-16 bg-cg-green rounded-xl flex items-center justify-center cg-intro-glow">
-          <span className="text-black font-black text-2xl">CG</span>
+        <div className="cg-intro-glow rounded-xl">
+          <Logo variant="stacked" theme="white" size="xl" priority alt="CricGeek" />
         </div>
-        <span className="text-white font-bold text-2xl tracking-tight">
-          CricGeek
-        </span>
       </div>
 
       {/* Green horizontal sweep line */}

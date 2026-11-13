@@ -10,6 +10,23 @@ export const metadata: Metadata = {
   description:
     "Your ultimate cricket companion. Live match scores, ball-by-ball commentary, expert analysis, and community-driven cricket discussion.",
   keywords: ["cricket", "live scores", "IPL", "World Cup", "cricket analysis"],
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/brand/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/brand/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/brand/app-icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [
+      { url: "/brand/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "CricGeek",
+  },
 };
 
 /**

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "@/components/layout/Logo";
 
 const footerLinks = {
   Cricket: [
@@ -22,11 +23,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-cg-green rounded-lg flex items-center justify-center">
-                <span className="text-black font-black text-lg">CG</span>
-              </div>
-              <span className="text-[var(--text-primary)] font-bold text-xl">CricGeek</span>
+            <div className="mb-4">
+              <Logo variant="horizontal" height={28} width={173} href="/" alt="CricGeek" />
             </div>
             <p className="text-[var(--text-secondary)] text-sm">
               Your ultimate cricket companion. Live scores, expert analysis,

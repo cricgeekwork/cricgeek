@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import NotificationBell from "@/components/layout/NotificationBell";
 import ThemeToggle from "@/components/layout/ThemeToggle";
+import Logo from "@/components/layout/Logo";
 import { useCricGeekSession } from "@/hooks/useCricGeekSession";
 import { signOutLocalUser } from "@/lib/communities/local-community-service";
 import {
@@ -177,22 +178,24 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-cg-green rounded-lg flex items-center justify-center">
-              <span className="text-black font-black text-lg">CG</span>
+          <Link href="/" className="flex items-center gap-2 focus:outline-none shrink-0">
+            {/* Mobile: App icon 1 (dark mode) / App icon 2 (light mode) */}
+            <div className="sm:hidden flex items-center">
+              <Logo variant="icon" width={40} height={40} priority alt="CricGeek" />
             </div>
-            <span className="text-[var(--text-primary)] font-bold text-xl hidden sm:block">
-              CricGeek
-            </span>
+            {/* Desktop: Official Horizontal Logo */}
+            <div className="hidden sm:flex items-center">
+              <Logo variant="horizontal" height={24} width={148} priority alt="CricGeek" />
+            </div>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden xl:flex items-center gap-1">
             {visibleNavLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-[var(--text-secondary)] hover:text-cg-green hover:bg-[var(--bg-hover)] px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
+                className="text-[var(--text-secondary)] hover:text-cg-green hover:bg-[var(--bg-hover)] px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap"
               >
                 <link.icon size={16} />
                 {link.label}
@@ -201,7 +204,7 @@ export default function Navbar() {
           </div>
 
           {/* Right side */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden xl:flex items-center gap-3">
             <button className="text-[var(--text-muted)] hover:text-[var(--text-primary)] p-2 rounded-lg hover:bg-[var(--bg-hover)] transition-all">
               <Search size={18} />
             </button>
@@ -303,7 +306,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile account controls */}
-          <div className="flex md:hidden items-center gap-1">
+          <div className="flex xl:hidden items-center gap-1">
             <button
               type="button"
               aria-label="Search"
@@ -389,7 +392,7 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
-      <div className="cg-mobile-bottom-nav md:hidden">
+      <div className="cg-mobile-bottom-nav xl:hidden">
         <nav
           aria-label="Mobile navigation"
           className="cg-mobile-bottom-nav__viewport"

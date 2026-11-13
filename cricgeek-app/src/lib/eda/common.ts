@@ -130,6 +130,7 @@ export function buildMetricQuality(input: {
   confidence?: MetricConfidenceTier;
   confidenceScore?: number | null;
   warning?: string | null;
+  diagnostic?: string | null;
   suppressed?: boolean;
   uncertainty?: MetricUncertainty | null;
   readiness?: MetricReadiness | null;
@@ -148,6 +149,7 @@ export function buildMetricQuality(input: {
         ? 95
         : confidenceScoreFromSample(Math.max(0, input.sampleSize ?? 0))),
     warning: input.warning ?? null,
+    diagnostic: input.diagnostic ?? null,
     suppressed: input.suppressed ?? false,
     uncertainty: input.uncertainty ?? null,
     readiness: input.readiness ?? null,

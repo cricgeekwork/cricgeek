@@ -33,10 +33,12 @@
 :root,
 [data-theme="dark"] {
   /* Backgrounds */
+  --analytics-page-bg: #070b12;
   --bg-base:          #0A0A0A;
   --bg-surface:       #111111;
   --bg-surface-2:     #1A1A2E;
   --bg-card:          #111111;
+  --bg-inset:         #0A0A0A;
   --bg-input:         #111111;
   --bg-hover:         rgba(255,255,255,0.05);
   --bg-hover-2:       rgba(255,255,255,0.08);
@@ -74,6 +76,14 @@
 
   /* Secondary highlight */
   --highlight:        #FBBF24;
+  --status-warning-text: #fbbf24;
+  --status-warning-bg: rgba(245,158,11,0.10);
+  --status-warning-border: rgba(245,158,11,0.30);
+  --status-success-text: #4ade80;
+  --status-success-bg: rgba(34,197,94,0.10);
+  --status-success-border: rgba(34,197,94,0.30);
+  --chart-grid: rgba(255,255,255,0.06);
+  --chart-point-stroke: rgba(255,255,255,0.4);
 
   /* Dropdown */
   --dropdown-bg:      #111111;
@@ -87,10 +97,12 @@
 
 [data-theme="light"] {
   /* Backgrounds — Paper & Lichen palette */
+  --analytics-page-bg: var(--bg-base);
   --bg-base:          #F3F1E8;
   --bg-surface:       #FCFBF7;
   --bg-surface-2:     #F0EEE4;
   --bg-card:          #FCFBF7;
+  --bg-inset:         #F7F6F1;
   --bg-input:         #FCFBF7;
   --bg-hover:         rgba(68,112,90,0.06);
   --bg-hover-2:       rgba(68,112,90,0.10);
@@ -128,6 +140,14 @@
 
   /* Secondary highlight */
   --highlight:        #8F6416;
+  --status-warning-text: #8c4a0b;
+  --status-warning-bg: rgba(245,158,11,0.12);
+  --status-warning-border: rgba(180,83,9,0.25);
+  --status-success-text: #17633c;
+  --status-success-bg: rgba(34,120,70,0.09);
+  --status-success-border: rgba(34,120,70,0.24);
+  --chart-grid: rgba(28,37,32,0.12);
+  --chart-point-stroke: rgba(28,37,32,0.55);
 
   /* Dropdown */
   --dropdown-bg:      #FCFBF7;
@@ -1366,4 +1386,118 @@ body {
 [data-theme="light"] .bg-cg-dark-2\/80 {
   background-color: var(--bg-card) !important;
   border-color: var(--border-color) !important;
+}
+
+/* Semantic surfaces used by the preview and post-match analytics pages. */
+.cg-analytics-scope {
+  min-width: 0;
+  max-width: 100%;
+  color: var(--text-primary);
+}
+
+.cg-analytics-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.cg-analytics-inset {
+  background-color: var(--bg-inset);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.cg-analytics-feature {
+  background: linear-gradient(to bottom right, var(--accent-muted), var(--bg-surface), var(--bg-base));
+  border: 1px solid var(--accent-border);
+  color: var(--text-primary);
+}
+
+.cg-analytics-action {
+  background-color: var(--btn-secondary-bg);
+  border: 1px solid transparent;
+  color: var(--text-primary);
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.cg-analytics-action:hover {
+  background-color: var(--bg-hover-2);
+}
+
+.cg-analytics-accent-link {
+  color: var(--accent);
+}
+
+[data-theme="light"] .cg-analytics-feature {
+  background: var(--bg-surface);
+}
+
+[data-theme="light"] .cg-analytics-action {
+  border-color: var(--btn-secondary-border);
+}
+
+/* Theme legacy dark utility surfaces inside the analysis report with the semantic palette. */
+[data-theme="light"] .cg-analytics-scope :is(.bg-\[\#070b12\]) {
+  background-color: var(--bg-base) !important;
+}
+
+[data-theme="light"] .cg-analytics-scope :is(
+  .bg-\[\#0c121e\],
+  .bg-\[\#0b101b\],
+  .bg-\[\#080b12\],
+  .bg-black\/40,
+  .bg-black\/30,
+  .bg-black\/20,
+  .bg-slate-900,
+  .bg-slate-800,
+  .bg-white\/\[0\.05\],
+  .bg-white\/\[0\.04\],
+  .bg-white\/\[0\.03\],
+  .bg-white\/\[0\.02\]
+) {
+  background-color: var(--bg-inset) !important;
+}
+
+[data-theme="light"] .cg-analytics-scope :is(
+  .border-slate-800,
+  .border-slate-800\/80,
+  .border-slate-700,
+  .border-white\/10,
+  .border-white\/8
+) {
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="light"] .cg-analytics-scope :is(
+  .bg-slate-900\/80,
+  .bg-slate-800\/80
+) {
+  background-color: var(--tag-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="light"] .cg-analytics-scope .bg-amber-500\/\[0\.06\],
+[data-theme="light"] .cg-analytics-scope .bg-amber-500\/10 {
+  background-color: var(--status-warning-bg) !important;
+}
+
+[data-theme="light"] .cg-analytics-scope .border-amber-500\/30 {
+  border-color: var(--status-warning-border) !important;
+}
+
+[data-theme="light"] .cg-analytics-scope .text-amber-300,
+[data-theme="light"] .cg-analytics-scope .text-amber-200 {
+  color: var(--status-warning-text) !important;
+}
+
+[data-theme="light"] .cg-analytics-scope .bg-emerald-500\/\[0\.06\] {
+  background-color: var(--status-success-bg) !important;
+}
+
+[data-theme="light"] .cg-analytics-scope .border-emerald-500\/30 {
+  border-color: var(--status-success-border) !important;
+}
+
+[data-theme="light"] .cg-analytics-scope .text-emerald-400 {
+  color: var(--status-success-text) !important;
 }

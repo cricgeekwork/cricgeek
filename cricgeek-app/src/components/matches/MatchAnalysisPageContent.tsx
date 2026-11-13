@@ -40,5 +40,5 @@ export async function MatchAnalysisPageContent({ params }: MatchAnalysisPageProp
 
   const report = await buildPostMatchEdaReport(match, scorecards);
 
-  return <PostMatchInsightsStory match={match} report={report} coverage={coverage} />;
+  return <PostMatchInsightsStory match={match} report={report} coverage={coverage} scorecards={scorecards} />;
 }

@@ -193,10 +193,20 @@ function QualityStrip({ card }: { card: PostMatchEdaCard }) {
           <p className="text-[11px] font-medium text-sky-800 dark:text-sky-100/90">{quality.readiness.label}</p>
         </div>
       ) : null}
-      {quality?.warning ? (
+      {quality?.warning && quality.warning !== card.insight ? (
         <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] font-medium text-amber-900 dark:text-amber-100">
           {quality.warning}
         </p>
+      ) : null}
+      {quality?.diagnostic ? (
+        <details className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface-2)] px-3 py-2 text-[11px] text-[var(--text-secondary)]">
+          <summary className="cursor-pointer font-semibold text-[var(--text-secondary)]">
+            Technical details
+          </summary>
+          <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap break-words [overflow-wrap:anywhere] font-mono text-[10px] leading-relaxed">
+            {quality.diagnostic}
+          </pre>
+        </details>
       ) : null}
     </div>
   );

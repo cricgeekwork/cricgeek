@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Logo from "@/components/layout/Logo";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight, CheckCircle2, Chrome } from "lucide-react";
 
@@ -79,11 +80,8 @@ export default function RegisterPage() {
         {/* Left — Branding Panel */}
         <div className="hidden lg:flex flex-col justify-between p-8 bg-gradient-to-br from-cg-green/10 via-cg-dark-2 to-cg-dark-3 border-r border-gray-800">
           <div>
-            <div className="flex items-center gap-2 mb-10">
-              <div className="w-10 h-10 bg-cg-green rounded-lg flex items-center justify-center">
-                <span className="text-black font-black text-lg">CG</span>
-              </div>
-              <span className="text-white font-bold text-xl">CricGeek</span>
+            <div className="mb-10">
+              <Logo variant="horizontal" theme="dark" height={28} width={173} href="/" alt="CricGeek" />
             </div>
 
             <h2 className="text-3xl font-black text-white leading-tight mb-3">
@@ -135,10 +133,8 @@ export default function RegisterPage() {
         {/* Right — Registration Form */}
         <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
           {/* Mobile logo */}
-          <div className="lg:hidden text-center mb-6">
-            <div className="w-14 h-14 bg-cg-green rounded-xl flex items-center justify-center mx-auto mb-3">
-              <span className="text-black font-black text-2xl">CG</span>
-            </div>
+          <div className="lg:hidden flex justify-center mb-6">
+            <Logo variant="icon" size="lg" href="/" alt="CricGeek" />
           </div>
 
           <h1 className="text-2xl font-black text-white mb-1">

@@ -98,13 +98,18 @@ export async function buildPreMatchEdaReport(match: Match, squads: Squad[] | nul
       label: `${teamA} form`,
       value: teamAForm.available ? `${teamAForm.wins}-${teamAForm.losses}-${teamAForm.noResult}` : "Waiting",
       insight: teamAForm.summary,
-      tone: teamAForm.wins >= teamAForm.losses ? "good" as const : "neutral" as const,
+      tone: !teamAForm.available
+        ? "warning" as const
+        : teamAForm.wins >= teamAForm.losses
+          ? "good" as const
+          : "neutral" as const,
       subValue: teamAForm.avgRuns !== null ? `Avg ${teamAForm.avgRuns} runs` : undefined,
       quality: buildMetricQuality({
         sampleSize: teamAForm.sampleSize,
         provenance: "historical",
         confidence: teamAForm.confidence,
         warning: teamAForm.warning,
+        diagnostic: teamAForm.diagnostic,
         uncertainty: teamAForm.winPctInterval ?? null,
       }),
     },
@@ -113,13 +118,18 @@ export async function buildPreMatchEdaReport(match: Match, squads: Squad[] | nul
       label: `${teamB} form`,
       value: teamBForm.available ? `${teamBForm.wins}-${teamBForm.losses}-${teamBForm.noResult}` : "Waiting",
       insight: teamBForm.summary,
-      tone: teamBForm.wins >= teamBForm.losses ? "good" as const : "neutral" as const,
+      tone: !teamBForm.available
+        ? "warning" as const
+        : teamBForm.wins >= teamBForm.losses
+          ? "good" as const
+          : "neutral" as const,
       subValue: teamBForm.avgRuns !== null ? `Avg ${teamBForm.avgRuns} runs` : undefined,
       quality: buildMetricQuality({
         sampleSize: teamBForm.sampleSize,
         provenance: "historical",
         confidence: teamBForm.confidence,
         warning: teamBForm.warning,
+        diagnostic: teamBForm.diagnostic,
         uncertainty: teamBForm.winPctInterval ?? null,
       }),
     },
@@ -144,6 +154,7 @@ export async function buildPreMatchEdaReport(match: Match, squads: Squad[] | nul
         provenance: "blended",
         confidence: headToHead.confidence,
         warning: headToHead.warning ?? (h2hResolved === 0 ? "No direct head-to-head sample was available; this is a form-prior estimate." : null),
+        diagnostic: headToHead.diagnostic,
         uncertainty: headToHead.rawWinInterval ?? null,
       }),
     },
@@ -159,6 +170,7 @@ export async function buildPreMatchEdaReport(match: Match, squads: Squad[] | nul
         provenance: "historical",
         confidence: venue.confidence,
         warning: venue.warning,
+        diagnostic: venue.diagnostic,
         uncertainty: venue.avgFirstInningsInterval ?? null,
       }),
     },
@@ -190,6 +202,7 @@ export async function buildPreMatchEdaReport(match: Match, squads: Squad[] | nul
           suppressChaseRate
             ? `Suppressed because only ${chaseSampleSize} completed comparable chases exist for this venue.`
             : venue.warning,
+        diagnostic: venue.diagnostic,
         suppressed: suppressChaseRate,
         uncertainty: venue.chaseWinInterval ?? null,
       }),
