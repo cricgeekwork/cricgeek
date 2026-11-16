@@ -70,6 +70,7 @@ export default function Logo({
           width={iconDim}
           height={iconDim}
           priority={priority}
+          unoptimized
           className={cn(`${roundedClass} object-contain shrink-0`, className)}
         />
       );
@@ -81,6 +82,7 @@ export default function Logo({
           width={iconDim}
           height={iconDim}
           priority={priority}
+          unoptimized
           className={cn(`${roundedClass} object-contain shrink-0`, className)}
         />
       );
@@ -97,6 +99,7 @@ export default function Logo({
             width={iconDim}
             height={iconDim}
             priority={priority}
+            unoptimized
             className={cn("hidden dark:block w-full h-full object-contain", roundedClass)}
           />
           <Image
@@ -105,6 +108,7 @@ export default function Logo({
             width={iconDim}
             height={iconDim}
             priority={priority}
+            unoptimized
             className={cn("block dark:hidden w-full h-full object-contain", roundedClass)}
           />
         </div>
@@ -124,6 +128,7 @@ export default function Logo({
           width={stackedWidth}
           height={stackedHeight}
           priority={priority}
+          unoptimized
           className={cn("object-contain shrink-0", className)}
         />
       );
@@ -135,6 +140,7 @@ export default function Logo({
           width={stackedWidth}
           height={stackedHeight}
           priority={priority}
+          unoptimized
           className={cn("object-contain shrink-0", className)}
         />
       );
@@ -150,6 +156,7 @@ export default function Logo({
             width={stackedWidth}
             height={stackedHeight}
             priority={priority}
+            unoptimized
             className="hidden dark:block w-full h-full object-contain"
           />
           <Image
@@ -158,6 +165,7 @@ export default function Logo({
             width={stackedWidth}
             height={stackedHeight}
             priority={priority}
+            unoptimized
             className="block dark:hidden w-full h-full object-contain"
           />
         </div>
@@ -178,6 +186,7 @@ export default function Logo({
           width={wDim}
           height={hDim}
           priority={priority}
+          unoptimized
           className={cn("object-contain shrink-0", className)}
         />
       );
@@ -189,6 +198,7 @@ export default function Logo({
           width={wDim}
           height={hDim}
           priority={priority}
+          unoptimized
           className={cn("object-contain shrink-0", className)}
         />
       );
@@ -205,6 +215,7 @@ export default function Logo({
             width={wDim}
             height={hDim}
             priority={priority}
+            unoptimized
             className="hidden dark:block w-full h-full object-contain"
           />
           <Image
@@ -213,6 +224,7 @@ export default function Logo({
             width={wDim}
             height={hDim}
             priority={priority}
+            unoptimized
             className="block dark:hidden w-full h-full object-contain"
           />
         </div>
