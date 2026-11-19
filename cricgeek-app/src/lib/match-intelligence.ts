@@ -180,7 +180,7 @@ function buildInningsSummaries(scorecards: Scorecard[]): PostMatchInningsSummary
       totalRuns: card.totalRuns,
       totalWickets: card.totalWickets,
       totalOvers: card.totalOvers,
-      runRate: roundStat(card.totalRuns / Math.max(card.totalOvers, 1), 2),
+      runRate: roundStat((card.totalRuns * 6) / Math.max(oversToBalls(card.totalOvers), 1), 2),
       extras,
       extrasPct: percentage(extras, card.totalRuns),
       boundaryRuns,
@@ -244,7 +244,11 @@ function buildBowlingLeaders(scorecards: Scorecard[]): PostMatchBowlingLeader[] 
     .slice(0, 6);
 }
 
-function buildMatchSignals(summaries: PostMatchInningsSummary[], bowlingLeaders: PostMatchBowlingLeader[]): PostMatchSignal[] {
+function buildMatchSignals(
+  summaries: PostMatchInningsSummary[],
+  bowlingLeaders: PostMatchBowlingLeader[],
+  matchEnded: boolean,
+): PostMatchSignal[] {
   if (summaries.length === 0) {
     return [
       {
@@ -263,8 +267,9 @@ function buildMatchSignals(summaries: PostMatchInningsSummary[], bowlingLeaders:
     ];
   }
 
-  const comparisonWarning =
-    summaries.length <= 1
+  const comparisonWarning = !matchEnded
+    ? "The match has not finished, so comparisons are provisional."
+    : summaries.length <= 1
       ? "Only one innings is available, so comparative signals are provisional."
       : null;
   const fastestInnings = [...summaries].sort((left, right) => right.runRate - left.runRate)[0];
@@ -360,7 +365,9 @@ function buildReportNotes(match: Match, summaries: PostMatchInningsSummary[]) {
     "We intentionally avoid fake phase claims when ball-by-ball tempo splits are not available from the scorecard feed.",
   ];
 
-  if (!match.matchEnded) {
+  if (!match.matchStarted) {
+    notes.push("The match has not started, so post-match analysis is not available yet.");
+  } else if (!match.matchEnded) {
     notes.push("The match is still live or incomplete, so the EDA report will evolve as more innings data arrives.");
   }
 
@@ -391,7 +398,11 @@ function buildFallbackTurningPoints(summaries: PostMatchInningsSummary[], signal
   ];
 }
 
-function buildFallbackTakeaways(summaries: PostMatchInningsSummary[], bowlingLeaders: PostMatchBowlingLeader[]) {
+function buildFallbackTakeaways(
+  summaries: PostMatchInningsSummary[],
+  bowlingLeaders: PostMatchBowlingLeader[],
+  matchEnded: boolean,
+) {
   if (summaries.length === 0) {
     return [
       "Post-match tactical takeaways unlock once scorecards are available.",
@@ -405,8 +416,8 @@ function buildFallbackTakeaways(summaries: PostMatchInningsSummary[], bowlingLea
   const bestBowling = bowlingLeaders[0];
 
   return [
-    `${balancedInnings.inning} showed the healthiest batting shape, with ${formatPercentage(balancedInnings.supportPct)} of runs coming outside the top scorer.`,
-    `${boundaryHeavyInnings.inning} leaned hardest on boundary scoring, a sign that strike rotation may have been less stable there.`,
+    `${balancedInnings.inning} had the highest support share in the available scorecards, with ${formatPercentage(balancedInnings.supportPct)} of runs coming outside the top scorer${matchEnded ? "." : " so far; this comparison is provisional."}`,
+    `${boundaryHeavyInnings.inning} had the highest boundary share${matchEnded ? ", indicating greater reliance on boundary runs." : " so far; the match is still in progress."}`,
     bestBowling
       ? `${bestBowling.name}'s ${bestBowling.wickets}/${bestBowling.runsConceded} in ${bestBowling.inning} was the cleanest spell of control in the data.`
       : "Bowling control will read more clearly once wicket-taking spells are fully available.",
@@ -417,17 +428,31 @@ export async function buildPostMatchIntel(match: Match, scorecards: Scorecard[] 
   const summaries = buildInningsSummaries(scorecards ?? []);
   const battingLeaders = buildBattingLeaders(scorecards ?? []);
   const bowlingLeaders = buildBowlingLeaders(scorecards ?? []);
-  const matchSignals = buildMatchSignals(summaries, bowlingLeaders);
-  const edaCards = buildPostMatchEdaCards(scorecards ?? []);
+  const matchSignals = buildMatchSignals(summaries, bowlingLeaders, match.matchEnded);
+  const edaCards = buildPostMatchEdaCards(scorecards ?? [], match.matchEnded);
   const topBatters = getTopBatters(scorecards ?? []);
   const topBowlers = getTopBowlers(scorecards ?? []);
   const reportNotes = buildReportNotes(match, summaries);
 
   const fallback: PostMatchIntel = {
-    headline: `${match.name} post-match EDA report`,
-    summary: `The result at ${match.venue} was shaped by scoring speed, batting support, and how much pressure each side released through boundaries and extras. This report combines deterministic innings fingerprints with model-written post-match context.`,
-    turningPoints: buildFallbackTurningPoints(summaries, matchSignals),
-    tacticalTakeaways: buildFallbackTakeaways(summaries, bowlingLeaders),
+    headline: `${match.name} ${
+      match.matchEnded
+        ? "post-match EDA report"
+        : match.matchStarted
+          ? "live match EDA snapshot"
+          : "analysis pending"
+    }`,
+    summary: !match.matchStarted
+      ? `${match.name} has not started yet. Post-match analysis will be available when scorecards arrive.`
+      : match.matchEnded
+        ? summaries.length > 1
+          ? `Final result: ${match.status}. This comparison uses ${summaries.length} innings from the available scorecards.`
+          : `Final result: ${match.status}. Detailed comparisons are limited because fewer than two innings are available.`
+        : `Live snapshot of ${match.name}. The available scorecards cover ${summaries.length} innings; comparisons and turning-point conclusions remain provisional.`,
+    turningPoints: match.matchEnded ? buildFallbackTurningPoints(summaries, matchSignals) : [],
+    tacticalTakeaways: match.matchEnded
+      ? buildFallbackTakeaways(summaries, bowlingLeaders, true)
+      : [],
     standoutPerformers: [
       ...topBatters.map((entry) => `${entry.name}: ${entry.runs} runs in ${entry.inning}`),
       ...topBowlers.map((entry) => `${entry.name}: ${entry.wickets} wickets in ${entry.inning}`),
@@ -441,12 +466,15 @@ export async function buildPostMatchIntel(match: Match, scorecards: Scorecard[] 
   };
 
   const narrative = await generateStructuredNarrative<Partial<PostMatchIntel>>(
-    `You are a senior cricket analyst writing a concise, evidence-aware post-match EDA summary. Return strict JSON.
+    `You are a senior cricket analyst writing a concise, evidence-aware cricket analysis. Return strict JSON.
 Keys: headline, summary, turningPoints, tacticalTakeaways, standoutPerformers.
 Do not invent phase data or ball-by-ball trends unless directly implied by the scorecard metrics below.
+If the match has not started, say analysis is pending and do not describe a live snapshot.
+If it has started but not ended, describe a live snapshot, make no definitive turning-point claims, and label comparisons provisional.
 Match: ${match.name}
 Venue: ${match.venue}
 Status: ${match.status}
+Started: ${match.matchStarted ? "yes" : "no"}
 Ended: ${match.matchEnded ? "yes" : "no"}
 Innings fingerprints: ${summaries.map((summary) => `${summary.inning} ${summary.totalRuns}/${summary.totalWickets} in ${summary.totalOvers} overs, RR ${summary.runRate}, boundary share ${summary.boundaryPct}%, support share ${summary.supportPct}%, lower-order share ${summary.lowerOrderPct}%, extras ${summary.extras} (${summary.extrasPct}%)`).join("; ") || "No scorecard summaries available"}
 Batting leaders: ${battingLeaders.map((entry) => `${entry.name} ${entry.runs}(${entry.balls}) SR ${entry.strikeRate} in ${entry.inning}`).join("; ") || "No batting leaders available"}
@@ -457,12 +485,16 @@ Signals: ${matchSignals.map((signal) => `${signal.label}: ${signal.value} (${sig
   return {
     headline: narrative?.headline || fallback.headline,
     summary: narrative?.summary || fallback.summary,
-    turningPoints: Array.isArray(narrative?.turningPoints) && narrative.turningPoints.length > 0
-      ? narrative.turningPoints.slice(0, 3)
-      : fallback.turningPoints,
-    tacticalTakeaways: Array.isArray(narrative?.tacticalTakeaways) && narrative.tacticalTakeaways.length > 0
-      ? narrative.tacticalTakeaways.slice(0, 3)
-      : fallback.tacticalTakeaways,
+    turningPoints: match.matchEnded
+      ? Array.isArray(narrative?.turningPoints) && narrative.turningPoints.length > 0
+        ? narrative.turningPoints.slice(0, 3)
+        : fallback.turningPoints
+      : [],
+    tacticalTakeaways: match.matchEnded
+      ? Array.isArray(narrative?.tacticalTakeaways) && narrative.tacticalTakeaways.length > 0
+        ? narrative.tacticalTakeaways.slice(0, 3)
+        : fallback.tacticalTakeaways
+      : [],
     standoutPerformers: Array.isArray(narrative?.standoutPerformers) && narrative.standoutPerformers.length > 0
       ? narrative.standoutPerformers.slice(0, 5)
       : fallback.standoutPerformers,
@@ -475,7 +507,10 @@ Signals: ${matchSignals.map((signal) => `${signal.label}: ${signal.value} (${sig
   };
 }
 
-export function buildPostMatchEdaCards(scorecards: Scorecard[]): PostMatchEdaCard[] {
+export function buildPostMatchEdaCards(
+  scorecards: Scorecard[],
+  matchEnded = true,
+): PostMatchEdaCard[] {
   if (scorecards.length === 0) {
     return [
       {
@@ -507,8 +542,9 @@ export function buildPostMatchEdaCards(scorecards: Scorecard[]): PostMatchEdaCar
   const extrasLeak = [...summaries].sort((left, right) => right.extrasPct - left.extrasPct)[0];
   const topBatter = battingLeaders[0];
   const bestBowler = bowlingLeaders[0];
-  const inningsWarning =
-    summaries.length <= 1
+  const inningsWarning = !matchEnded
+    ? "The match is not complete, so comparisons are provisional."
+    : summaries.length <= 1
       ? "Only one innings is available, so full-match comparisons are provisional."
       : null;
 

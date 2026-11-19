@@ -40,6 +40,10 @@ interface ApiResponse<T> {
 }
 
 async function fetchApi<T>(endpoint: string, params: Record<string, string> = {}): Promise<T | null> {
+  if (!API_KEY) {
+    return null;
+  }
+
   try {
     const url = new URL(`${BASE_URL}/${endpoint}`);
     url.searchParams.set("apikey", API_KEY);
@@ -248,7 +252,7 @@ export async function getMatchScorecard(
     return legacyScorecard;
   }
 
-  return shouldUseMocks() ? getMockScorecard() : null;
+  return shouldUseMocks() ? getMockScorecard(matchId) : null;
 }
 
 // Get match ball-by-ball commentary
@@ -266,7 +270,7 @@ export async function getMatchCommentary(
     return legacyCommentary;
   }
 
-  return shouldUseMocks() ? getMockCommentary() : null;
+  return shouldUseMocks() ? getMockCommentary(matchId) : null;
 }
 
 // Get match squads
@@ -284,7 +288,7 @@ export async function getMatchSquad(
     return legacySquads;
   }
 
-  return shouldUseMocks() ? getMockSquads() : null;
+  return shouldUseMocks() ? getMockSquads(matchId) : null;
 }
 
 // Get upcoming matches (calendar)
@@ -381,12 +385,13 @@ export async function getMatchDetailBundle(
   }
 
   if (shouldUseMocks()) {
+    const match = getMockMatch(matchId);
     return {
-      match: getMockMatch(matchId),
-      scorecard: getMockScorecard(),
-      commentary: getMockCommentary(),
-      squads: getMockSquads(),
-      source: "mock",
+      match,
+      scorecard: match ? getMockScorecard(matchId) : null,
+      commentary: match ? getMockCommentary(matchId) : null,
+      squads: match ? getMockSquads(matchId) : null,
+      source: match ? "mock" : "none",
     };
   }
 
@@ -438,8 +443,8 @@ function getMockLiveMatches(): Match[] {
         { name: "South Africa", shortname: "SA", img: "/flags/sa.png" },
       ],
       score: [
-        { r: 312, w: 8, o: 50, inning: "South Africa" },
-        { r: 315, w: 5, o: 47.3, inning: "England" },
+        { r: 312, w: 8, o: 50, inning: "South Africa 1st Innings" },
+        { r: 315, w: 5, o: 47.3, inning: "England 1st Innings" },
       ],
       matchStarted: true,
       matchEnded: true,
@@ -458,8 +463,8 @@ function getMockLiveMatches(): Match[] {
         { name: "Chennai Super Kings", shortname: "CSK", img: "/flags/csk.png" },
       ],
       score: [
-        { r: 189, w: 6, o: 20, inning: "Chennai Super Kings" },
-        { r: 156, w: 3, o: 16.2, inning: "Mumbai Indians" },
+        { r: 189, w: 6, o: 20, inning: "Chennai Super Kings 1st Innings" },
+        { r: 156, w: 3, o: 16.2, inning: "Mumbai Indians 1st Innings" },
       ],
       matchStarted: true,
       matchEnded: false,
@@ -481,41 +486,217 @@ function getMockLiveMatches(): Match[] {
       matchStarted: false,
       matchEnded: false,
     },
+    {
+      id: "mock-5",
+      name: "Sri Lanka vs Bangladesh, 1st ODI",
+      matchType: "ODI",
+      status: "Bangladesh won by 5 wickets",
+      venue: "Pallekele International Cricket Stadium",
+      date: "2026-02-10",
+      dateTimeGMT: "2026-02-10T10:00:00",
+      teams: ["Sri Lanka", "Bangladesh"],
+      teamInfo: [
+        { name: "Sri Lanka", shortname: "SL", img: "/flags/sl.png" },
+        { name: "Bangladesh", shortname: "BAN", img: "/flags/ban.png" },
+      ],
+      score: [
+        { r: 245, w: 7, o: 50, inning: "Sri Lanka 1st Innings" },
+        { r: 247, w: 5, o: 48.4, inning: "Bangladesh 1st Innings" },
+      ],
+      matchStarted: true,
+      matchEnded: true,
+    },
   ];
 }
 
-function getMockMatch(matchId: string): Match {
+function getMockMatch(matchId: string): Match | null {
   const matches = getMockLiveMatches();
-  return matches.find((m) => m.id === matchId) || matches[0];
+  return matches.find((m) => m.id === matchId) ?? null;
 }
 
-function getMockScorecard(): Scorecard[] {
-  return [
+function getMockScorecard(matchId: string): Scorecard[] | null {
+  const scorecards: Record<string, Scorecard[]> = {
+    "mock-1": [
     {
       inning: "India 1st Innings",
       totalRuns: 287,
       totalWickets: 4,
       totalOvers: 78,
-      extras: "b 4, lb 8, w 2, nb 1 (15)",
+      extras: "b 3, lb 8, w 2, nb 1 (14)",
       batting: [
         { batsman: { id: "1", name: "Rohit Sharma" }, dismissal: "c Smith b Starc", r: 52, b: 78, "4s": 7, "6s": 1, sr: "66.67" },
         { batsman: { id: "2", name: "Yashasvi Jaiswal" }, dismissal: "lbw b Hazlewood", r: 82, b: 134, "4s": 10, "6s": 2, sr: "61.19" },
         { batsman: { id: "3", name: "Shubman Gill" }, dismissal: "c Carey b Lyon", r: 45, b: 89, "4s": 4, "6s": 0, sr: "50.56" },
         { batsman: { id: "4", name: "Virat Kohli" }, dismissal: "c Labuschagne b Starc", r: 34, b: 67, "4s": 3, "6s": 1, sr: "50.75" },
-        { batsman: { id: "5", name: "KL Rahul" }, dismissal: "batting", r: 48, b: 72, "4s": 5, "6s": 0, sr: "66.67" },
+        { batsman: { id: "5", name: "KL Rahul" }, dismissal: "batting", r: 48, b: 71, "4s": 5, "6s": 0, sr: "67.61" },
         { batsman: { id: "6", name: "Ravindra Jadeja" }, dismissal: "batting", r: 12, b: 18, "4s": 1, "6s": 0, sr: "66.67" },
       ],
       bowling: [
-        { bowler: { id: "10", name: "Mitchell Starc" }, o: 20, m: 3, r: 72, w: 2, eco: "3.60" },
-        { bowler: { id: "11", name: "Josh Hazlewood" }, o: 18, m: 5, r: 48, w: 1, eco: "2.67" },
-        { bowler: { id: "12", name: "Pat Cummins" }, o: 16, m: 2, r: 62, w: 0, eco: "3.88" },
+        { bowler: { id: "10", name: "Mitchell Starc" }, o: 22, m: 3, r: 74, w: 2, eco: "3.36" },
+        { bowler: { id: "11", name: "Josh Hazlewood" }, o: 18, m: 5, r: 51, w: 1, eco: "2.83" },
+        { bowler: { id: "12", name: "Pat Cummins" }, o: 16, m: 2, r: 65, w: 0, eco: "4.06" },
         { bowler: { id: "13", name: "Nathan Lyon" }, o: 22, m: 4, r: 86, w: 1, eco: "3.91" },
       ],
     },
-  ];
+    ],
+    "mock-2": [
+      {
+        inning: "South Africa 1st Innings",
+        totalRuns: 312,
+        totalWickets: 8,
+        totalOvers: 50,
+        extras: "b 1, lb 6, w 4, nb 1 (12)",
+        batting: [
+          { batsman: { id: "101", name: "Quinton de Kock" }, dismissal: "c Buttler b Archer", r: 81, b: 75, "4s": 9, "6s": 1, sr: "108.00" },
+          { batsman: { id: "102", name: "Reeza Hendricks" }, dismissal: "c Root b Woakes", r: 54, b: 67, "4s": 6, "6s": 0, sr: "80.60" },
+          { batsman: { id: "103", name: "Rassie van der Dussen" }, dismissal: "lbw b Rashid", r: 48, b: 52, "4s": 4, "6s": 0, sr: "92.31" },
+          { batsman: { id: "104", name: "Aiden Markram" }, dismissal: "c Buttler b Stokes", r: 37, b: 32, "4s": 3, "6s": 1, sr: "115.63" },
+          { batsman: { id: "105", name: "Heinrich Klaasen" }, dismissal: "c Bairstow b Archer", r: 29, b: 24, "4s": 2, "6s": 1, sr: "120.83" },
+          { batsman: { id: "106", name: "David Miller" }, dismissal: "c Root b Rashid", r: 26, b: 19, "4s": 1, "6s": 1, sr: "136.84" },
+          { batsman: { id: "107", name: "Marco Jansen" }, dismissal: "b Wood", r: 12, b: 9, "4s": 1, "6s": 0, sr: "133.33" },
+          { batsman: { id: "108", name: "Keshav Maharaj" }, dismissal: "c Stokes b Rashid", r: 6, b: 5, "4s": 0, "6s": 0, sr: "120.00" },
+          { batsman: { id: "109", name: "Kagiso Rabada" }, dismissal: "not out", r: 4, b: 6, "4s": 0, "6s": 0, sr: "66.67" },
+          { batsman: { id: "110", name: "Anrich Nortje" }, dismissal: "not out", r: 3, b: 4, "4s": 0, "6s": 0, sr: "75.00" },
+        ],
+        bowling: [
+          { bowler: { id: "201", name: "Jofra Archer" }, o: 10, m: 0, r: 54, w: 2, eco: "5.40" },
+          { bowler: { id: "202", name: "Mark Wood" }, o: 10, m: 1, r: 61, w: 1, eco: "6.10" },
+          { bowler: { id: "203", name: "Adil Rashid" }, o: 10, m: 0, r: 57, w: 3, eco: "5.70" },
+          { bowler: { id: "204", name: "Chris Woakes" }, o: 10, m: 1, r: 55, w: 1, eco: "5.50" },
+          { bowler: { id: "205", name: "Ben Stokes" }, o: 7, m: 0, r: 48, w: 1, eco: "6.86" },
+          { bowler: { id: "206", name: "Moeen Ali" }, o: 3, m: 0, r: 30, w: 0, eco: "10.00" },
+        ],
+      },
+      {
+        inning: "England 1st Innings",
+        totalRuns: 315,
+        totalWickets: 5,
+        totalOvers: 47.3,
+        extras: "b 2, lb 10, w 2, nb 1 (15)",
+        batting: [
+          { batsman: { id: "211", name: "Jason Roy" }, dismissal: "c de Kock b Rabada", r: 72, b: 65, "4s": 10, "6s": 2, sr: "110.77" },
+          { batsman: { id: "212", name: "Jonny Bairstow" }, dismissal: "c Markram b Nortje", r: 45, b: 39, "4s": 6, "6s": 1, sr: "115.38" },
+          { batsman: { id: "213", name: "Joe Root" }, dismissal: "c Klaasen b Jansen", r: 63, b: 70, "4s": 4, "6s": 0, sr: "90.00" },
+          { batsman: { id: "214", name: "Ben Stokes" }, dismissal: "c Miller b Markram", r: 58, b: 52, "4s": 5, "6s": 2, sr: "111.54" },
+          { batsman: { id: "215", name: "Jos Buttler" }, dismissal: "c de Kock b Miller", r: 35, b: 28, "4s": 3, "6s": 2, sr: "125.00" },
+          { batsman: { id: "216", name: "Moeen Ali" }, dismissal: "not out", r: 19, b: 13, "4s": 1, "6s": 1, sr: "146.15" },
+          { batsman: { id: "217", name: "Sam Curran" }, dismissal: "not out", r: 8, b: 6, "4s": 1, "6s": 0, sr: "133.33" },
+        ],
+        bowling: [
+          { bowler: { id: "221", name: "Kagiso Rabada" }, o: 10, m: 0, r: 65, w: 1, eco: "6.50" },
+          { bowler: { id: "222", name: "Anrich Nortje" }, o: 9, m: 0, r: 57, w: 1, eco: "6.33" },
+          { bowler: { id: "223", name: "Marco Jansen" }, o: 9, m: 0, r: 51, w: 1, eco: "5.67" },
+          { bowler: { id: "224", name: "Keshav Maharaj" }, o: 8.3, m: 0, r: 44, w: 0, eco: "5.18" },
+          { bowler: { id: "225", name: "Aiden Markram" }, o: 7, m: 0, r: 46, w: 1, eco: "6.57" },
+          { bowler: { id: "226", name: "David Miller" }, o: 4, m: 0, r: 40, w: 1, eco: "10.00" },
+        ],
+      },
+    ],
+    "mock-5": [
+      {
+        inning: "Sri Lanka 1st Innings",
+        totalRuns: 245,
+        totalWickets: 7,
+        totalOvers: 50,
+        extras: "b 1, lb 2, w 4, nb 1 (8)",
+        batting: [
+          { batsman: { id: "501", name: "Pathum Nissanka" }, dismissal: "c Litton b Taskin", r: 64, b: 75, "4s": 7, "6s": 1, sr: "85.33" },
+          { batsman: { id: "502", name: "Kusal Mendis" }, dismissal: "c Shanto b Shoriful", r: 48, b: 55, "4s": 5, "6s": 1, sr: "87.27" },
+          { batsman: { id: "503", name: "Charith Asalanka" }, dismissal: "lbw b Mustafizur", r: 39, b: 42, "4s": 3, "6s": 1, sr: "92.86" },
+          { batsman: { id: "504", name: "Dhananjaya de Silva" }, dismissal: "c Mushfiqur b Mehidy", r: 27, b: 36, "4s": 2, "6s": 0, sr: "75.00" },
+          { batsman: { id: "505", name: "Wanindu Hasaranga" }, dismissal: "c Hridoy b Taskin", r: 24, b: 18, "4s": 1, "6s": 1, sr: "133.33" },
+          { batsman: { id: "506", name: "Sadeera Samarawickrama" }, dismissal: "c Litton b Mustafizur", r: 21, b: 27, "4s": 1, "6s": 0, sr: "77.78" },
+          { batsman: { id: "507", name: "Dunith Wellalage" }, dismissal: "b Shakib", r: 10, b: 12, "4s": 1, "6s": 0, sr: "83.33" },
+          { batsman: { id: "508", name: "Dushmantha Chameera" }, dismissal: "not out", r: 4, b: 5, "4s": 0, "6s": 0, sr: "80.00" },
+        ],
+        bowling: [
+          { bowler: { id: "511", name: "Taskin Ahmed" }, o: 10, m: 0, r: 49, w: 2, eco: "4.90" },
+          { bowler: { id: "512", name: "Shoriful Islam" }, o: 10, m: 1, r: 58, w: 1, eco: "5.80" },
+          { bowler: { id: "513", name: "Mustafizur Rahman" }, o: 10, m: 0, r: 44, w: 2, eco: "4.40" },
+          { bowler: { id: "514", name: "Mehidy Hasan" }, o: 10, m: 0, r: 48, w: 1, eco: "4.80" },
+          { bowler: { id: "515", name: "Shakib Al Hasan" }, o: 10, m: 0, r: 43, w: 1, eco: "4.30" },
+        ],
+      },
+      {
+        inning: "Bangladesh 1st Innings",
+        totalRuns: 247,
+        totalWickets: 5,
+        totalOvers: 48.4,
+        extras: "b 2, lb 5, w 9, nb 1 (17)",
+        batting: [
+          { batsman: { id: "521", name: "Litton Das" }, dismissal: "c Mendis b Chameera", r: 71, b: 78, "4s": 8, "6s": 1, sr: "91.03" },
+          { batsman: { id: "522", name: "Tanzid Hasan" }, dismissal: "c Nissanka b Rajitha", r: 44, b: 50, "4s": 4, "6s": 1, sr: "88.00" },
+          { batsman: { id: "523", name: "Najmul Hossain Shanto" }, dismissal: "lbw b Theekshana", r: 36, b: 45, "4s": 3, "6s": 0, sr: "80.00" },
+          { batsman: { id: "524", name: "Towhid Hridoy" }, dismissal: "c Asalanka b Hasaranga", r: 51, b: 48, "4s": 4, "6s": 1, sr: "106.25" },
+          { batsman: { id: "525", name: "Mushfiqur Rahim" }, dismissal: "c Wellalage b Asalanka", r: 15, b: 20, "4s": 1, "6s": 0, sr: "75.00" },
+          { batsman: { id: "526", name: "Mehidy Hasan" }, dismissal: "not out", r: 10, b: 15, "4s": 0, "6s": 0, sr: "66.67" },
+          { batsman: { id: "527", name: "Taskin Ahmed" }, dismissal: "not out", r: 3, b: 6, "4s": 0, "6s": 0, sr: "50.00" },
+        ],
+        bowling: [
+          { bowler: { id: "531", name: "Dushmantha Chameera" }, o: 9, m: 0, r: 51, w: 1, eco: "5.67" },
+          { bowler: { id: "532", name: "Kasun Rajitha" }, o: 9.4, m: 0, r: 54, w: 1, eco: "5.59" },
+          { bowler: { id: "533", name: "Maheesh Theekshana" }, o: 10, m: 0, r: 49, w: 1, eco: "4.90" },
+          { bowler: { id: "534", name: "Wanindu Hasaranga" }, o: 10, m: 0, r: 43, w: 1, eco: "4.30" },
+          { bowler: { id: "535", name: "Charith Asalanka" }, o: 10, m: 0, r: 43, w: 1, eco: "4.30" },
+        ],
+      },
+    ],
+    "mock-3": [
+      {
+        inning: "Chennai Super Kings 1st Innings",
+        totalRuns: 189,
+        totalWickets: 6,
+        totalOvers: 20,
+        extras: "b 2, lb 3, w 8, nb 1 (14)",
+        batting: [
+          { batsman: { id: "301", name: "Ruturaj Gaikwad" }, dismissal: "c Ishan b Bumrah", r: 72, b: 46, "4s": 8, "6s": 3, sr: "156.52" },
+          { batsman: { id: "302", name: "Devon Conway" }, dismissal: "c Rohit b Boult", r: 36, b: 27, "4s": 4, "6s": 1, sr: "133.33" },
+          { batsman: { id: "303", name: "Ajinkya Rahane" }, dismissal: "c SKY b Coetzee", r: 18, b: 11, "4s": 2, "6s": 0, sr: "163.64" },
+          { batsman: { id: "304", name: "Shivam Dube" }, dismissal: "c Hardik b Madhwal", r: 28, b: 15, "4s": 2, "6s": 2, sr: "186.67" },
+          { batsman: { id: "305", name: "Ravindra Jadeja" }, dismissal: "c Tilak b Chawla", r: 8, b: 6, "4s": 0, "6s": 0, sr: "133.33" },
+          { batsman: { id: "306", name: "MS Dhoni" }, dismissal: "run out", r: 6, b: 4, "4s": 0, "6s": 0, sr: "150.00" },
+          { batsman: { id: "307", name: "Moeen Ali" }, dismissal: "not out", r: 5, b: 3, "4s": 0, "6s": 0, sr: "166.67" },
+          { batsman: { id: "308", name: "Deepak Chahar" }, dismissal: "not out", r: 2, b: 3, "4s": 0, "6s": 0, sr: "66.67" },
+        ],
+        bowling: [
+          { bowler: { id: "311", name: "Jasprit Bumrah" }, o: 4, m: 0, r: 28, w: 1, eco: "7.00" },
+          { bowler: { id: "312", name: "Trent Boult" }, o: 4, m: 0, r: 37, w: 1, eco: "9.25" },
+          { bowler: { id: "313", name: "Gerald Coetzee" }, o: 4, m: 0, r: 41, w: 1, eco: "10.25" },
+          { bowler: { id: "314", name: "Akash Madhwal" }, o: 4, m: 0, r: 39, w: 1, eco: "9.75" },
+          { bowler: { id: "315", name: "Piyush Chawla" }, o: 2, m: 0, r: 19, w: 1, eco: "9.50" },
+          { bowler: { id: "316", name: "Mohammad Nabi" }, o: 2, m: 0, r: 20, w: 0, eco: "10.00" },
+        ],
+      },
+      {
+        inning: "Mumbai Indians 1st Innings",
+        totalRuns: 156,
+        totalWickets: 3,
+        totalOvers: 16.2,
+        extras: "b 2, lb 4, w 6, nb 1 (13)",
+        batting: [
+          { batsman: { id: "321", name: "Rohit Sharma" }, dismissal: "c Gaikwad b Chahar", r: 57, b: 38, "4s": 6, "6s": 2, sr: "150.00" },
+          { batsman: { id: "322", name: "Ishan Kishan" }, dismissal: "c Conway b Deshpande", r: 40, b: 26, "4s": 4, "6s": 2, sr: "153.85" },
+          { batsman: { id: "323", name: "Suryakumar Yadav" }, dismissal: "c Dube b Pathirana", r: 30, b: 17, "4s": 2, "6s": 2, sr: "176.47" },
+          { batsman: { id: "324", name: "Tilak Varma" }, dismissal: "batting", r: 12, b: 8, "4s": 1, "6s": 0, sr: "150.00" },
+          { batsman: { id: "325", name: "Hardik Pandya" }, dismissal: "batting", r: 4, b: 3, "4s": 0, "6s": 0, sr: "133.33" },
+        ],
+        bowling: [
+          { bowler: { id: "331", name: "Deepak Chahar" }, o: 4, m: 0, r: 34, w: 1, eco: "8.50" },
+          { bowler: { id: "332", name: "Tushar Deshpande" }, o: 3.2, m: 0, r: 32, w: 1, eco: "9.60" },
+          { bowler: { id: "333", name: "Ravindra Jadeja" }, o: 4, m: 0, r: 30, w: 0, eco: "7.50" },
+          { bowler: { id: "334", name: "Matheesha Pathirana" }, o: 3, m: 0, r: 32, w: 1, eco: "10.67" },
+          { bowler: { id: "335", name: "Moeen Ali" }, o: 2, m: 0, r: 21, w: 0, eco: "10.50" },
+        ],
+      },
+    ],
+  };
+
+  return scorecards[matchId] ?? null;
 }
 
-function getMockCommentary(): Commentary {
+function getMockCommentary(matchId: string): Commentary | null {
+  if (matchId !== "mock-1") return null;
+
   return {
     bbb: [
       { id: "1", over: 78, ball: 0, score: 0, batsman: "KL Rahul", bowler: "Lyon", commentary: "End of over 78. India 287/4. KL Rahul 48*, Jadeja 12*", timestamp: "2026-02-11T09:00:00" },
@@ -529,7 +710,9 @@ function getMockCommentary(): Commentary {
   };
 }
 
-function getMockSquads(): Squad[] {
+function getMockSquads(matchId: string): Squad[] | null {
+  if (matchId !== "mock-1") return null;
+
   return [
     {
       teamName: "India",

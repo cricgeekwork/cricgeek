@@ -40,6 +40,17 @@ function formatOvers(value: number) {
   return `${value} ov`;
 }
 
+function getLegalBalls(overs: number) {
+  const completedOvers = Math.floor(Math.max(overs, 0));
+  const ballsInCurrentOver = Math.min(5, Math.round((overs - completedOvers) * 10));
+  return completedOvers * 6 + ballsInCurrentOver;
+}
+
+function getRunRate(runs: number, overs: number) {
+  const legalBalls = getLegalBalls(overs);
+  return legalBalls > 0 ? ((runs * 6) / legalBalls).toFixed(2) : "0.00";
+}
+
 function getScheduledOvers(matchType: string) {
   const normalized = matchType.toLowerCase();
   if (normalized.includes("t20")) return 20;
@@ -272,10 +283,7 @@ function getPrimaryScore(scorecard: Scorecard[] | null, commentary: Commentary |
 
   return {
     inning: activeInnings,
-    runRate:
-      activeInnings.totalOvers > 0
-        ? (activeInnings.totalRuns / activeInnings.totalOvers).toFixed(2)
-        : "0.00",
+    runRate: getRunRate(activeInnings.totalRuns, activeInnings.totalOvers),
     featuredBatters,
     featuredBowlers,
     batterContextLabel,
@@ -295,8 +303,7 @@ function InningsSplitView({ scorecards, selectedInning, onSelectInning }: Inning
   const safeIndex = Math.min(selectedInning, scorecards.length - 1);
   const active = scorecards[safeIndex];
   const [pressedInning, setPressedInning] = useState<number | null>(null);
-  const currentRunRate =
-    active.totalOvers > 0 ? (active.totalRuns / active.totalOvers).toFixed(2) : "0.00";
+  const currentRunRate = getRunRate(active.totalRuns, active.totalOvers);
 
   // Extract the team name from an inning label like "Royal Challengers Bengaluru Innings 1"
   // by stripping the trailing " Innings N" suffix.
@@ -642,11 +649,12 @@ export default function MatchDetailClient({
               {primaryScore && (
                 <>
                   <p className="text-[15px] text-[#b1ab9f]">
-                    Current RR: <span className="font-semibold text-white">{primaryScore.runRate}</span>
+                    {liveMatch.matchEnded ? "Final RR:" : "Current RR:"}{" "}
+                    <span className="font-semibold text-white">{primaryScore.runRate}</span>
                   </p>
                   <div className="inline-flex items-center gap-2 rounded-full border border-[#2d5a41] bg-[#102417] px-3 py-1.5 text-sm font-medium text-[#7be090]">
                     <BarChart3 size={14} />
-                    Live Snapshot Ready
+                    {liveMatch.matchEnded ? "Final Scorecard" : "Live Snapshot Ready"}
                   </div>
                 </>
               )}

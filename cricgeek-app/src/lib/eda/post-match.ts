@@ -38,6 +38,14 @@ function buildBlendedEdge(input: {
   headToHeadWinsB: number;
 }) {
   const resolved = input.headToHeadWinsA + input.headToHeadWinsB;
+  if (
+    resolved === 0 &&
+    input.teamAFormResolved === 0 &&
+    input.teamBFormResolved === 0
+  ) {
+    return null;
+  }
+
   const teamAFormRate = input.teamAFormResolved > 0 ? input.teamAFormWins / input.teamAFormResolved : 0.5;
   const teamBFormRate = input.teamBFormResolved > 0 ? input.teamBFormWins / input.teamBFormResolved : 0.5;
   const priorRateA = (teamAFormRate + (1 - teamBFormRate)) / 2;
@@ -111,6 +119,14 @@ async function getEvaluationSummary(): Promise<InsightsEvaluationResponse["summa
 }
 
 function buildRetrospectiveSummary(match: Match, winner: string | null, margin: string | null, topSwing: string | null) {
+  if (!match.matchStarted) {
+    return `${match.name} has not started yet. Post-match conclusions will be available after scorecards arrive.`;
+  }
+
+  if (!match.matchEnded) {
+    return `${match.name} is still in progress. This is a live scorecard snapshot; comparisons and turning-point conclusions are provisional.`;
+  }
+
   if (winner && margin) {
     return `${winner} won by ${margin}. ${topSwing ? `${topSwing} was the decisive passage in the retrospective innings review.` : "The scorecard, phase battle, and over-impact review agree on the decisive pressure moments."}`;
   }
@@ -140,7 +156,10 @@ export async function buildPostMatchEdaReport(
     getEvaluationSummary(),
   ]);
 
-  const winner = match.status.toLowerCase().includes("won") ? inferWinner(match) : null;
+  const winner =
+    match.matchEnded && match.status.toLowerCase().includes("won")
+      ? inferWinner(match)
+      : null;
   const loser = winner ? [teamA, teamB].find((team) => team !== winner) || null : null;
   const margin = parseMargin(match.status);
 

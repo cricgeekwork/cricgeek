@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PostMatchInsightsStory from "@/components/matches/PostMatchInsightsStory";
+import PostMatchAnalysisSlides from "@/components/matches/PostMatchAnalysisSlides";
 import { getMatchInfo, getMatchScorecard } from "@/lib/cricket-api";
 import { buildPostMatchEdaReport } from "@/lib/eda/post-match";
 import { getMatchCoverage } from "@/lib/match-coverage";
@@ -40,5 +40,5 @@ export async function MatchAnalysisPageContent({ params }: MatchAnalysisPageProp
 
   const report = await buildPostMatchEdaReport(match, scorecards);
 
-  return <PostMatchInsightsStory match={match} report={report} coverage={coverage} scorecards={scorecards} />;
+  return <PostMatchAnalysisSlides match={match} report={report} coverage={coverage} scorecards={scorecards} />;
 }
